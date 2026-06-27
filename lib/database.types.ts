@@ -50,9 +50,10 @@ export const DEFAULT_THEME: ProfileTheme = {
   radius: "14px",
 }
 
-/** Normalize theme fields for rendering / storage */
+/** Normalize theme for live pages — mockup PNGs are gallery-only, never backgrounds */
 export function themeForRender(theme: ProfileTheme): ProfileTheme {
-  return { ...DEFAULT_THEME, ...theme }
+  const { bg_image: _bg, ...rest } = { ...DEFAULT_THEME, ...theme }
+  return rest
 }
 
 export function mapProfile(row: Record<string, unknown>): DbProfile {

@@ -40,8 +40,8 @@ export function BiolinkNavbar() {
   return (
     <div className="fixed left-0 right-0 top-0 z-[999] mt-2.5">
       <div className="px-4 sm:px-6 md:px-8">
-        <div className="relative mx-auto flex w-full max-w-[1300px] items-center gap-4 rounded-[40px] bg-white px-5 py-3.5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] sm:px-6 sm:py-4 max-md:py-3">
-          <LogoMark height={36} className="mr-1 shrink-0" />
+        <div className="relative mx-auto flex h-14 w-full max-w-[1300px] items-center gap-4 rounded-[40px] bg-white px-5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] sm:h-[60px] sm:px-6">
+          <LogoMark height={32} className="mr-1 flex shrink-0 items-center self-center sm:h-9" />
 
           <nav className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar md:flex lg:gap-0">
             {navLinks.map((link) => (

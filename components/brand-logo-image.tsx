@@ -29,8 +29,13 @@ export function BrandLogoImage({
         alt={alt}
         width={imageHeight}
         height={imageHeight}
-        className="max-w-none object-contain object-center"
-        style={{ height: imageHeight, width: "auto" }}
+        className="max-w-none object-contain"
+        style={{
+          height: imageHeight,
+          width: "auto",
+          objectPosition: "center 54%",
+          transform: "translateY(1px)",
+        }}
         priority
       />
     </span>

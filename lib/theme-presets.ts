@@ -63,32 +63,24 @@ function buildPreset(id: string, name: string, image: string): ThemePreset {
     id,
     name,
     image,
-    theme: { ...colors, preset_id: id, bg_image: image },
+    theme: { ...colors, preset_id: id },
   }
 }
 
 export const THEME_PRESETS: ThemePreset[] = [
   ...bioThemes.map((t) => buildPreset(t.id, t.name, t.image)),
-  ...EXTRA_PRESETS.map((p) => ({ ...p, theme: { ...p.theme, bg_image: p.image } })),
+  ...EXTRA_PRESETS,
 ]
 
 export function getThemePreset(id: string): ThemePreset | undefined {
   return THEME_PRESETS.find((p) => p.id === id)
 }
 
-/** Ensure decorative background art is attached when we only have preset_id + colors */
+/** @deprecated use themeForRender — strips mockup screenshot URLs */
 export function resolveThemeBackground(theme: ProfileTheme): ProfileTheme {
-  const merged = themeForRender(theme)
-  if (merged.bg_image) return merged
-  if (merged.preset_id) {
-    const preset = getThemePreset(merged.preset_id)
-    if (preset?.image) return { ...merged, bg_image: preset.image }
-  }
-  return merged
+  return themeForRender(theme)
 }
 
-export function themeWithBackground(theme: ProfileTheme, image?: string | null): ProfileTheme {
-  const base = themeForRender(theme)
-  if (base.bg_image || !image) return base
-  return { ...base, bg_image: image }
+export function themeWithBackground(theme: ProfileTheme, _image?: string | null): ProfileTheme {
+  return themeForRender(theme)
 }
