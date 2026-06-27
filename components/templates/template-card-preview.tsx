@@ -25,8 +25,8 @@ export function TemplateCardPreview({ template }: { template: MarketplaceTemplat
     .map((l) => ({ id: l.id, title: l.title || "Link", url: l.url || "#", icon: l.icon }))
 
   return (
-    <div className="flex aspect-[9/14] items-start justify-center overflow-hidden bg-bio-grey-f4 px-2 pt-3 sm:px-3">
-      <PhoneDeviceFrame size="card" showLabel={false} glow={false} className="shrink-0">
+    <div className="flex aspect-[9/14] items-start justify-center overflow-hidden bg-bio-grey-f4 px-1 pt-2 sm:px-2 sm:pt-3">
+      <PhoneDeviceFrame size="card" showLabel={false} glow={false} className="w-full max-w-full shrink">
         <DbPublicProfileView
           profile={previewProfile}
           links={previewLinks}

@@ -45,7 +45,7 @@ export function BiolinkNavbar() {
         <div className="relative mx-auto flex h-14 w-full max-w-[1300px] items-center gap-4 rounded-[40px] bg-white px-5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] sm:h-[60px] sm:px-6">
           <LogoMark height={28} maxWidth={118} className="mr-1 flex shrink-0 items-center self-center" />
 
-          <nav className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar md:flex lg:gap-0">
+          <nav className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar lg:flex lg:gap-0">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -60,11 +60,11 @@ export function BiolinkNavbar() {
             ))}
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-2 md:flex lg:gap-3">{authLinks}</div>
+          <div className="hidden shrink-0 items-center gap-2 lg:flex lg:gap-3">{authLinks}</div>
 
           <button
             type="button"
-            className="ml-auto shrink-0 md:hidden"
+            className="ml-auto flex min-h-11 min-w-11 shrink-0 items-center justify-center lg:hidden"
             aria-label="Open menu"
             onClick={() => setOpen(true)}
           >
@@ -83,11 +83,16 @@ export function BiolinkNavbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-white md:hidden"
+            className="fixed inset-0 z-50 bg-white lg:hidden"
           >
-            <div className="flex items-center justify-between px-6 py-6">
+            <div className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-6">
               <LogoMark height={28} maxWidth={118} />
-              <button type="button" aria-label="Close menu" onClick={() => setOpen(false)}>
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setOpen(false)}
+                className="flex min-h-11 min-w-11 items-center justify-center"
+              >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M12.9875 1L1 12.9875" stroke="black" strokeWidth="2" strokeLinecap="round" />
                   <path d="M12.9975 13L1 1" stroke="black" strokeWidth="2" strokeLinecap="round" />

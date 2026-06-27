@@ -19,7 +19,7 @@ export default function TemplatesPage() {
       <SiteJsonLd />
       <section className="mx-auto w-[min(900px,92%)] pt-32 text-center text-bio-dark max-lg:pt-24">
         <SectionBadge>Templates</SectionBadge>
-        <h1 className="mt-6 text-6xl font-semibold tracking-tighter max-lg:text-5xl max-sm:text-4xl">
+        <h1 className="mt-6 text-3xl font-semibold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
           Link in bio templates
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-bio-grey">

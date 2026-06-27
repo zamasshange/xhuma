@@ -55,12 +55,12 @@ export function AiAssistantSection() {
         </div>
       </BioContainer>
 
-      <div className="relative -mt-16 flex h-screen items-center justify-center bg-white max-md:mt-0 max-sm:h-auto">
+      <div className="relative -mt-16 flex max-h-[70vh] items-center justify-center bg-white max-lg:mt-0 max-lg:h-auto max-lg:max-h-none max-sm:mt-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={view === "app" ? bioAiSection.appImage : bioAiSection.webImage}
           alt={view === "app" ? "Xhuma mobile app" : "Xhuma website"}
-          className="h-[85%] w-auto object-cover transition-opacity duration-200 max-sm:h-auto max-sm:w-[65%]"
+          className="h-auto max-h-[65vh] w-[min(65%,320px)] object-contain transition-opacity duration-200 sm:w-[min(55%,400px)]"
         />
       </div>
     </section>

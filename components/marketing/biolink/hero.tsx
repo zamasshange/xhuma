@@ -22,19 +22,19 @@ export function BiolinkHero() {
 
   return (
     <section className="relative overflow-hidden">
-      <div className="bio-fade-up mx-auto flex w-[min(1200px,92%)] pt-32 max-lg:pt-24 max-md:flex-wrap">
-        <div className="w-3/5 pl-10 text-bio-dark max-md:flex max-md:w-full max-md:flex-col max-md:items-center max-md:justify-center max-md:pl-0 max-md:text-center">
-          <h1 className="mt-6 whitespace-pre-line text-7xl font-bold leading-[1.05] tracking-tighter max-lg:text-5xl max-sm:text-4xl">
+      <div className="bio-fade-up mx-auto flex w-[min(1200px,92%)] flex-col pt-28 max-lg:pt-24 lg:flex-row">
+        <div className="w-full text-bio-dark lg:w-3/5 lg:pl-10 max-lg:flex max-lg:flex-col max-lg:items-center max-lg:text-center">
+          <h1 className="mt-6 whitespace-pre-line text-4xl font-bold leading-[1.08] tracking-tighter sm:text-5xl lg:text-7xl">
             {bioHero.title}
           </h1>
-          <h4 className="mt-6 w-4/5 text-xl font-normal leading-relaxed max-sm:mt-5 max-sm:w-11/12 max-sm:text-base">
+          <h4 className="mt-5 w-full text-base font-normal leading-relaxed sm:mt-6 sm:text-lg lg:mt-6 lg:w-4/5 lg:text-xl">
             {bioHero.subtitle}
           </h4>
-          <ClaimLinkInput className="mt-8 w-[min(470px,98%)] max-lg:w-[min(400px,98%)] max-sm:mt-6" />
+          <ClaimLinkInput className="mt-6 w-full max-w-[470px] sm:mt-8" />
         </div>
 
-        <div className="flex w-2/5 items-center justify-center pb-10 max-md:mt-10 max-md:w-full max-sm:mt-7">
-          <div className="relative flex w-full max-w-[340px] flex-col items-center sm:max-w-[380px]">
+        <div className="mt-10 flex w-full items-center justify-center pb-6 sm:mt-12 lg:mt-0 lg:w-2/5 lg:pb-10">
+          <div className="relative flex w-full max-w-[min(340px,88vw)] flex-col items-center">
             {/* Soft glow behind mockups */}
             <div
               className="pointer-events-none absolute inset-0 -z-10 scale-90 rounded-full opacity-70 blur-3xl"
@@ -45,7 +45,7 @@ export function BiolinkHero() {
               aria-hidden
             />
 
-            <div className="relative aspect-[9/19] w-full min-h-[420px] max-h-[min(72vh,640px)]">
+            <div className="relative aspect-[9/19] w-full min-h-[320px] max-h-[min(65vh,560px)] sm:min-h-[380px] sm:max-h-[min(72vh,640px)]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active.id}

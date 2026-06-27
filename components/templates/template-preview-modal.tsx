@@ -46,19 +46,23 @@ export function TemplatePreviewModal({
     .map((l) => ({ id: l.id, title: l.title || "Link", url: l.url || "#", icon: l.icon }))
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-bio-dark/50 p-4 sm:items-center">
-      <div className="flex max-h-[94vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-bio-dark/50 p-0 sm:items-center sm:p-4">
+      <div className="flex max-h-[96dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:max-h-[94vh] sm:rounded-2xl">
         <div className="flex items-center justify-between border-b border-bio-dark/8 px-4 py-3">
-          <div>
-            <p className="font-semibold text-bio-dark">{template.name}</p>
+          <div className="min-w-0 pr-2">
+            <p className="truncate font-semibold text-bio-dark">{template.name}</p>
             <p className="text-xs text-bio-grey">{template.category} · Preview only</p>
           </div>
-          <button type="button" onClick={onClose} className="rounded-lg p-2 hover:bg-bio-grey-f4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg hover:bg-bio-grey-f4"
+          >
             <X className="size-5" />
           </button>
         </div>
 
-        <div className="flex justify-center gap-2 border-b border-bio-dark/8 px-4 py-2">
+        <div className="flex justify-center gap-1.5 overflow-x-auto border-b border-bio-dark/8 px-3 py-2 no-scrollbar sm:gap-2 sm:px-4">
           {(
             [
               { id: "mobile" as const, icon: Smartphone, label: "Mobile" },
@@ -71,7 +75,7 @@ export function TemplatePreviewModal({
               type="button"
               onClick={() => setDevice(d.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold",
+                "flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold",
                 device === d.id ? "bg-bio-dark text-white" : "text-bio-grey",
               )}
             >
@@ -81,19 +85,21 @@ export function TemplatePreviewModal({
           ))}
         </div>
 
-        <div className="flex flex-1 items-start justify-center overflow-auto bg-bio-grey-f4 p-6 sm:p-8">
-          <PhoneDeviceFrame size={DEVICE_FRAME[device]} showLabel={false} glow={device === "mobile"}>
-            <DbPublicProfileView
-              profile={previewProfile}
-              links={previewLinks}
-              pageSections={state.page_sections}
-              density="device"
-            />
-          </PhoneDeviceFrame>
+        <div className="flex flex-1 justify-center overflow-auto bg-bio-grey-f4 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-6 sm:pb-6">
+          <div className="w-full max-w-full overflow-hidden">
+            <PhoneDeviceFrame size={DEVICE_FRAME[device]} showLabel={false} glow={device === "mobile"}>
+              <DbPublicProfileView
+                profile={previewProfile}
+                links={previewLinks}
+                pageSections={state.page_sections}
+                density="device"
+              />
+            </PhoneDeviceFrame>
+          </div>
         </div>
 
-        <div className="border-t border-bio-dark/8 p-4">
-          <BioButton className="w-full" onClick={onUse}>
+        <div className="border-t border-bio-dark/8 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4">
+          <BioButton className="min-h-11 w-full" onClick={onUse}>
             Use this template
           </BioButton>
         </div>

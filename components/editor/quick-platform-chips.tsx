@@ -24,7 +24,7 @@ export function QuickPlatformChips({
           key={p.icon}
           type="button"
           onClick={() => onAdd(p.title, p.url, p.icon)}
-          className="flex items-center gap-2 rounded-lg border border-bio-dark/8 bg-white px-2.5 py-1.5 text-xs font-semibold text-bio-dark shadow-sm transition hover:border-bio-dark/15 hover:bg-bio-grey-f4 active:scale-[0.98]"
+          className="flex min-h-11 items-center gap-2 rounded-lg border border-bio-dark/8 bg-white px-3 py-2 text-sm font-semibold text-bio-dark shadow-sm transition hover:border-bio-dark/15 hover:bg-bio-grey-f4 active:scale-[0.98]"
         >
           <SocialIconBadge icon={p.icon} size={24} className="rounded-md" />
           {p.label}

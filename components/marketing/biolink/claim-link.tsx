@@ -73,27 +73,29 @@ export function ClaimLinkInput({
     <form onSubmit={handleSubmit} className={cn("relative z-20", className)}>
       <div
         className={cn(
-          "flex items-center overflow-hidden rounded-full",
+          "flex flex-col gap-2 overflow-hidden rounded-full sm:flex-row sm:items-center",
           variant === "muted"
             ? "bg-bio-grey-f4"
             : "border-2 border-bio-dark bg-white shadow-sm",
         )}
       >
-        <span className="shrink-0 pl-5 text-base text-bio-dark max-sm:pl-4 max-sm:text-sm">{SITE_DOMAIN}/</span>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="name"
-          className="min-w-0 flex-1 bg-transparent py-4 pr-2 text-base text-bio-dark outline-none placeholder:text-bio-grey max-sm:py-3.5 max-sm:text-sm"
-          aria-label="Choose your username"
-          autoComplete="off"
-          autoCapitalize="off"
-          spellCheck={false}
-        />
+        <div className="flex min-w-0 flex-1 items-center">
+          <span className="shrink-0 pl-4 text-sm text-bio-dark sm:pl-5 sm:text-base">{SITE_DOMAIN}/</span>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="name"
+            className="min-w-0 flex-1 bg-transparent py-3.5 pr-2 text-sm text-bio-dark outline-none placeholder:text-bio-grey sm:py-4 sm:text-base"
+            aria-label="Choose your username"
+            autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
+          />
+        </div>
         <button
           type="submit"
-          className="m-1.5 shrink-0 rounded-full bg-bio-dark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 max-sm:px-4 max-sm:py-2.5"
+          className="m-1.5 min-h-11 shrink-0 rounded-full bg-bio-dark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 sm:px-6"
         >
           {buttonLabel}
         </button>

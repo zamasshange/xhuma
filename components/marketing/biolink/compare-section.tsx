@@ -81,14 +81,14 @@ export function CompareSection() {
           </p>
         </div>
 
-        <div className="relative mx-auto mt-4 flex w-[min(420px,88%)] items-center justify-between gap-3">
+        <div className="relative mx-auto mt-4 flex w-[min(420px,92%)] flex-col gap-2 sm:w-[min(420px,88%)] sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-2.5">
             <LogoMark href="#" height={24} maxWidth={100} className="shrink-0" />
-            <p className="text-base font-medium text-bio-dark max-sm:text-sm">
+            <p className="text-sm font-medium text-bio-dark sm:text-base">
               Get everything with {SITE_NAME}
             </p>
           </div>
-          <p className="shrink-0 text-lg font-semibold text-bio-green max-sm:text-base">
+          <p className="shrink-0 text-base font-semibold text-bio-green sm:text-lg">
             {formatCurrency(bioPricing.yearly)}/mo
           </p>
         </div>

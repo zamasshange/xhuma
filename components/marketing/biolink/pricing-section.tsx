@@ -48,7 +48,7 @@ export function BiolinkPricing() {
         One simple plan
       </h1>
 
-      <div className="relative z-10 mx-auto mt-10 flex w-[250px] rounded-full bg-[#f0ebe3] p-1 max-sm:mt-6">
+      <div className="relative z-10 mx-auto mt-10 flex w-full max-w-xs rounded-full bg-[#f0ebe3] p-1 max-sm:mt-6 sm:max-w-[280px]">
         <button
           type="button"
           onClick={() => setYearly(false)}

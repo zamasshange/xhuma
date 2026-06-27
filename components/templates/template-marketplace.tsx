@@ -104,19 +104,19 @@ export function TemplateMarketplace({
   ]
 
   return (
-    <section id="templates" className={cn("text-bio-dark", compact ? "pt-8" : "pt-28 max-lg:pt-16")}>
+    <section id="templates" className={cn("text-bio-dark", compact ? "pt-8" : "pt-24 max-lg:pt-16")}>
       {showHeader && (
-        <div className="mx-auto mb-8 w-[min(900px,92%)] text-center">
-          <h2 className="text-5xl font-semibold tracking-tighter max-lg:text-4xl max-sm:text-3xl">
+        <div className="mx-auto mb-6 w-[min(900px,92%)] px-1 text-center sm:mb-8">
+          <h2 className="text-3xl font-semibold tracking-tighter sm:text-4xl lg:text-5xl">
             Template marketplace
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-lg text-bio-grey">
+          <p className="mx-auto mt-3 max-w-xl text-base text-bio-grey sm:text-lg">
             Professionally designed layouts — or start from a blank canvas with AI-powered sections.
           </p>
         </div>
       )}
 
-      <div className="mx-auto w-[min(1200px,94%)]">
+      <div className="mx-auto w-[min(1200px,100%)] px-3 sm:px-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
@@ -128,7 +128,7 @@ export function TemplateMarketplace({
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="h-11 rounded-xl border border-bio-dark/10 bg-white px-3 text-sm"
+            className="h-11 w-full rounded-xl border border-bio-dark/10 bg-white px-3 text-sm sm:w-auto"
           >
             <option value="All">All categories</option>
             {TEMPLATE_CATEGORIES.map((c) => (
@@ -147,23 +147,26 @@ export function TemplateMarketplace({
           </BioButton>
         </div>
 
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <div className="-mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-2 no-scrollbar">
           {tabs.map((t) => (
             <button
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
               className={cn(
-                "shrink-0 rounded-full px-4 py-2 text-xs font-semibold min-h-[40px]",
+                "shrink-0 rounded-full px-3.5 py-2.5 text-xs font-semibold min-h-11 sm:px-4",
                 tab === t.id ? "bg-bio-dark text-white" : "bg-bio-grey-f4 text-bio-grey",
               )}
             >
-              {t.label}
+              <span className="sm:hidden">
+                {t.id === "ai-saved" ? "AI Gen" : t.id === "recent" ? "Recent" : t.label.split(" ")[0]}
+              </span>
+              <span className="hidden sm:inline">{t.label}</span>
             </button>
           ))}
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:mt-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <CreateFromScratchCard onSelect={startBlank} />
 
           {templates.map((t) => (
@@ -234,7 +237,7 @@ function TemplateCard({
           <button
             type="button"
             onClick={onFavorite}
-            className="pointer-events-auto ml-auto rounded-full bg-white p-2 shadow-md ring-1 ring-black/5 transition hover:bg-white"
+            className="pointer-events-auto ml-auto flex min-h-11 min-w-11 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/5 transition hover:bg-white"
             aria-label="Favourite"
           >
             <Heart className={cn("size-4", favorited ? "fill-red-500 text-red-500" : "text-bio-grey")} />
@@ -245,16 +248,20 @@ function TemplateCard({
         <p className="text-[10px] font-medium uppercase tracking-wide text-bio-grey">{template.category}</p>
         <h3 className="font-semibold text-bio-dark">{template.name}</h3>
         <p className="mt-1 line-clamp-2 text-xs text-bio-grey">{template.description}</p>
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          <BioButton variant="secondary" className="h-8 flex-1 px-2 text-[11px]" onClick={onPreview}>
-            <Eye className="size-3.5" />
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <BioButton variant="secondary" className="min-h-11 flex-1 px-3 text-xs sm:text-sm" onClick={onPreview}>
+            <Eye className="size-4" />
             Preview
           </BioButton>
-          <BioButton className="h-8 flex-1 px-2 text-[11px]" onClick={onUse}>
-            Use
+          <BioButton className="min-h-11 flex-1 px-3 text-xs sm:text-sm" onClick={onUse}>
+            Use template
           </BioButton>
         </div>
-        <button type="button" onClick={onDuplicate} className="mt-2 text-center text-[10px] text-bio-grey hover:text-bio-dark">
+        <button
+          type="button"
+          onClick={onDuplicate}
+          className="mt-2 min-h-10 text-center text-xs text-bio-grey hover:text-bio-dark"
+        >
           Duplicate to edit
         </button>
       </div>

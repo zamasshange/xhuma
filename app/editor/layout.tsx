@@ -13,7 +13,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function EditorLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="xhuma-site min-h-dvh bg-white text-bio-dark">
+    <div className="xhuma-site min-h-dvh overflow-x-hidden bg-white text-bio-dark">
       <EditorProvider>{children}</EditorProvider>
     </div>
   )

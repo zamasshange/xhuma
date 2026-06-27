@@ -14,7 +14,7 @@ const SIZES = {
     sideBtn: { left: "top-[72px] h-7", leftLow: "top-[108px] h-11", right: "top-[92px] h-16" },
   },
   card: {
-    width: "w-[228px]",
+    width: "w-full max-w-[200px] sm:max-w-[228px]",
     bezel: "p-[6px] rounded-[2.1rem]",
     screen: "rounded-[1.7rem]",
     island: "top-[8px] h-[18px] w-[72px]",
@@ -34,7 +34,7 @@ const SIZES = {
     sideBtn: { left: "top-[100px] h-8", leftLow: "top-[148px] h-14", right: "top-[124px] h-[72px]" },
   },
   editor: {
-    width: "w-[300px] sm:w-[320px]",
+    width: "w-full max-w-[min(100%,280px)] sm:max-w-[300px]",
     bezel: "p-[7px] rounded-[2.65rem]",
     screen: "rounded-[2.15rem]",
     island: "top-[9px] h-[21px] w-[84px]",
@@ -44,7 +44,7 @@ const SIZES = {
     sideBtn: { left: "top-[100px] h-8", leftLow: "top-[148px] h-14", right: "top-[124px] h-[72px]" },
   },
   preview: {
-    width: "w-[300px] sm:w-[320px]",
+    width: "w-full max-w-[min(100%,280px)] sm:max-w-[300px]",
     bezel: "p-[7px] rounded-[2.65rem]",
     screen: "rounded-[2.15rem]",
     island: "top-[9px] h-[21px] w-[84px]",
@@ -93,7 +93,7 @@ export function PhoneDeviceFrame({
         </p>
       )}
 
-      <div className={cn("relative mx-auto", s.width, glow && "phone-device-stage py-6")}>
+      <div className={cn("relative mx-auto max-w-full", s.width, glow && "phone-device-stage py-4 sm:py-6")}>
         {glow && <div className="phone-device-aura" aria-hidden />}
 
         <div className="phone-device relative z-10">

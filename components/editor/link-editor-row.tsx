@@ -47,7 +47,7 @@ export function LinkEditorRow({
             type="button"
             disabled={index === 0}
             onClick={() => onMove(-1)}
-            className="rounded-md p-1 hover:bg-white disabled:opacity-30"
+            className="flex min-h-10 min-w-10 items-center justify-center rounded-md hover:bg-white disabled:opacity-30"
             aria-label="Move up"
           >
             <ChevronUp className="size-4" />
@@ -56,7 +56,7 @@ export function LinkEditorRow({
             type="button"
             disabled={index >= total - 1}
             onClick={() => onMove(1)}
-            className="rounded-md p-1 hover:bg-white disabled:opacity-30"
+            className="flex min-h-10 min-w-10 items-center justify-center rounded-md hover:bg-white disabled:opacity-30"
             aria-label="Move down"
           >
             <ChevronDown className="size-4" />
@@ -92,12 +92,12 @@ export function LinkEditorRow({
           <div className="flex gap-2">
             <BioButton
               variant="secondary"
-              className="h-9 px-3"
+              className="min-h-11 px-3"
               onClick={() => onUpdate({ is_active: !link.is_active })}
             >
               {link.is_active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
             </BioButton>
-            <BioButton variant="secondary" className="h-9 px-3 text-bio-red" onClick={onRemove}>
+            <BioButton variant="secondary" className="min-h-11 px-3 text-bio-red" onClick={onRemove}>
               <Trash2 className="size-4" />
             </BioButton>
           </div>

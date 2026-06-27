@@ -72,7 +72,7 @@ export function AiAssistantDock({ tab }: { tab: EditorTabId }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-20 right-4 z-40 flex size-14 items-center justify-center rounded-full bg-bio-dark text-white shadow-lg transition-transform hover:scale-105 lg:bottom-6"
+          className="fixed bottom-[max(5rem,env(safe-area-inset-bottom))] right-3 z-40 flex size-14 items-center justify-center rounded-full bg-bio-dark text-white shadow-lg transition-transform hover:scale-105 sm:right-4 lg:bottom-6"
           aria-label="Open AI assistant"
         >
           <AiIcon className="size-6" />
@@ -80,7 +80,7 @@ export function AiAssistantDock({ tab }: { tab: EditorTabId }) {
       )}
 
       {open && (
-        <div className="fixed bottom-20 right-4 z-50 flex w-[min(100vw-2rem,380px)] flex-col overflow-hidden rounded-2xl border border-bio-dark/10 bg-white shadow-2xl lg:bottom-6">
+        <div className="fixed bottom-[max(5rem,env(safe-area-inset-bottom))] right-3 z-50 flex w-[min(calc(100vw-1.5rem),380px)] flex-col overflow-hidden rounded-2xl border border-bio-dark/10 bg-white shadow-2xl sm:right-4 lg:bottom-6">
           <div className="flex items-center justify-between border-b border-bio-dark/6 bg-bio-grey-f4 px-4 py-3">
             <div className="flex items-center gap-2">
               <MessageCircle className="size-4 text-bio-dark" />

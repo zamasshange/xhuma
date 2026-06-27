@@ -92,10 +92,16 @@ function FeatureCarousel() {
             onClick={() => setActive(i)}
             aria-label={`Slide ${i + 1}`}
             className={cn(
-              "rounded-full transition-all",
-              i === active ? "size-2.5 bg-white shadow-sm" : "size-2 bg-[#d9d9d9]",
+              "flex min-h-11 min-w-11 items-center justify-center rounded-full transition-all",
             )}
-          />
+          >
+            <span
+              className={cn(
+                "rounded-full transition-all",
+                i === active ? "size-2.5 bg-white shadow-sm" : "size-2 bg-[#d9d9d9]",
+              )}
+            />
+          </button>
         ))}
       </div>
     </div>

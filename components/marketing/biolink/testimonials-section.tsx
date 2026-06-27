@@ -102,7 +102,7 @@ export function TestimonialsSection() {
               />
             ))}
           </span>
-          <span className="whitespace-nowrap text-sm font-medium max-sm:text-xs">
+          <span className="text-center text-sm font-medium max-sm:max-w-[140px] max-sm:whitespace-normal sm:whitespace-nowrap">
             +{bioTestimonialSocialProof.count} users enjoy {SITE_NAME}
           </span>
           <span className="ml-1 flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold max-sm:px-2 max-sm:text-xs">
