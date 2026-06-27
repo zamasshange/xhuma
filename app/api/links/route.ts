@@ -1,9 +1,12 @@
-import { createAdminClient, getUserId, requireUserId } from "@/lib/supabase/admin"
+import { createAdminClient } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 import { linkCreateSchema, linkUpdateSchema, linksReorderSchema } from "@/lib/validations"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { isMissingColumnError, omitColumn, withSchemaHint } from "@/lib/schema-hint"
 import { revalidatePublicProfile } from "@/lib/revalidate-profile"
+import { findProfileForRequest, requireProfileOwnerId } from "@/lib/resolve-profile-owner"
+
+const LINK_SELECT = "id, user_id, title, url, position, clicks, is_active, created_at"
 
 async function revalidateProfileForUser(supabase: ReturnType<typeof createAdminClient>, userId: string) {
   const { data } = await supabase.from("profiles").select("username").eq("id", userId).maybeSingle()
@@ -11,14 +14,14 @@ async function revalidateProfileForUser(supabase: ReturnType<typeof createAdminC
 }
 
 export async function GET(request: Request) {
-  const userId = await getUserId(request)
-  if (!userId) return apiSuccess([])
-
   const supabase = createAdminClient()
+  const { ownerId, profile } = await findProfileForRequest(request, supabase)
+  if (!profile || !ownerId) return apiSuccess([])
+
   const { data, error } = await supabase
     .from("links")
     .select("*")
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .order("position", { ascending: true })
 
   if (error) return apiError(error.message, 500)
@@ -26,48 +29,50 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const userId = await requireUserId(request)
-  if (typeof userId === "object") return apiError("Sign in to add links to your live page", 401)
+  const supabase = createAdminClient()
+  const ownerId = await requireProfileOwnerId(request, supabase)
+  if (typeof ownerId === "object") return apiError(ownerId.error, 401)
 
   const body = await request.json()
   const parsed = linkCreateSchema.safeParse(body)
   if (!parsed.success) return apiError(parsed.error.issues[0]?.message ?? "Invalid input")
 
-  const supabase = createAdminClient()
   const { count } = await supabase
     .from("links")
     .select("*", { count: "exact", head: true })
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
 
   const row = {
-    user_id: userId,
+    user_id: ownerId,
     title: parsed.data.title,
     url: parsed.data.url,
     icon: parsed.data.icon ?? inferLinkIcon(parsed.data.title, parsed.data.url),
     position: count ?? 0,
   }
 
-  let { data, error } = await supabase.from("links").insert(row).select().single()
+  let { data, error } = await supabase.from("links").insert(row).select(LINK_SELECT).maybeSingle()
 
   if (error && isMissingColumnError(error.message, "icon", "links")) {
     ;({ data, error } = await supabase
       .from("links")
       .insert(omitColumn(row, "icon"))
-      .select()
-      .single())
+      .select(LINK_SELECT)
+      .maybeSingle())
   }
 
   if (error) return apiError(withSchemaHint(error.message), 500)
-  await revalidateProfileForUser(supabase, userId)
+  if (!data) return apiError("Could not create link", 500)
+
+  await revalidateProfileForUser(supabase, ownerId)
   return apiSuccess(data, 201)
 }
 
 export async function PATCH(request: Request) {
-  const userId = await requireUserId(request)
-  if (typeof userId === "object") return apiError(userId.error, 401)
+  const supabase = createAdminClient()
+  const ownerId = await requireProfileOwnerId(request, supabase)
+  if (typeof ownerId === "object") return apiError(ownerId.error, 401)
 
   const body = await request.json()
-  const supabase = createAdminClient()
 
   if (body.links) {
     const parsed = linksReorderSchema.safeParse(body)
@@ -78,9 +83,9 @@ export async function PATCH(request: Request) {
         .from("links")
         .update({ position: link.position })
         .eq("id", link.id)
-        .eq("user_id", userId)
+        .eq("user_id", ownerId)
     }
-    await revalidateProfileForUser(supabase, userId)
+    await revalidateProfileForUser(supabase, ownerId)
     return apiSuccess({ reordered: true })
   }
 
@@ -92,36 +97,38 @@ export async function PATCH(request: Request) {
     .from("links")
     .update(updates)
     .eq("id", id)
-    .eq("user_id", userId)
-    .select()
-    .single()
+    .eq("user_id", ownerId)
+    .select(LINK_SELECT)
+    .maybeSingle()
 
   if (error && updates.icon !== undefined && isMissingColumnError(error.message, "icon", "links")) {
     ;({ data, error } = await supabase
       .from("links")
       .update(omitColumn(updates, "icon"))
       .eq("id", id)
-      .eq("user_id", userId)
-      .select()
-      .single())
+      .eq("user_id", ownerId)
+      .select(LINK_SELECT)
+      .maybeSingle())
   }
 
   if (error) return apiError(withSchemaHint(error.message), 500)
-  await revalidateProfileForUser(supabase, userId)
+  if (!data) return apiError("Link not found", 404)
+
+  await revalidateProfileForUser(supabase, ownerId)
   return apiSuccess(data)
 }
 
 export async function DELETE(request: Request) {
-  const userId = await requireUserId(request)
-  if (typeof userId === "object") return apiError(userId.error, 401)
+  const supabase = createAdminClient()
+  const ownerId = await requireProfileOwnerId(request, supabase)
+  if (typeof ownerId === "object") return apiError(ownerId.error, 401)
 
   const id = new URL(request.url).searchParams.get("id")
   if (!id) return apiError("Missing link id")
 
-  const supabase = createAdminClient()
-  const { error } = await supabase.from("links").delete().eq("id", id).eq("user_id", userId)
+  const { error } = await supabase.from("links").delete().eq("id", id).eq("user_id", ownerId)
   if (error) return apiError(error.message, 500)
 
-  await revalidateProfileForUser(supabase, userId)
+  await revalidateProfileForUser(supabase, ownerId)
   return apiSuccess({ deleted: true })
 }

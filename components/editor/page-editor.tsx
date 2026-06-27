@@ -167,6 +167,10 @@ export function PageEditor() {
   }
 
   const handleSaveAll = async () => {
+    if (!dirty) {
+      toast.message("No changes to save")
+      return
+    }
     setSavingAll(true)
     const result = await saveAll()
     setSavingAll(false)

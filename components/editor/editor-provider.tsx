@@ -194,11 +194,14 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setState((prev) => (prev ? updater(prev) : prev))
   }, [])
 
+  const markDirty = useCallback(() => setDirty(true), [])
+
   const updateProfile = useCallback(
     (patch: Partial<EditorState["profile"]>) => {
       patchState((s) => ({ ...s, profile: { ...s.profile, ...patch } }))
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const setTheme = useCallback(
@@ -216,8 +219,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
           },
         }
       })
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const addLink = useCallback(
@@ -227,8 +231,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         const resolvedIcon = icon ?? inferLinkIcon(title, url)
         return { ...s, links: [...s.links, { ...link, title, url, icon: resolvedIcon }] }
       })
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const updateLink = useCallback(
@@ -237,8 +242,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         ...s,
         links: s.links.map((l) => (l.id === id ? { ...l, ...patch } : l)),
       }))
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const removeLink = useCallback(
@@ -247,8 +253,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         ...s,
         links: s.links.filter((l) => l.id !== id).map((l, i) => ({ ...l, position: i })),
       }))
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const moveLink = useCallback(
@@ -260,8 +267,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         ;[links[index], links[next]] = [links[next], links[index]]
         return { ...s, links: links.map((l, i) => ({ ...l, position: i })) }
       })
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const addPageSection = useCallback(
@@ -273,8 +281,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         page_sections.splice(insertAt, 0, section)
         return { ...s, page_sections, sections: sectionsToLegacyIds(page_sections) }
       })
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const updatePageSection = useCallback(
@@ -285,8 +294,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
           sec.id === id ? { ...sec, ...patch, content: patch.content ? { ...sec.content, ...patch.content } : sec.content } : sec,
         ),
       }))
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const removePageSection = useCallback(
@@ -297,8 +307,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         const page_sections = s.page_sections.filter((x) => x.id !== id)
         return { ...s, page_sections, sections: sectionsToLegacyIds(page_sections) }
       })
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const movePageSection = useCallback(
@@ -314,8 +325,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         ;[sections[idx], sections[next]] = [sections[next], sections[idx]]
         return { ...s, page_sections: sections, sections: sectionsToLegacyIds(sections) }
       })
+      markDirty()
     },
-    [patchState],
+    [patchState, markDirty],
   )
 
   const saveAsTemplate = useCallback(
@@ -328,31 +340,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [],
   )
 
-  // Track unsaved edits (explicit Save button persists changes)
-  useEffect(() => {
-    if (!state) {
-      setDirty(false)
-      return
-    }
-    if (mode === "draft") {
-      const json = JSON.stringify(editorStateToDocument(state))
-      setDirty(json !== lastSavedJson.current)
-      return
-    }
-    if (mode === "live") {
-      setDirty(
-        liveSnapshot(state) !== lastSavedLiveSnapshot.current || pendingDeletes.current.length > 0,
-      )
-    }
-  }, [state, mode])
-
   const queueLinkDelete = useCallback(
     (id: string) => {
-      removeLink(id)
       if (mode === "live" && !id.startsWith("temp-")) {
         pendingDeletes.current.push(id)
       }
-      setDirty(true)
+      removeLink(id)
     },
     [mode, removeLink],
   )
@@ -388,6 +381,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         if (!profileRes.success) {
           return { ok: false, error: profileRes.error ?? "Could not save profile" }
         }
+        if (profileRes.data) setProfile(profileRes.data)
 
         for (const id of pendingDeletes.current) {
           const del = await apiFetch(`/api/links?id=${id}`, { method: "DELETE" })

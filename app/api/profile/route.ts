@@ -1,25 +1,23 @@
-import { createAdminClient, getUserId, requireUserId } from "@/lib/supabase/admin"
+import { createAdminClient, getUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 import { profileCreateSchema, profileUpdateSchema } from "@/lib/validations"
 import { DEFAULT_THEME, themeForRender, mapProfile, type ProfileTheme } from "@/lib/database.types"
 import { resolveThemeBackground } from "@/lib/theme-presets"
 import { revalidatePublicProfile } from "@/lib/revalidate-profile"
+import { findProfileForRequest, requireProfileOwnerId } from "@/lib/resolve-profile-owner"
 
 export async function GET(request: Request) {
-  const userId = await getUserId(request)
-  if (!userId) return apiSuccess(null)
-
   const supabase = createAdminClient()
-  const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle()
-  if (error) return apiError(error.message, 500)
-  if (!data) return apiSuccess(null)
+  const { profile, error } = await findProfileForRequest(request, supabase)
+  if (error) return apiError(error, 500)
+  if (!profile) return apiSuccess(null)
 
-  return apiSuccess(mapProfile(data))
+  return apiSuccess(mapProfile(profile))
 }
 
 export async function POST(request: Request) {
-  const userId = await requireUserId(request)
-  if (typeof userId === "object") return apiError(userId.error, 401)
+  const userId = await getUserId(request)
+  if (!userId) return apiError("Unauthorized", 401)
 
   const body = await request.json()
   const parsed = profileCreateSchema.safeParse(body)
@@ -27,7 +25,7 @@ export async function POST(request: Request) {
 
   const supabase = createAdminClient()
 
-  const { data: existing } = await supabase.from("profiles").select("id").eq("id", userId).maybeSingle()
+  const { profile: existing } = await findProfileForRequest(request, supabase)
   if (existing) return apiError("Profile already exists", 409)
 
   const { data, error } = await supabase
@@ -40,19 +38,21 @@ export async function POST(request: Request) {
       theme_json: DEFAULT_THEME,
     })
     .select()
-    .single()
+    .maybeSingle()
 
   if (error) {
     if (error.code === "23505") return apiError("Username already taken", 409)
     return apiError(error.message, 500)
   }
+  if (!data) return apiError("Could not create profile", 500)
 
   return apiSuccess(mapProfile(data), 201)
 }
 
 export async function PATCH(request: Request) {
-  const userId = await requireUserId(request)
-  if (typeof userId === "object") return apiError(userId.error, 401)
+  const supabase = createAdminClient()
+  const ownerId = await requireProfileOwnerId(request, supabase)
+  if (typeof ownerId === "object") return apiError(ownerId.error, 404)
 
   const body = await request.json()
   const parsed = profileUpdateSchema.safeParse(body)
@@ -67,18 +67,22 @@ export async function PATCH(request: Request) {
     updates.theme_json = themeForRender(resolveThemeBackground(parsed.data.theme as ProfileTheme))
   }
 
-  const supabase = createAdminClient()
+  if (Object.keys(updates).length === 0) {
+    return apiError("No changes to save", 400)
+  }
+
   const { data, error } = await supabase
     .from("profiles")
     .update(updates)
-    .eq("id", userId)
+    .eq("id", ownerId)
     .select()
-    .single()
+    .maybeSingle()
 
   if (error) {
     if (error.code === "23505") return apiError("Username already taken", 409)
     return apiError(error.message, 500)
   }
+  if (!data) return apiError("Profile not found", 404)
 
   revalidatePublicProfile(String(data.username))
 

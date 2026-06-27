@@ -18,7 +18,7 @@ export const profileThemeSchema = z.object({
   social_icon_style: z.enum(["brand", "theme"]).optional(),
   bg_image: z.string().optional().nullable(),
   preset_id: z.string().optional().nullable(),
-  page_sections: z.array(z.record(z.string(), z.unknown())).optional(),
+  page_sections: z.array(z.unknown()).optional(),
 })
 
 export const profileUpdateSchema = z.object({

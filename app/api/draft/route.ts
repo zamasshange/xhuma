@@ -90,7 +90,7 @@ export async function PUT(request: Request) {
     // Delete-then-insert avoids ON CONFLICT / missing-PK issues on older live DBs
     await supabase.from("profile_drafts").delete().eq("session_id", sessionId)
 
-    const { data, error } = await supabase.from("profile_drafts").insert(row).select().single()
+    const { data, error } = await supabase.from("profile_drafts").insert(row).select().maybeSingle()
 
     if (error) {
       const hint =
