@@ -60,11 +60,14 @@ export const DEFAULT_THEME: ProfileTheme = {
   radius: "14px",
 }
 
-/** Normalize theme — strip third-party mockup screenshots, keep Xhuma backgrounds */
+/** Normalize theme — strip mockup thumbnails and stale webpack URLs (re-resolved from preset_id) */
 export function themeForRender(theme: ProfileTheme): ProfileTheme {
   const merged = { ...DEFAULT_THEME, ...theme }
   const bg = merged.bg_image
-  if (bg && bg.includes("bio.link/_nuxt")) {
+  if (
+    bg &&
+    (bg.includes("bio.link/_nuxt") || bg.includes("/_next/static/media/"))
+  ) {
     const { bg_image: _removed, ...rest } = merged
     return rest
   }

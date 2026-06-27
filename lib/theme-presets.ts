@@ -55,7 +55,7 @@ function buildPreset(id: string, name: string): ThemePreset {
   return {
     id,
     name,
-    image: bgImage ?? bioThemes.find((t) => t.id === id)?.image ?? "",
+    image: bioThemes.find((t) => t.id === id)?.image ?? bgImage ?? "",
     theme: {
       ...colors,
       preset_id: id,
@@ -76,11 +76,11 @@ export function getThemePreset(id: string): ThemePreset | undefined {
 /** Attach Xhuma background art for live preview / storage */
 export function resolveThemeBackground(theme: ProfileTheme): ProfileTheme {
   const merged = themeForRender(theme)
-  if (merged.bg_image) return merged
   if (merged.preset_id) {
     const bg = themeBackgroundForPreset(merged.preset_id)
     if (bg) return { ...merged, bg_image: bg }
   }
+  if (merged.bg_image) return merged
   return merged
 }
 

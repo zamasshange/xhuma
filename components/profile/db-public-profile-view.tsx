@@ -187,6 +187,8 @@ export function DbPublicProfileView({
           src={theme.bg_image}
           alt=""
           aria-hidden
+          decoding="async"
+          fetchPriority="high"
           className="pointer-events-none absolute inset-0 size-full object-cover object-center"
         />
       )}

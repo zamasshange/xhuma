@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { mapProfile } from "@/lib/database.types"
+import { resolveThemeBackground } from "@/lib/theme-presets"
 import { fetchActiveLinksForUser } from "@/lib/supabase/fetch-links"
 import { PublicProfilePageClient } from "./public-profile-client"
 import { JsonLd } from "@/components/seo/json-ld"
@@ -21,8 +22,13 @@ async function fetchPublicProfile(username: string) {
 
   const links = await fetchActiveLinksForUser(supabase, profile.id)
 
+  const mapped = mapProfile(profile)
+
   return {
-    profile: mapProfile(profile),
+    profile: {
+      ...mapped,
+      theme_json: resolveThemeBackground(mapped.theme_json),
+    },
     links,
   }
 }
