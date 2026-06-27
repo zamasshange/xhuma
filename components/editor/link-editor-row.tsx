@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronUp, Eye, EyeOff, Trash2 } from "lucide-react"
 import { SocialIconBadge, resolveLinkIcon } from "@/components/icons/social-icon"
+import { ImproveWithAi } from "@/components/ai/improve-with-ai"
 import { BioButton } from "@/components/ui/bio-form"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import type { EditorLink } from "@/lib/editor-state"
@@ -65,13 +66,22 @@ export function LinkEditorRow({
         <SocialIconBadge icon={displayIcon} size={44} className="mt-0.5 rounded-lg" />
 
         <div className="min-w-0 flex-1 space-y-2">
-          <input
-            className="h-10 w-full rounded-lg border border-bio-dark/8 bg-white px-3 text-sm font-medium text-bio-dark outline-none placeholder:font-normal placeholder:text-bio-grey focus:border-bio-dark/20"
-            value={link.title}
-            placeholder="Button text"
-            onChange={(e) => patchWithIcon({ title: e.target.value })}
-            onBlur={onBlur}
-          />
+          <div className="flex items-center gap-2">
+            <input
+              className="h-10 min-w-0 flex-1 rounded-lg border border-bio-dark/8 bg-white px-3 text-sm font-medium text-bio-dark outline-none placeholder:font-normal placeholder:text-bio-grey focus:border-bio-dark/20"
+              value={link.title}
+              placeholder="Button text"
+              onChange={(e) => patchWithIcon({ title: e.target.value })}
+              onBlur={onBlur}
+            />
+            <ImproveWithAi
+              field="link_title"
+              text={link.title}
+              context={link.url}
+              compact
+              onApply={(title) => patchWithIcon({ title })}
+            />
+          </div>
           <input
             className="h-10 w-full rounded-lg border border-bio-dark/8 bg-white px-3 text-sm text-bio-dark outline-none placeholder:text-bio-grey focus:border-bio-dark/20"
             value={link.url}

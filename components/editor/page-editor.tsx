@@ -9,7 +9,16 @@ import {
   ExternalLink,
   Share2,
   Rocket,
+  Sparkles,
 } from "lucide-react"
+import { AiAssistantDock } from "@/components/ai/ai-assistant-dock"
+import { AiDelightHints } from "@/components/ai/ai-delight-hints"
+import { AiLinkRecommendations } from "@/components/ai/ai-link-recommendations"
+import { AiOnboardingModal } from "@/components/ai/ai-onboarding-modal"
+import { AiPublishReview } from "@/components/ai/ai-publish-review"
+import { AiThemeAssistant } from "@/components/ai/ai-theme-assistant"
+import { ImproveWithAi } from "@/components/ai/improve-with-ai"
+import { ProfileHealthCard } from "@/components/ai/profile-health-card"
 import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
 import { useEditor } from "@/components/editor/editor-provider"
 import {
@@ -34,6 +43,7 @@ import { QuickPlatformChips } from "@/components/editor/quick-platform-chips"
 import { AvatarUpload } from "@/components/editor/avatar-upload"
 import { LinkStylePicker } from "@/components/editor/link-style-picker"
 import { resolveLinkCardStyle } from "@/lib/link-card-styles"
+import type { SocialIconName } from "@/lib/infer-link-icon"
 
 export function PageEditor() {
   const router = useRouter()
@@ -61,6 +71,9 @@ export function PageEditor() {
 
   const [newLink, setNewLink] = useState({ title: "", url: "" })
   const [addingLink, setAddingLink] = useState(false)
+  const [showPublishReview, setShowPublishReview] = useState(false)
+  const [showAiOnboarding, setShowAiOnboarding] = useState(false)
+  const [publishHref, setPublishHref] = useState("/claim")
 
   const canEdit = mode === "draft" || mode === "live"
   const isDraft = mode === "draft"
@@ -85,6 +98,24 @@ export function PageEditor() {
       setTheme(preset.theme)
     }
   }, [themeParam, mode, state, setTheme])
+
+  useEffect(() => {
+    if (!canEdit || mode !== "draft" || !state) return
+    const skipped = localStorage.getItem("xhuma-ai-onboarding-skipped")
+    const done = localStorage.getItem("xhuma-ai-onboarding-done")
+    const isEmpty =
+      !state.profile.display_name &&
+      !state.profile.bio &&
+      state.links.filter((l) => l.title.trim()).length === 0
+    if (isEmpty && !skipped && !done) {
+      setShowAiOnboarding(true)
+    }
+  }, [canEdit, mode, state])
+
+  const handleGoLive = (href: string) => {
+    setPublishHref(href)
+    setShowPublishReview(true)
+  }
 
   const previewProfile: DbProfile | null = state
     ? {
@@ -166,7 +197,10 @@ export function PageEditor() {
         <span className="hidden text-xs text-bio-grey sm:inline">Saving…</span>
       )}
       {isDraft && tab === "page" && (
-        <BioGradientButton className="h-9 px-4 text-xs sm:text-sm" href="/claim">
+        <BioGradientButton
+          className="h-9 px-4 text-xs sm:text-sm"
+          onClick={() => handleGoLive("/claim")}
+        >
           <Rocket className="size-4" />
           <span className="hidden sm:inline">Go live</span>
         </BioGradientButton>
@@ -241,6 +275,24 @@ export function PageEditor() {
               </EditorPanel>
             ) : (
               <>
+                <ProfileHealthCard />
+
+                {isDraft && (
+                  <EditorPanel>
+                    <button
+                      type="button"
+                      onClick={() => setShowAiOnboarding(true)}
+                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-bio-dark/15 bg-bio-grey-f4/50 px-4 py-3 text-left transition-colors hover:border-bio-dark/25"
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-bio-dark">Set up with AI</p>
+                        <BioMuted className="text-xs">Answer a few questions — we&apos;ll draft your page.</BioMuted>
+                      </div>
+                      <Sparkles className="size-5 shrink-0 text-bio-dark" />
+                    </button>
+                  </EditorPanel>
+                )}
+
                 {isDraft && (
                   <EditorPanel>
                     <p className="text-sm text-bio-grey">
@@ -249,7 +301,7 @@ export function PageEditor() {
                       </span>
                       <span className="ml-2">template · autosaves every second</span>
                     </p>
-                    <BioGradientButton className="mt-4 max-w-xs" href="/claim">
+                    <BioGradientButton className="mt-4 max-w-xs" onClick={() => handleGoLive("/claim")}>
                       <Rocket className="size-4" />
                       Claim username & go live
                     </BioGradientButton>
@@ -267,11 +319,19 @@ export function PageEditor() {
                     onUploaded={(url) => updateProfile({ avatar_url: url })}
                   />
                   <div className="mt-5 flex flex-col gap-3 border-t border-bio-dark/6 pt-5">
-                    <BioInput
-                      value={state?.profile.display_name ?? ""}
-                      onChange={(e) => updateProfile({ display_name: e.target.value })}
-                      placeholder="Your name"
-                    />
+                    <div className="flex items-center gap-2">
+                      <BioInput
+                        className="flex-1"
+                        value={state?.profile.display_name ?? ""}
+                        onChange={(e) => updateProfile({ display_name: e.target.value })}
+                        placeholder="Your name"
+                      />
+                      <ImproveWithAi
+                        field="display_name"
+                        text={state?.profile.display_name ?? ""}
+                        onApply={(display_name) => updateProfile({ display_name })}
+                      />
+                    </div>
                     <div className="relative">
                       <BioTextarea
                         className="min-h-[100px]"
@@ -280,11 +340,21 @@ export function PageEditor() {
                         placeholder="Bio"
                         maxLength={255}
                       />
+                      <div className="absolute bottom-3 left-3">
+                        <ImproveWithAi
+                          field="bio"
+                          text={state?.profile.bio ?? ""}
+                          context={state?.profile.display_name}
+                          compact
+                          onApply={(bio) => updateProfile({ bio })}
+                        />
+                      </div>
                       <span className="absolute bottom-3 right-4 text-xs text-bio-grey">
                         {(state?.profile.bio ?? "").length}/255
                       </span>
                     </div>
                   </div>
+                  <AiDelightHints />
                 </EditorPanel>
 
                 <EditorPanel>
@@ -323,6 +393,9 @@ export function PageEditor() {
                       />
                     ))}
                   </div>
+                  <div className="mt-4">
+                    <AiLinkRecommendations />
+                  </div>
                 </EditorPanel>
 
                 <EditorPanel>
@@ -335,6 +408,13 @@ export function PageEditor() {
                       setTheme({ ...state!.profile.theme, link_style })
                     }
                   />
+                </EditorPanel>
+
+                <EditorPanel>
+                  <EditorSectionTitle subtitle="Describe your vibe — AI picks matching colours.">
+                    AI Theme
+                  </EditorSectionTitle>
+                  <AiThemeAssistant />
                 </EditorPanel>
 
                 <EditorPanel>
@@ -380,6 +460,26 @@ export function PageEditor() {
           </EditorPreviewFrame>
         </div>
       )}
+
+      {tab === "page" && canEdit && <AiAssistantDock tab={tab} />}
+
+      <AiOnboardingModal
+        open={showAiOnboarding}
+        onClose={() => {
+          setShowAiOnboarding(false)
+          localStorage.setItem("xhuma-ai-onboarding-skipped", "1")
+        }}
+      />
+
+      <AiPublishReview
+        open={showPublishReview}
+        onClose={() => setShowPublishReview(false)}
+        onContinue={() => {
+          setShowPublishReview(false)
+          localStorage.setItem("xhuma-ai-onboarding-done", "1")
+          router.push(publishHref)
+        }}
+      />
     </EditorShell>
   )
 }

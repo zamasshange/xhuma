@@ -1,6 +1,6 @@
 import { env } from "@/lib/env"
 
-type ChatMessage = { role: "system" | "user"; content: string }
+export type ChatMessage = { role: "system" | "user" | "assistant"; content: string }
 
 export type OpenRouterResult =
   | { ok: true; content: string }

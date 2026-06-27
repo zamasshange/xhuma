@@ -3,6 +3,10 @@
 import { useState } from "react"
 import { toast } from "sonner"
 import { Loader2, Sparkles } from "lucide-react"
+import { AiLinkRecommendations } from "@/components/ai/ai-link-recommendations"
+import { AiQuickActions } from "@/components/ai/ai-quick-actions"
+import { AiThemeAssistant } from "@/components/ai/ai-theme-assistant"
+import { ProfileHealthCard } from "@/components/ai/profile-health-card"
 import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioCard, BioInput, BioMuted, BioSectionTitle, BioTextarea } from "@/components/ui/bio-form"
 import { Badge } from "@/components/ui/badge"
@@ -12,14 +16,15 @@ import { apiFetch } from "@/lib/api-fetch"
 import { cn } from "@/lib/utils"
 
 const TOOLS = [
+  { id: "studio", title: "AI Studio" },
   { id: "bio", title: "Bio Generator" },
   { id: "links", title: "Link Suggestions" },
   { id: "button", title: "Button Writer" },
 ] as const
 
 export function AiPanel() {
-  const { profile, refresh, setProfile } = useEditor()
-  const [activeTool, setActiveTool] = useState<(typeof TOOLS)[number]["id"]>("bio")
+  const { profile, state, updateProfile, refresh, persistLiveLink, addLink, mode } = useEditor()
+  const [activeTool, setActiveTool] = useState<(typeof TOOLS)[number]["id"]>("studio")
   const [loading, setLoading] = useState(false)
 
   const [bioInput, setBioInput] = useState("")
@@ -72,6 +77,11 @@ export function AiPanel() {
   }
 
   const applyBio = async (bio: string) => {
+    if (mode === "draft" || !profile) {
+      updateProfile({ bio })
+      toast.success("Bio applied!")
+      return
+    }
     const res = await apiFetch("/api/profile", { method: "PATCH", body: JSON.stringify({ bio }) })
     if (!res.success) {
       toast.error(res.error ?? "Could not apply bio")
@@ -83,26 +93,29 @@ export function AiPanel() {
 
   const addSuggestedLink = async (link: { title: string; url: string }) => {
     const icon = inferLinkIcon(link.title, link.url)
-    const res = await apiFetch("/api/links", {
-      method: "POST",
-      body: JSON.stringify({ ...link, icon }),
-    })
-    if (!res.success) {
-      toast.error(res.error ?? "Could not add link")
+    if (mode === "draft") {
+      addLink(link.title, link.url, icon)
+      toast.success(`${link.title} added!`)
       return
     }
-    await refresh()
+    const ok = await persistLiveLink(link.title, link.url, icon)
+    if (!ok) {
+      toast.error("Could not add link")
+      return
+    }
     toast.success(`${link.title} added!`)
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <BioSectionTitle>AI Studio</BioSectionTitle>
+        <BioSectionTitle>AI Creator Assistant</BioSectionTitle>
         <BioMuted className="mt-1">
-          AI tools for your page{profile ? ` (@${profile.username})` : ""}.
+          AI woven into your workflow{profile ? ` (@${profile.username})` : ""}. All suggestions are editable.
         </BioMuted>
       </div>
+
+      <ProfileHealthCard compact />
 
       <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
         {TOOLS.map((tool) => (
@@ -122,11 +135,21 @@ export function AiPanel() {
         ))}
       </div>
 
+      {activeTool === "studio" && (
+        <div className="flex flex-col gap-4">
+          <BioCard>
+            <AiQuickActions />
+          </BioCard>
+          <AiThemeAssistant />
+          <AiLinkRecommendations />
+        </div>
+      )}
+
       {activeTool === "bio" && (
         <BioCard className="space-y-4">
           <h3 className="font-semibold text-bio-dark">AI Bio Generator</h3>
           <BioTextarea
-            placeholder="Tell us about yourself — role, vibe, location..."
+            placeholder="Tell us about yourself — role, vibe, location (e.g. DJ in Johannesburg)..."
             value={bioInput}
             onChange={(e) => setBioInput(e.target.value)}
           />
@@ -140,7 +163,7 @@ export function AiPanel() {
                 <div key={i} className="rounded-2xl border-2 border-bio-dark/10 bg-white p-4">
                   <Badge variant="secondary" className="mb-2">Option {i + 1}</Badge>
                   <p className="text-sm leading-relaxed text-bio-dark">{bio}</p>
-                  <BioButton variant="secondary" className="mt-3 h-10 w-full text-xs" onClick={() => applyBio(bio)} disabled={!profile}>
+                  <BioButton variant="secondary" className="mt-3 h-10 w-full text-xs" onClick={() => applyBio(bio)} disabled={!state}>
                     Use this bio
                   </BioButton>
                 </div>
@@ -170,7 +193,7 @@ export function AiPanel() {
                     <SocialIconBadge icon={resolveLinkIcon(null, link.title, link.url)} size={40} />
                     <span className="truncate font-medium text-bio-dark">{link.title}</span>
                   </div>
-                  <BioButton variant="secondary" className="h-10 px-4 text-xs" onClick={() => addSuggestedLink(link)} disabled={!profile}>
+                  <BioButton variant="secondary" className="h-10 px-4 text-xs" onClick={() => addSuggestedLink(link)} disabled={!state}>
                     Add
                   </BioButton>
                 </div>
@@ -182,11 +205,12 @@ export function AiPanel() {
 
       {activeTool === "button" && (
         <BioCard className="space-y-4">
-          <h3 className="font-semibold text-bio-dark">AI Button Writer</h3>
+          <h3 className="font-semibold text-bio-dark">AI CTA Generator</h3>
+          <BioMuted className="text-xs">Turn generic platform names into strong call-to-action buttons.</BioMuted>
           <BioInput
             value={buttonPlatform}
             onChange={(e) => setButtonPlatform(e.target.value)}
-            placeholder="Platform (e.g. Instagram)"
+            placeholder="Platform (e.g. Instagram, WhatsApp)"
           />
           {buttonPlatform.trim() && (
             <div className="flex items-center gap-3 rounded-2xl border-2 border-bio-dark/10 bg-white p-4">
@@ -196,7 +220,7 @@ export function AiPanel() {
           )}
           <BioButton onClick={generateButton} disabled={loading || !buttonPlatform.trim()} className="h-11">
             {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-            Generate Copy
+            Generate CTA
           </BioButton>
           {buttonText && (
             <div className="flex items-center justify-between rounded-2xl border-2 border-bio-dark/10 bg-white p-4">

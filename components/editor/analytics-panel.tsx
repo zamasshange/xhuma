@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { Eye, Link2, MousePointerClick, TrendingUp, type LucideIcon } from "lucide-react"
+import { AiAnalyticsInsights } from "@/components/ai/ai-analytics-insights"
 import { BioCard, BioMuted, BioSectionTitle } from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
 import { formatNumber } from "@/lib/locale"
@@ -74,6 +76,14 @@ export function AnalyticsPanel() {
           <BioStat key={stat.id} label={stat.label} value={stat.value} change={stat.change} icon={stat.icon} />
         ))}
       </div>
+
+      <AiAnalyticsInsights
+        analytics={{
+          profileViews: data.profileViews,
+          linkClicks: data.linkClicks,
+          topLinks: data.topLinks.map((l) => ({ title: l.title, clicks: l.clicks })),
+        }}
+      />
 
       <BioCard>
         <h3 className="font-semibold text-bio-dark">Top links</h3>
