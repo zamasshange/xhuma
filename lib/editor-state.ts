@@ -181,11 +181,16 @@ export function editorStateFromProfile(
 
 export function newLink(position: number): EditorLink {
   return {
-    id: crypto.randomUUID(),
+    id: `temp-${crypto.randomUUID()}`,
     title: "",
     url: "",
     icon: null,
     position,
     is_active: true,
   }
+}
+
+/** True for links that only exist in the editor until saved via POST */
+export function isPendingEditorLink(id: string): boolean {
+  return id.startsWith("temp-") || id.startsWith("link-")
 }

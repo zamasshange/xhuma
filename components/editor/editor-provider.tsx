@@ -20,6 +20,7 @@ import {
   editorStateToDocument,
   normalizeTemplateDocument,
   newLink,
+  isPendingEditorLink,
   type EditorLink,
   type EditorState,
 } from "@/lib/editor-state"
@@ -342,7 +343,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const queueLinkDelete = useCallback(
     (id: string) => {
-      if (mode === "live" && !id.startsWith("temp-")) {
+      if (mode === "live" && !id.startsWith("temp-") && !isPendingEditorLink(id)) {
         pendingDeletes.current.push(id)
       }
       removeLink(id)
@@ -390,6 +391,14 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         pendingDeletes.current = []
 
         const idMap = new Map<string, string>()
+
+        async function createLink(title: string, url: string, icon: string | null) {
+          return apiFetch<DbLink>("/api/links", {
+            method: "POST",
+            body: JSON.stringify({ title, url, icon }),
+          })
+        }
+
         for (let i = 0; i < state.links.length; i++) {
           const link = state.links[i]
           const title = link.title.trim()
@@ -397,26 +406,32 @@ export function EditorProvider({ children }: { children: ReactNode }) {
           const icon = link.icon ?? (url ? inferLinkIcon(title, url) : null)
           if (!title) continue
 
-          if (link.id.startsWith("temp-")) {
+          if (isPendingEditorLink(link.id)) {
             if (!url) continue
-            const res = await apiFetch<DbLink>("/api/links", {
-              method: "POST",
-              body: JSON.stringify({ title, url, icon }),
-            })
+            const res = await createLink(title, url, icon)
             if (!res.success) return { ok: false, error: res.error ?? `Could not add: ${title}` }
             if (res.data) idMap.set(link.id, res.data.id)
-          } else {
-            const body: Record<string, unknown> = {
-              id: link.id,
-              title,
-              is_active: link.is_active,
-              position: i,
-            }
-            if (url) body.url = url
-            if (icon != null) body.icon = icon
-            const res = await apiFetch("/api/links", { method: "PATCH", body: JSON.stringify(body) })
-            if (!res.success) return { ok: false, error: res.error ?? `Could not update: ${title}` }
+            continue
           }
+
+          const body: Record<string, unknown> = {
+            id: link.id,
+            title,
+            is_active: link.is_active,
+            position: i,
+          }
+          if (url) body.url = url
+          if (icon != null) body.icon = icon
+
+          let res = await apiFetch<DbLink>("/api/links", { method: "PATCH", body: JSON.stringify(body) })
+
+          if (!res.success && /link not found/i.test(res.error ?? "")) {
+            if (!url) return { ok: false, error: `Add a URL for “${title}” before saving` }
+            res = await createLink(title, url, icon)
+            if (res.success && res.data) idMap.set(link.id, res.data.id)
+          }
+
+          if (!res.success) return { ok: false, error: res.error ?? `Could not update: ${title}` }
         }
 
         const nextLinks =
@@ -450,7 +465,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       const icon = link.icon ?? inferLinkIcon(title, url)
       if (!title || !url) return
 
-      if (id.startsWith("temp-")) {
+      if (isPendingEditorLink(id)) {
         const res = await apiFetch<DbLink>("/api/links", {
           method: "POST",
           body: JSON.stringify({ title, url, icon }),
