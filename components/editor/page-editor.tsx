@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Share2,
   Rocket,
+  Save,
 } from "lucide-react"
 import { AiIcon } from "@/components/icons/app-icons"
 import { AiAssistantDock } from "@/components/ai/ai-assistant-dock"
@@ -32,7 +33,6 @@ import {
 } from "@/components/editor/editor-shell"
 import { ThemePicker } from "@/components/editor/theme-picker"
 import { BioButton, BioInput, BioMuted, BioTextarea } from "@/components/ui/bio-form"
-import { apiFetch } from "@/lib/api-fetch"
 import type { DbProfile } from "@/lib/database.types"
 import { onboardingThemePresets } from "@/data/onboarding"
 import { getThemePreset, resolveThemeBackground } from "@/lib/theme-presets"
@@ -44,6 +44,7 @@ import { QuickPlatformChips } from "@/components/editor/quick-platform-chips"
 import { AvatarUpload } from "@/components/editor/avatar-upload"
 import { LinkStylePicker } from "@/components/editor/link-style-picker"
 import { LinkColorPicker } from "@/components/editor/link-color-picker"
+import { BackgroundPicker } from "@/components/editor/background-picker"
 import { PageSectionsPanel } from "@/components/editor/page-sections-panel"
 import { resolveLinkCardStyle } from "@/lib/link-card-styles"
 import type { SocialIconName } from "@/lib/infer-link-icon"
@@ -63,9 +64,9 @@ export function PageEditor() {
     updateLink,
     removeLink,
     moveLink,
-    syncLiveLink,
-    deleteLiveLink,
-    persistLiveLink,
+    queueLinkDelete,
+    saveAll,
+    dirty,
   } = useEditor()
 
   const tab = (searchParams.get("tab") as EditorTabId) || "page"
@@ -74,6 +75,7 @@ export function PageEditor() {
 
   const [newLink, setNewLink] = useState({ title: "", url: "" })
   const [addingLink, setAddingLink] = useState(false)
+  const [savingAll, setSavingAll] = useState(false)
   const [showPublishReview, setShowPublishReview] = useState(false)
   const [showAiOnboarding, setShowAiOnboarding] = useState(false)
   const [publishHref, setPublishHref] = useState("/claim")
@@ -137,67 +139,58 @@ export function PageEditor() {
     .filter((l) => l.is_active !== false && l.title.trim())
     .map((l) => ({ id: l.id, title: l.title, url: l.url || "#", icon: l.icon }))
 
-  const handleQuickAdd = async (title: string, url: string, icon: SocialIconName) => {
-    if (isDraft) {
-      addLink(title, url, icon)
-      toast.success(`${title} added!`)
-      return
-    }
-    const result = await persistLiveLink(title, url, icon)
-    if (result.ok) toast.success(`${title} added!`)
-    else toast.error(result.error ?? "Could not add link")
+  const handleQuickAdd = (title: string, url: string, icon: SocialIconName) => {
+    addLink(title, url, icon)
+    toast.success(`${title} added — click Save to publish`)
   }
 
-  const handleAddLink = async () => {
+  const handleAddLink = () => {
     if (!newLink.title.trim() || !newLink.url.trim()) {
       toast.error("Enter a title and URL")
       return
     }
-    if (isDraft) {
-      addLink(newLink.title.trim(), newLink.url.trim())
-      setNewLink({ title: "", url: "" })
-      toast.success("Link added!")
-      return
-    }
-    setAddingLink(true)
-    const result = await persistLiveLink(newLink.title.trim(), newLink.url.trim())
-    setAddingLink(false)
-    if (!result.ok) {
-      toast.error(result.error ?? "Could not add link")
-      return
-    }
+    addLink(newLink.title.trim(), newLink.url.trim())
     setNewLink({ title: "", url: "" })
-    toast.success("Link added!")
+    toast.success(isDraft ? "Link added!" : "Link added — click Save to publish")
   }
 
-  const handleRemoveLink = async (id: string) => {
+  const handleRemoveLink = (id: string) => {
     if (isDraft) {
       removeLink(id)
       return
     }
-    await deleteLiveLink(id)
+    queueLinkDelete(id)
   }
 
-  const handleMoveLink = async (index: number, dir: -1 | 1) => {
+  const handleMoveLink = (index: number, dir: -1 | 1) => {
     moveLink(index, dir)
-    if (!isDraft && state) {
-      const next = index + dir
-      if (next < 0 || next >= state.links.length) return
-      const reordered = [...state.links]
-      ;[reordered[index], reordered[next]] = [reordered[next], reordered[index]]
-      await apiFetch("/api/links", {
-        method: "PATCH",
-        body: JSON.stringify({
-          links: reordered.map((l, i) => ({ id: l.id, position: i })),
-        }),
-      })
+  }
+
+  const handleSaveAll = async () => {
+    setSavingAll(true)
+    const result = await saveAll()
+    setSavingAll(false)
+    if (result.ok) {
+      toast.success(profile ? "Published to your live page!" : "Changes saved!")
+    } else {
+      toast.error(result.error ?? "Could not save")
     }
   }
 
   const headerActions = (
     <>
-      {saving && (
-        <span className="hidden text-xs text-bio-grey sm:inline">Saving…</span>
+      {canEdit && (
+        <BioButton
+          className="h-9 shrink-0 px-3 text-xs sm:px-4 sm:text-sm"
+          onClick={handleSaveAll}
+          disabled={savingAll || saving || !dirty}
+        >
+          <Save className="size-4" />
+          <span className="hidden sm:inline">{savingAll || saving ? "Saving…" : "Save"}</span>
+        </BioButton>
+      )}
+      {dirty && canEdit && (
+        <span className="hidden text-xs font-medium text-amber-600 lg:inline">Unsaved</span>
       )}
       {isDraft && tab === "page" && (
         <BioButton
@@ -309,7 +302,7 @@ export function PageEditor() {
                       <span className="rounded-full bg-bio-grey-f4 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-bio-dark">
                         {state?.template_id}
                       </span>
-                      <span className="ml-2">template · autosaves every second</span>
+                      <span className="ml-2">template · click Save to keep changes</span>
                     </p>
                     <BioButton className="mt-4 max-w-xs" onClick={() => handleGoLive("/claim")}>
                       <Rocket className="size-4" />
@@ -368,7 +361,9 @@ export function PageEditor() {
                 </EditorPanel>
 
                 <EditorPanel>
-                  <EditorSectionTitle subtitle="Buttons visitors tap on your page.">Links</EditorSectionTitle>
+                  <EditorSectionTitle subtitle="Buttons visitors tap on your page. Save when you&apos;re done editing.">
+                    Links
+                  </EditorSectionTitle>
                   <QuickPlatformChips onAdd={handleQuickAdd} />
                   <div className="mt-4 rounded-lg border border-bio-dark/6 bg-bio-grey-f4/60 p-3 sm:rounded-xl sm:p-4">
                     <div className="flex flex-col gap-2">
@@ -384,7 +379,7 @@ export function PageEditor() {
                       />
                       <BioButton onClick={handleAddLink} disabled={addingLink}>
                         <Plus className="size-4" />
-                        {addingLink ? "Adding…" : "Add link"}
+                        Add link
                       </BioButton>
                     </div>
                   </div>
@@ -399,7 +394,6 @@ export function PageEditor() {
                         onUpdate={(patch) => updateLink(link.id, patch)}
                         onMove={(dir) => handleMoveLink(index, dir)}
                         onRemove={() => handleRemoveLink(link.id)}
-                        onBlur={() => !isDraft && syncLiveLink(link.id)}
                       />
                     ))}
                   </div>
@@ -445,12 +439,17 @@ export function PageEditor() {
                     selectedId={themeId}
                     onSelect={(_id, theme) =>
                       setTheme({
-                        ...theme,
+                        ...resolveThemeBackground(theme),
                         link_style:
                           state?.profile.theme.link_style ??
                           resolveLinkCardStyle(state?.profile.theme ?? theme),
+                        social_icon_style: state?.profile.theme.social_icon_style,
                       })
                     }
+                  />
+                  <BackgroundPicker
+                    theme={state?.profile.theme ?? { bg: "#ffffff", text: "#0d0c22", button: "#0d0c22", radius: "14px" }}
+                    onChange={(next) => setTheme(next)}
                   />
                 </EditorPanel>
               </>

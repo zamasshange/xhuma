@@ -5,7 +5,10 @@ import { isMissingColumnError } from "@/lib/schema-hint"
 export type PublicLink = Pick<DbLink, "id" | "title" | "url" | "icon" | "position">
 
 function isRenderableLink(link: Pick<DbLink, "title" | "url">): boolean {
-  return Boolean(link.title?.trim() && link.url?.trim() && link.url !== "#")
+  if (!link.title?.trim()) return false
+  const url = link.url?.trim()
+  if (!url || url === "#") return false
+  return true
 }
 
 /** Load active links for a public profile. Never selects `icon` first (column may be missing). */

@@ -15,6 +15,7 @@ import { ProfileSectionBlocks } from "@/components/profile/profile-section-block
 import type { PageSection } from "@/lib/editor-sections"
 import { normalizePageSections } from "@/lib/editor-sections"
 import { resolveProfileDensity, type ProfileViewDensity } from "@/lib/profile-view-density"
+import { normalizeUrl } from "@/lib/normalize-url"
 
 const PRESET_DECOR_CLASS: Record<string, string> = {
   summer: "profile-theme-summer",
@@ -64,14 +65,16 @@ export function DbPublicProfileView({
   const staticPreview = !isFull
   const isFramePreview = isDevice || isCompact
 
-  const handleClick = async (linkId: string, url: string) => {
+  const handleLinkClick = (linkId: string) => {
     if (trackClicks) {
-      const res = await fetch(`/api/links/${linkId}/click`, { method: "POST" })
-      const json = await res.json()
-      if (json.success && json.data?.url) window.open(json.data.url, "_blank", "noopener,noreferrer")
-      return
+      fetch(`/api/links/${linkId}/click`, { method: "POST" }).catch(() => {})
     }
-    if (url !== "#") window.open(url, "_blank", "noopener,noreferrer")
+  }
+
+  const linkHref = (url: string) => {
+    const trimmed = url.trim()
+    if (!trimmed || trimmed === "#") return undefined
+    return normalizeUrl(trimmed)
   }
 
   const header = (
@@ -148,10 +151,18 @@ export function DbPublicProfileView({
           title={link.title}
           icon={resolveLinkIcon(link.icon, link.title, link.url)}
           theme={theme}
+          href={isFull ? linkHref(link.url) : undefined}
           delay={0.05 * i}
           density={viewDensity}
           staticPreview={staticPreview}
-          onClick={() => handleClick(link.id, link.url)}
+          onClick={
+            isFull && linkHref(link.url)
+              ? () => handleLinkClick(link.id)
+              : () => {
+                  const href = linkHref(link.url)
+                  if (href) window.open(href, "_blank", "noopener,noreferrer")
+                }
+          }
         />
       ))}
     </div>

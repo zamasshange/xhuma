@@ -2,7 +2,7 @@
 export function normalizeUrl(url: string): string {
   const trimmed = url.trim()
   if (!trimmed) return trimmed
-  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  if (/^(https?|mailto|tel):/i.test(trimmed)) return trimmed
   return `https://${trimmed.replace(/^\/+/, "")}`
 }
 
@@ -13,4 +13,13 @@ export function isValidHttpUrl(url: string): boolean {
   } catch {
     return false
   }
+}
+
+/** http(s), mailto, and tel links are allowed on profiles */
+export function isValidLinkUrl(url: string): boolean {
+  const trimmed = url.trim()
+  if (!trimmed) return false
+  if (/^mailto:/i.test(trimmed)) return trimmed.length > 7
+  if (/^tel:/i.test(trimmed)) return trimmed.length > 4
+  return isValidHttpUrl(trimmed)
 }

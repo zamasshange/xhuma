@@ -17,6 +17,7 @@ export function ProfileLinkButton({
   title,
   icon,
   theme,
+  href,
   onClick,
   delay = 0,
   staticPreview = false,
@@ -26,7 +27,9 @@ export function ProfileLinkButton({
   title: string
   icon?: string | null
   theme: ProfileTheme
-  onClick: () => void
+  /** When set, renders a real link (works on mobile; optional onClick for analytics) */
+  href?: string
+  onClick?: () => void
   delay?: number
   staticPreview?: boolean
   density?: ProfileViewDensity
@@ -37,7 +40,7 @@ export function ProfileLinkButton({
   const isCompact = viewDensity === "compact"
   const isDevice = viewDensity === "device"
   const styleId = resolveLinkCardStyle(theme)
-  const displayIcon = resolveLinkIcon(icon, title)
+  const displayIcon = resolveLinkIcon(icon, title, href)
   const { text: iconColor } = resolveLinkButtonColors(theme)
 
   const className = cn(
@@ -61,6 +64,24 @@ export function ProfileLinkButton({
       <span className="truncate">{title}</span>
     </>
   )
+
+  if (href && !staticPreview) {
+    return (
+      <motion.a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay }}
+        onClick={onClick}
+        className={className}
+        style={style}
+      >
+        {content}
+      </motion.a>
+    )
+  }
 
   if (staticPreview) {
     return (

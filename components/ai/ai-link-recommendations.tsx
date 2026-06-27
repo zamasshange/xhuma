@@ -11,7 +11,7 @@ import { getRecommendedLinks, PROFESSION_OPTIONS, type ProfessionId } from "@/li
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 
 export function AiLinkRecommendations() {
-  const { state, addLink, persistLiveLink, mode } = useEditor()
+  const { state, addLink, mode } = useEditor()
   const [profession, setProfession] = useState<ProfessionId>("creator")
   const [adding, setAdding] = useState(false)
 
@@ -25,14 +25,8 @@ export function AiLinkRecommendations() {
   }, [state, profession])
 
   const addOne = async (title: string, url: string, icon: string) => {
-    if (mode === "draft") {
-      addLink(title, url, icon)
-      toast.success(`${title} added`)
-      return
-    }
-    const result = await persistLiveLink(title, url, icon)
-    if (result.ok) toast.success(`${title} added`)
-    else toast.error(result.error ?? "Could not save link")
+    addLink(title, url, icon)
+    toast.success(mode === "draft" ? `${title} added` : `${title} added — click Save to publish`)
   }
 
   const addAll = async () => {

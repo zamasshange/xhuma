@@ -24,7 +24,7 @@ const TOOLS = [
 ] as const
 
 export function AiPanel() {
-  const { profile, state, updateProfile, refresh, persistLiveLink, addLink, mode } = useEditor()
+  const { profile, state, updateProfile, refresh, addLink, mode } = useEditor()
   const [activeTool, setActiveTool] = useState<(typeof TOOLS)[number]["id"]>("studio")
   const [loading, setLoading] = useState(false)
 
@@ -94,17 +94,8 @@ export function AiPanel() {
 
   const addSuggestedLink = async (link: { title: string; url: string }) => {
     const icon = inferLinkIcon(link.title, link.url)
-    if (mode === "draft") {
-      addLink(link.title, link.url, icon)
-      toast.success(`${link.title} added!`)
-      return
-    }
-    const result = await persistLiveLink(link.title, link.url, icon)
-    if (!result.ok) {
-      toast.error(result.error ?? "Could not add link")
-      return
-    }
-    toast.success(`${link.title} added!`)
+    addLink(link.title, link.url, icon)
+    toast.success(mode === "draft" ? `${link.title} added!` : `${link.title} added — click Save`)
   }
 
   return (

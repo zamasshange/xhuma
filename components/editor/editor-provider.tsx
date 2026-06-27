@@ -56,11 +56,21 @@ type EditorContextValue = {
   syncLiveLink: (id: string) => Promise<void>
   deleteLiveLink: (id: string) => Promise<void>
   persistLiveLink: (title: string, url: string, icon?: string | null) => Promise<{ ok: boolean; error?: string }>
+  queueLinkDelete: (id: string) => void
+  saveAll: () => Promise<{ ok: boolean; error?: string }>
+  dirty: boolean
   refresh: () => Promise<void>
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null)
-const AUTOSAVE_MS = 1000
+
+function liveSnapshot(state: EditorState) {
+  return JSON.stringify({
+    profile: state.profile,
+    page_sections: state.page_sections,
+    links: state.links,
+  })
+}
 
 export function EditorProvider({ children }: { children: ReactNode }) {
   const { userId: clerkId } = useAuth()
@@ -72,9 +82,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<EditorState | null>(null)
   const [mode, setMode] = useState<EditorMode>("empty")
   const lastSavedJson = useRef("")
-  const lastSavedLiveProfile = useRef("")
-  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const liveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastSavedLiveSnapshot = useRef("")
+  const pendingDeletes = useRef<string[]>([])
+  const [dirty, setDirty] = useState(false)
 
   const hydrate = useCallback(async () => {
     setLoading(true)
@@ -96,13 +106,16 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setState(liveState)
         setMode("live")
         lastSavedJson.current = JSON.stringify(editorStateToDocument(liveState))
-        lastSavedLiveProfile.current = JSON.stringify(liveState.profile)
+        lastSavedLiveSnapshot.current = liveSnapshot(liveState)
+        pendingDeletes.current = []
+        setDirty(false)
       } else if (draft) {
         const doc = normalizeTemplateDocument(draft.data_json as Record<string, unknown>)
         const draftState = editorStateFromDocument(draft.template_id, doc)
         setState(draftState)
         setMode("draft")
         lastSavedJson.current = JSON.stringify(doc)
+        setDirty(false)
       } else {
         const pending = consumePendingDraft()
         if (pending) {
@@ -315,66 +328,122 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [],
   )
 
-  // Draft autosave: full JSON → profile_drafts
+  // Track unsaved edits (explicit Save button persists changes)
   useEffect(() => {
-    if (mode !== "draft" || !state) return
-    const doc = editorStateToDocument(state)
-    const json = JSON.stringify(doc)
-    if (json === lastSavedJson.current) return
+    if (!state) {
+      setDirty(false)
+      return
+    }
+    if (mode === "draft") {
+      const json = JSON.stringify(editorStateToDocument(state))
+      setDirty(json !== lastSavedJson.current)
+      return
+    }
+    if (mode === "live") {
+      setDirty(
+        liveSnapshot(state) !== lastSavedLiveSnapshot.current || pendingDeletes.current.length > 0,
+      )
+    }
+  }, [state, mode])
 
-    if (draftTimer.current) clearTimeout(draftTimer.current)
-    draftTimer.current = setTimeout(async () => {
-      setSaving(true)
-      try {
+  const queueLinkDelete = useCallback(
+    (id: string) => {
+      removeLink(id)
+      if (mode === "live" && !id.startsWith("temp-")) {
+        pendingDeletes.current.push(id)
+      }
+      setDirty(true)
+    },
+    [mode, removeLink],
+  )
+
+  const saveAll = useCallback(async (): Promise<{ ok: boolean; error?: string }> => {
+    if (!state) return { ok: false, error: "Nothing to save" }
+
+    setSaving(true)
+    try {
+      if (mode === "draft") {
+        const doc = editorStateToDocument(state)
         const res = await apiFetch<ProfileDraft>("/api/draft", {
           method: "PUT",
           body: JSON.stringify({ data: doc }),
         })
-        if (res.success) lastSavedJson.current = json
-      } finally {
-        setSaving(false)
+        if (!res.success) return { ok: false, error: res.error ?? "Save failed" }
+        lastSavedJson.current = JSON.stringify(doc)
+        setDirty(false)
+        return { ok: true }
       }
-    }, AUTOSAVE_MS)
 
-    return () => {
-      if (draftTimer.current) clearTimeout(draftTimer.current)
-    }
-  }, [state, mode])
-
-  // Live autosave: profile fields + page sections → profiles table
-  useEffect(() => {
-    if (mode !== "live" || !state) return
-
-    const snapshot = JSON.stringify({
-      profile: state.profile,
-      page_sections: state.page_sections,
-    })
-    if (snapshot === lastSavedLiveProfile.current) return
-
-    if (liveTimer.current) clearTimeout(liveTimer.current)
-    liveTimer.current = setTimeout(async () => {
-      setSaving(true)
-      try {
+      if (mode === "live") {
         const theme = resolveThemeBackground(state.profile.theme)
-        const res = await apiFetch<DbProfile>("/api/profile", {
+        const profileRes = await apiFetch<DbProfile>("/api/profile", {
           method: "PATCH",
           body: JSON.stringify({
             display_name: state.profile.display_name,
             bio: state.profile.bio,
-            theme: { ...theme, page_sections: state.page_sections },
             avatar_url: state.profile.avatar_url,
+            theme: { ...theme, page_sections: state.page_sections },
           }),
         })
-        if (res.success) lastSavedLiveProfile.current = snapshot
-      } finally {
-        setSaving(false)
-      }
-    }, AUTOSAVE_MS)
+        if (!profileRes.success) {
+          return { ok: false, error: profileRes.error ?? "Could not save profile" }
+        }
 
-    return () => {
-      if (liveTimer.current) clearTimeout(liveTimer.current)
+        for (const id of pendingDeletes.current) {
+          const del = await apiFetch(`/api/links?id=${id}`, { method: "DELETE" })
+          if (!del.success) return { ok: false, error: del.error ?? "Could not delete link" }
+        }
+        pendingDeletes.current = []
+
+        const idMap = new Map<string, string>()
+        for (let i = 0; i < state.links.length; i++) {
+          const link = state.links[i]
+          const title = link.title.trim()
+          const url = link.url.trim() ? normalizeUrl(link.url) : ""
+          const icon = link.icon ?? (url ? inferLinkIcon(title, url) : null)
+          if (!title) continue
+
+          if (link.id.startsWith("temp-")) {
+            if (!url) continue
+            const res = await apiFetch<DbLink>("/api/links", {
+              method: "POST",
+              body: JSON.stringify({ title, url, icon }),
+            })
+            if (!res.success) return { ok: false, error: res.error ?? `Could not add: ${title}` }
+            if (res.data) idMap.set(link.id, res.data.id)
+          } else {
+            const body: Record<string, unknown> = {
+              id: link.id,
+              title,
+              is_active: link.is_active,
+              position: i,
+            }
+            if (url) body.url = url
+            if (icon != null) body.icon = icon
+            const res = await apiFetch("/api/links", { method: "PATCH", body: JSON.stringify(body) })
+            if (!res.success) return { ok: false, error: res.error ?? `Could not update: ${title}` }
+          }
+        }
+
+        const nextLinks =
+          idMap.size > 0
+            ? state.links.map((l) => (idMap.has(l.id) ? { ...l, id: idMap.get(l.id)! } : l))
+            : state.links
+
+        if (idMap.size > 0) {
+          patchState((s) => ({ ...s, links: nextLinks }))
+        }
+
+        lastSavedLiveSnapshot.current = liveSnapshot({ ...state, links: nextLinks })
+        setDirty(false)
+        return { ok: true }
+      }
+
+      return { ok: false, error: "Nothing to save" }
+    } finally {
+      setSaving(false)
     }
-  }, [state?.profile, state?.page_sections, mode])
+  }, [mode, patchState, state])
 
   const syncLiveLink = useCallback(
     async (id: string) => {
@@ -512,6 +581,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       syncLiveLink,
       deleteLiveLink,
       persistLiveLink,
+      queueLinkDelete,
+      saveAll,
+      dirty,
       refresh: hydrate,
     }),
     [
@@ -535,6 +607,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       syncLiveLink,
       deleteLiveLink,
       persistLiveLink,
+      queueLinkDelete,
+      saveAll,
+      dirty,
       hydrate,
     ],
   )

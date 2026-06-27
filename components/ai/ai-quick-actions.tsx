@@ -21,7 +21,7 @@ const QUICK_ACTIONS = [
 ] as const
 
 export function AiQuickActions() {
-  const { state, updateProfile, setTheme, addLink, persistLiveLink, mode } = useEditor()
+  const { state, updateProfile, setTheme, addLink, mode } = useEditor()
   const [loading, setLoading] = useState<string | null>(null)
 
   const applyResult = async (result: {
@@ -38,11 +38,10 @@ export function AiQuickActions() {
     if (result.links?.length) {
       for (const link of result.links) {
         const icon = link.icon ?? inferLinkIcon(link.title, link.url)
-        if (mode === "draft") addLink(link.title, link.url, icon)
-        else await persistLiveLink(link.title, link.url, icon)
+        addLink(link.title, link.url, icon)
       }
     }
-    toast.success(result.message)
+    toast.success(mode === "live" ? `${result.message} — click Save to publish` : result.message)
   }
 
   const run = async (actionId: string) => {

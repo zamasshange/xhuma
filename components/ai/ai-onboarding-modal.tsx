@@ -25,7 +25,7 @@ type Props = {
 }
 
 export function AiOnboardingModal({ open, onClose }: Props) {
-  const { updateProfile, setTheme, addLink, persistLiveLink, mode } = useEditor()
+  const { updateProfile, setTheme, addLink, mode } = useEditor()
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({ country: "South Africa" })
   const [loading, setLoading] = useState(false)
@@ -73,11 +73,14 @@ export function AiOnboardingModal({ open, onClose }: Props) {
 
     for (const link of setup.links.slice(0, 5)) {
       const icon = inferLinkIcon(link.title, link.url)
-      if (mode === "draft") addLink(link.title, link.url, icon)
-      else await persistLiveLink(link.title, link.url, icon)
+      addLink(link.title, link.url, icon)
     }
 
-    toast.success("Your page is set up — edit anything you like!")
+    toast.success(
+      mode === "draft"
+        ? "Your page is set up — edit anything you like!"
+        : "Your page is set up — click Save to publish!",
+    )
     localStorage.setItem("xhuma-ai-onboarding-done", "1")
     onClose()
   }
