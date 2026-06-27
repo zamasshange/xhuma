@@ -1,3 +1,5 @@
+import type { LinkCardStyle } from "@/lib/link-card-styles"
+
 export type ProfileTheme = {
   bg: string
   text: string
@@ -5,6 +7,8 @@ export type ProfileTheme = {
   radius: string
   button_text?: string
   button_style?: "rounded" | "wavy" | "pill"
+  /** Link button visual style (rounded, glass, comic, etc.) */
+  link_style?: LinkCardStyle
   /** Full-bleed background image (bio.link theme art) */
   bg_image?: string
   /** Editor / picker reference */

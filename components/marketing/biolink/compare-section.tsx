@@ -3,6 +3,7 @@ import { SectionBadge } from "@/components/marketing/biolink/section-badge"
 import { DarkButton, ArrowIcon } from "@/components/marketing/biolink/dark-button"
 import { LogoMark } from "@/components/marketing/biolink/logo-mark"
 import { SITE_NAME } from "@/lib/brand"
+import { formatCurrency } from "@/lib/locale"
 
 const totalElsewhere = bioComparison.reduce((sum, item) => sum + item.price, 0)
 
@@ -61,7 +62,7 @@ export function CompareSection() {
                   <p className="mt-0.5 text-[13px] font-light text-bio-grey max-sm:text-xs">{item.replaces}</p>
                 </div>
               </div>
-              <p className="shrink-0 pt-0.5 text-lg font-semibold text-bio-dark max-sm:text-base">${item.price}</p>
+              <p className="shrink-0 pt-0.5 text-lg font-semibold text-bio-dark max-sm:text-base">{formatCurrency(item.price)}</p>
             </div>
           ))}
         </div>
@@ -76,7 +77,7 @@ export function CompareSection() {
             <p className="text-base text-bio-grey line-through max-sm:text-sm">What you&apos;d spend otherwise</p>
           </div>
           <p className="shrink-0 text-lg font-semibold text-bio-red line-through max-sm:text-base">
-            ${totalElsewhere}/mo
+            {formatCurrency(totalElsewhere)}/mo
           </p>
         </div>
 
@@ -88,7 +89,7 @@ export function CompareSection() {
             </p>
           </div>
           <p className="shrink-0 text-lg font-semibold text-bio-green max-sm:text-base">
-            ${bioPricing.yearly.toFixed(2)}/mo
+            {formatCurrency(bioPricing.yearly)}/mo
           </p>
         </div>
 

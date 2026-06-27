@@ -4,7 +4,8 @@ import { Share2, BadgeCheck } from "lucide-react"
 import { motion } from "framer-motion"
 import { Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { SocialIcon, SocialIconRow, resolveLinkIcon } from "@/components/icons/social-icon"
+import { SocialIconRow, resolveLinkIcon } from "@/components/icons/social-icon"
+import { ProfileLinkButton } from "@/components/profile/profile-link-button"
 import type { DbLink, DbProfile } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
@@ -18,70 +19,6 @@ const PRESET_DECOR_CLASS: Record<string, string> = {
   strawberry: "profile-theme-strawberry",
   chameleon: "profile-theme-chameleon",
   desert: "profile-theme-desert",
-}
-
-function ProfileLinkButton({
-  title,
-  icon,
-  theme,
-  onClick,
-  delay,
-  staticPreview,
-}: {
-  title: string
-  icon?: string | null
-  theme: typeof DEFAULT_THEME
-  onClick: () => void
-  delay: number
-  staticPreview?: boolean
-}) {
-  const buttonText = theme.button_text ?? theme.text
-  const isWavy = theme.button_style === "wavy"
-  const isPill = theme.button_style === "pill" || theme.radius === "999px"
-  const displayIcon = resolveLinkIcon(icon, title)
-
-  const className = cn(
-    "flex w-full min-h-[48px] items-center justify-center gap-2.5 px-4 py-3 text-[15px]",
-    !staticPreview && "transition-transform hover:scale-[1.01] active:scale-[0.99]",
-    isWavy && "profile-link-wavy font-bold italic shadow-sm",
-    isPill && "rounded-full",
-    !isWavy && !isPill && "rounded-2xl font-medium shadow-sm",
-  )
-
-  const style = {
-    backgroundColor: theme.button,
-    color: buttonText,
-    borderRadius: isWavy ? undefined : isPill ? "999px" : theme.radius,
-  }
-
-  const content = (
-    <>
-      <SocialIcon name={displayIcon} size={18} color={buttonText} />
-      <span>{title}</span>
-    </>
-  )
-
-  if (staticPreview) {
-    return (
-      <button type="button" onClick={onClick} className={className} style={style}>
-        {content}
-      </button>
-    )
-  }
-
-  return (
-    <motion.button
-      type="button"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      onClick={onClick}
-      className={className}
-      style={style}
-    >
-      {content}
-    </motion.button>
-  )
 }
 
 export function DbPublicProfileView({

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { pricingPlans } from "@/data/marketing"
+import { formatCurrency } from "@/lib/locale"
 import { cn } from "@/lib/utils"
 
 export function PricingCards() {
@@ -26,9 +27,9 @@ export function PricingCards() {
         <Badge variant="success" className="ml-1">Save 20%</Badge>
       </div>
 
-      <div className="mt-10 grid w-full gap-5 lg:grid-cols-3">
+      <div className="mt-10 grid w-full gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {pricingPlans.map((plan, i) => {
-          const price = annual ? Math.round(plan.price * 0.8) : plan.price
+          const price = plan.price === 0 ? 0 : annual ? Math.round(plan.price * 0.8) : plan.price
           return (
             <motion.div
               key={plan.id}
@@ -51,13 +52,15 @@ export function PricingCards() {
               <h3 className="font-heading text-lg font-semibold">{plan.name}</h3>
               <p className="mt-1.5 text-sm text-muted-foreground">{plan.description}</p>
               <div className="mt-5 flex items-end gap-1">
-                <span className="font-heading text-4xl font-semibold tracking-tight">${price}</span>
-                <span className="mb-1 text-sm text-muted-foreground">/mo</span>
+                <span className="font-heading text-4xl font-semibold tracking-tight">
+                  {formatCurrency(price)}
+                </span>
+                {price > 0 && <span className="mb-1 text-sm text-muted-foreground">/mo</span>}
               </div>
               <Button
                 render={<Link href="/editor" />}
                 className={cn(
-                  "mt-5 h-11 w-full text-base",
+                  "mt-5 h-11 min-h-11 w-full text-base",
                   plan.highlighted
                     ? "bg-brand-gradient text-brand-foreground"
                     : "",

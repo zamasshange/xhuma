@@ -40,7 +40,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.12 }}
             className="mt-5 max-w-md text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
-            Linkly helps creators design a stunning, high-converting Link in Bio page — with AI writing your bio, building your theme, and growing your audience.
+            Xhuma helps South African creators design a stunning, high-converting Link in Bio page — with AI writing your bio, building your theme, and growing your audience.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

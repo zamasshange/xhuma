@@ -25,12 +25,12 @@ export const monthlyGrowth = [
 ]
 
 export const topCountries = [
-  { country: "United States", value: 38, flag: "US" },
-  { country: "United Kingdom", value: 18, flag: "UK" },
-  { country: "Germany", value: 14, flag: "DE" },
-  { country: "Brazil", value: 11, flag: "BR" },
-  { country: "Japan", value: 9, flag: "JP" },
-  { country: "Other", value: 10, flag: "··" },
+  { country: "South Africa", value: 42, flag: "ZA" },
+  { country: "United Kingdom", value: 16, flag: "UK" },
+  { country: "Nigeria", value: 12, flag: "NG" },
+  { country: "Kenya", value: 9, flag: "KE" },
+  { country: "United States", value: 8, flag: "US" },
+  { country: "Other", value: 13, flag: "··" },
 ]
 
 export const devices = [
@@ -47,7 +47,7 @@ export const topLinks = [
 ]
 
 export const recentActivity = [
-  { id: "1", text: "New follower from Los Angeles", time: "2m ago", icon: "user-plus" },
+  { id: "1", text: "New follower from Cape Town", time: "2m ago", icon: "user-plus" },
   { id: "2", text: "“Listen to my new EP” clicked 48 times", time: "14m ago", icon: "mouse-pointer-click" },
   { id: "3", text: "Profile shared on Instagram", time: "1h ago", icon: "share-2" },
   { id: "4", text: "AI generated a new bio variant", time: "3h ago", icon: "sparkles" },

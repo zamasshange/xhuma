@@ -36,7 +36,7 @@ export function HomeJsonLd() {
     offers: {
       "@type": "Offer",
       price: "0",
-      priceCurrency: "USD",
+      priceCurrency: "ZAR",
     },
     url: SITE_URL,
   }
@@ -46,10 +46,10 @@ export function HomeJsonLd() {
     "@type": "FAQPage",
     mainEntity: faqs.map((item) => ({
       "@type": "Question",
-      name: item.q.replace("Linkly", SITE_NAME),
+      name: item.q,
       acceptedAnswer: {
         "@type": "Answer",
-        text: item.a.replace(/Linkly/g, SITE_NAME),
+        text: item.a,
       },
     })),
   }

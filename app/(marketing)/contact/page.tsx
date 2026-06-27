@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
+import { SITE_DOMAIN } from "@/lib/brand"
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -41,7 +42,7 @@ export default function ContactPage() {
         <SectionHeading
           eyebrow="Contact"
           title="We'd love to hear from you"
-          description="Questions about Linkly, partnerships, or enterprise plans? Drop us a line."
+          description="Questions about Xhuma, partnerships, or Business plans? Drop us a line — we're based in South Africa and reply within one business day."
           align="left"
         />
       </Reveal>
@@ -49,9 +50,9 @@ export default function ContactPage() {
       <div className="mt-10 grid gap-8 lg:grid-cols-5">
         <div className="flex flex-col gap-4 lg:col-span-2">
           {[
-            { icon: Mail, title: "Email", value: "hello@linkly.io" },
-            { icon: MessageSquare, title: "Live chat", value: "Mon–Fri, 9am–6pm PST" },
-            { icon: User, title: "Support", value: "help.linkly.io" },
+            { icon: Mail, title: "Email", value: "hello@xhuma.cc" },
+            { icon: MessageSquare, title: "Live chat", value: "Mon–Fri, 9am–5pm SAST" },
+            { icon: User, title: "Support", value: `${SITE_DOMAIN}/faq` },
           ].map((item) => (
             <Card key={item.title} className="flex items-center gap-4 p-5">
               <div className="flex size-11 items-center justify-center rounded-xl bg-brand/10 text-brand">
@@ -80,7 +81,7 @@ export default function ContactPage() {
                     id="email"
                     type="email"
                     className="h-12 text-base"
-                    placeholder="you@example.com"
+                    placeholder="you@example.co.za"
                     {...register("email")}
                   />
                   {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -104,7 +105,7 @@ export default function ContactPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-12 w-full text-base bg-brand-gradient text-brand-foreground sm:w-auto sm:px-8"
+                className="h-12 min-h-11 w-full text-base bg-brand-gradient text-brand-foreground sm:w-auto sm:px-8"
               >
                 Send message
               </Button>

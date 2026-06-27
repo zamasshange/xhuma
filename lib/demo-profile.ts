@@ -62,9 +62,9 @@ export const PREMIUM_THEME: ProfileTheme = {
 /** Hero / marketing showcase — matches premium dark link-in-bio aesthetic */
 export const DEMO_PREMIUM_PROFILE: DbProfile = {
   id: "demo-premium",
-  username: "jordanpaul",
-  display_name: "Jordan Paul",
-  bio: "Curated bits from life and work.",
+  username: "leratophotos",
+  display_name: "Lerato Nkosi",
+  bio: "Photographer · Cape Town · Available for bookings nationwide.",
   avatar_url: "https://bio.link/_nuxt/user3.w1PRNQjx.png",
   theme_json: PREMIUM_THEME,
   created_at: new Date().toISOString(),

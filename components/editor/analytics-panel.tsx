@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { BioCard, BioMuted, BioSectionTitle } from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
-import { Eye, MousePointerClick, TrendingUp, Link2, type LucideIcon } from "lucide-react"
+import { formatNumber } from "@/lib/locale"
 
 type AnalyticsData = {
   profileViews: number
@@ -56,9 +56,9 @@ export function AnalyticsPanel() {
   if (!data) return <BioMuted>Loading analytics…</BioMuted>
 
   const stats = [
-    { id: "views", label: "Profile views", value: data.profileViews.toLocaleString(), change: `+${data.recentViews} this week`, icon: Eye },
-    { id: "clicks", label: "Link clicks", value: data.linkClicks.toLocaleString(), change: `+${data.recentClicks} this week`, icon: MousePointerClick },
-    { id: "total", label: "Total on links", value: data.totalLinkClicksCounter.toLocaleString(), change: "All time", icon: TrendingUp },
+    { id: "views", label: "Profile views", value: formatNumber(data.profileViews), change: `+${formatNumber(data.recentViews)} this week`, icon: Eye },
+    { id: "clicks", label: "Link clicks", value: formatNumber(data.linkClicks), change: `+${formatNumber(data.recentClicks)} this week`, icon: MousePointerClick },
+    { id: "total", label: "Total on links", value: formatNumber(data.totalLinkClicksCounter), change: "All time", icon: TrendingUp },
     { id: "links", label: "Active links", value: String(data.topLinks.length), change: "Tracked", icon: Link2 },
   ]
 
@@ -92,7 +92,7 @@ export function AnalyticsPanel() {
                 {data.topLinks.map((link) => (
                   <tr key={link.id} className="border-b border-bio-dark/8 last:border-0">
                     <td className="py-3 pr-4 text-bio-dark">{link.title}</td>
-                    <td className="py-3 text-bio-dark">{link.clicks.toLocaleString()}</td>
+                    <td className="py-3 text-bio-dark">{formatNumber(link.clicks)}</td>
                   </tr>
                 ))}
               </tbody>

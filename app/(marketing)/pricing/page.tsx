@@ -18,8 +18,8 @@ export default function PricingPage() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <SectionHeading
           eyebrow="Also available"
-          title="Linkly plan tiers"
-          description="Our original Starter, Pro, and Business plans remain available for teams that need more."
+          title="Xhuma plan tiers"
+          description="Starter, Creator, Pro, and Business plans — priced in South African Rand for local creators and teams."
         />
         <div className="mt-10">
           <PricingCards />
@@ -30,6 +30,7 @@ export default function PricingPage() {
               <tr className="border-b border-black/10 bg-bio-grey">
                 <th className="p-4 font-medium">Feature</th>
                 <th className="p-4 font-medium">Starter</th>
+                <th className="p-4 font-medium">Creator</th>
                 <th className="p-4 font-medium">Pro</th>
                 <th className="p-4 font-medium">Business</th>
               </tr>
@@ -38,7 +39,7 @@ export default function PricingPage() {
               {comparisonRows.map((row) => (
                 <tr key={row.feature} className="border-b border-black/10 last:border-0">
                   <td className="p-4">{row.feature}</td>
-                  {(["starter", "pro", "business"] as const).map((plan) => (
+                  {(["starter", "creator", "pro", "business"] as const).map((plan) => (
                     <td key={plan} className="p-4">
                       {row[plan] ? <Check className="size-5 text-bio-green" /> : <X className="size-5 text-bio-grey-d9" />}
                     </td>

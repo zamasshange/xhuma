@@ -12,7 +12,7 @@ export function TestimonialsSection() {
           <SectionHeading
             eyebrow="Loved by creators"
             title="Built for the people who build audiences"
-            description="Join millions of creators, artists, and founders who trust Linkly to power their presence."
+            description="Join millions of creators, artists, and founders who trust Xhuma to power their presence."
           />
         </Reveal>
         <div className="mt-12 columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">

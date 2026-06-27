@@ -2,7 +2,7 @@ export const aiBios = {
   professional:
     "Award-winning music producer crafting cinematic, emotionally-driven soundscapes for artists and brands worldwide. Specializing in modern pop, electronic, and ambient production with a focus on warmth and clarity.",
   friendly:
-    "Hey! I'm Aria — I make the kind of music you'd want playing on a late-night drive. Producer, DJ, and full-time studio gremlin. Let's create something we'll both be proud of.",
+    "Hey! I'm Lerato — Cape Town photographer capturing weddings, brands, and the coast. Bookings open for 2026. Let's create something beautiful together.",
   creator:
     "Turning feelings into frequencies. 🎧 Producer + DJ. New EP out now. Booking 2026 shows. Tap below to listen, book, or grab my sample packs.",
 }

@@ -12,20 +12,20 @@ export const bioHero = {
 }
 
 export const bioCreators = [
-  { name: "Charly Mata", username: "charlymatashow", image: `${BIO_ASSETS}/user1.Ba8DzGMp.png` },
-  { name: "Flavia Gamonar", username: "flaviagamonar", image: `${BIO_ASSETS}/user2.CiMA-Ti0.png` },
-  { name: "Austin Archer", username: "austinarcher", image: `${BIO_ASSETS}/user3.w1PRNQjx.png` },
-  { name: "AC Milan", username: "acmilan", image: `${BIO_ASSETS}/user4.Bo0FbbWl.png` },
-  { name: "Jo Franco", username: "jo_franco", image: `${BIO_ASSETS}/user5.CwX5k9hm.png` },
-  { name: "Erick Donoghue", username: "edon_productions", image: `${BIO_ASSETS}/user6.BtYp0XeA.png` },
-  { name: "Air Square", username: "airsquare", image: `${BIO_ASSETS}/user7.BJbxwnbs.png` },
-  { name: "18*90 Bowling", username: "1890bowling", image: `${BIO_ASSETS}/user8.C6dud4fg.png` },
-  { name: "Leonardo D'Ingeo", username: "dielle", image: `${BIO_ASSETS}/user9.BTGRzHLW.png` },
-  { name: "Lore Aquino Música", username: "loreaquino", image: `${BIO_ASSETS}/user10.Dzm4B_2D.png` },
-  { name: "Padre Paulo Ricardo", username: "padrepauloricardo", image: `${BIO_ASSETS}/user11.R_TCStqE.png` },
-  { name: "Lana Brandorne", username: "lanabrandorne", image: `${BIO_ASSETS}/user12.ZeT4kErD.png` },
-  { name: "TbO&Vega", username: "tbovega", image: `${BIO_ASSETS}/user13.CkAwBvvN.png` },
-  { name: "The Attachment Key", username: "theattachmentkey", image: `${BIO_ASSETS}/user14.BM45zxPw.png` },
+  { name: "Lerato Nkosi", username: "leratophotos", image: `${BIO_ASSETS}/user1.Ba8DzGMp.png` },
+  { name: "DJ Kabelo", username: "djkabelo", image: `${BIO_ASSETS}/user2.CiMA-Ti0.png` },
+  { name: "Thandi M", username: "thandim", image: `${BIO_ASSETS}/user3.w1PRNQjx.png` },
+  { name: "Cape Bakes Co.", username: "capebakes", image: `${BIO_ASSETS}/user4.Bo0FbbWl.png` },
+  { name: "Nomsa Beauty", username: "nomsabeauty", image: `${BIO_ASSETS}/user5.CwX5k9hm.png` },
+  { name: "Sipho Codes", username: "siphocodes", image: `${BIO_ASSETS}/user6.BtYp0XeA.png` },
+  { name: "Zanele Fashion", username: "zanelestyle", image: `${BIO_ASSETS}/user7.BJbxwnbs.png` },
+  { name: "Durban Surf Co", username: "durbansurf", image: `${BIO_ASSETS}/user8.C6dud4fg.png` },
+  { name: "Amahle Art", username: "amahleart", image: `${BIO_ASSETS}/user9.BTGRzHLW.png` },
+  { name: "Pretoria Podcast", username: "pta_podcast", image: `${BIO_ASSETS}/user10.Dzm4B_2D.png` },
+  { name: "Soweto Kitchen", username: "sowetokitchen", image: `${BIO_ASSETS}/user11.R_TCStqE.png` },
+  { name: "Midrand Tech", username: "midrandtech", image: `${BIO_ASSETS}/user12.ZeT4kErD.png` },
+  { name: "Gqeberha Fitness", username: "pefitness", image: `${BIO_ASSETS}/user13.CkAwBvvN.png` },
+  { name: "Bloem Events", username: "bloemevents", image: `${BIO_ASSETS}/user14.BM45zxPw.png` },
 ]
 
 export const bioThemes = [
@@ -108,8 +108,8 @@ export const bioFeatures = [
 ]
 
 export const bioPricing = {
-  monthly: 14.99,
-  yearly: 7.49,
+  monthly: 99,
+  yearly: 49,
   features: [
     "Unlimited sites & Unlimited visitors",
     "AI Chat doubles engagement by visitors",
@@ -120,12 +120,12 @@ export const bioPricing = {
 }
 
 export const bioComparison = [
-  { title: "Mobile-first Link-in-bio page", replaces: "Replaces Linktree, Beacons", price: 15, icon: "📱" },
-  { title: "Smart AI Assistant", replaces: "Replaces ManyChat, ChatGPT widgets", price: 20, icon: "🧠" },
-  { title: "Custom domain support", replaces: "Replaces Framer, Webflow", price: 14, icon: "🌐" },
-  { title: "Built‑in analytics & SEO", replaces: "Replaces Google Analytics, Bit.ly", price: 10, icon: "📈" },
-  { title: "Email list & newsletter builder", replaces: "Replaces Mailchimp, ActiveCampaign", price: 15, icon: "✉️" },
-  { title: "Publish blog posts/updates", replaces: "Replaces Substack, Blogger", price: 10, icon: "📝" },
+  { title: "Mobile-first Link-in-bio page", replaces: "Replaces Linktree, Beacons", price: 149, icon: "📱" },
+  { title: "Smart AI Assistant", replaces: "Replaces ManyChat, ChatGPT widgets", price: 199, icon: "🧠" },
+  { title: "Custom domain support", replaces: "Replaces Framer, Webflow", price: 139, icon: "🌐" },
+  { title: "Built‑in analytics & SEO", replaces: "Replaces Google Analytics, Bit.ly", price: 99, icon: "📈" },
+  { title: "Email list & newsletter builder", replaces: "Replaces Mailchimp, ActiveCampaign", price: 149, icon: "✉️" },
+  { title: "Publish blog posts/updates", replaces: "Replaces Substack, Blogger", price: 99, icon: "📝" },
 ]
 
 export type BioTestimonial = {
@@ -142,59 +142,59 @@ export type BioTestimonial = {
 export const bioTestimonials: BioTestimonial[] = [
   {
     id: "1",
-    name: "Yan P",
-    location: "Peru",
+    name: "Lerato N",
+    location: "Cape Town",
     headline: "Freedom like no other",
     body: "I love the freedom Xhuma gives me. I can customize my page exactly how I want, add my links, and even use AI to engage with my audience. It's the best link-in-bio tool I've ever used.",
     avatar: `${BIO_ASSETS}/user1.Ba8DzGMp.png`,
   },
   {
     id: "2",
-    name: "Tatiana I",
-    location: "Brazil",
+    name: "Kabelo M",
+    location: "Johannesburg",
     headline: "Awesome service, fair price, very fast",
-    body: "I was looking for a link-in-bio tool that was easy to use and affordable. Xhuma exceeded my expectations. The setup was quick, and the AI assistant is a game-changer for my business.",
-    initials: "TI",
+    body: "I was looking for a link-in-bio tool that was easy to use and affordable in Rands. Xhuma exceeded my expectations. The setup was quick, and the AI assistant is a game-changer for my gigs.",
+    initials: "KM",
     avatarColor: "#a855f7",
   },
   {
     id: "3",
-    name: "Alex C",
-    location: "United States",
+    name: "Nomsa D",
+    location: "Soweto",
     headline: "My go-to for everything",
     body: "From links to email capture to AI chat — it's all here. I cancelled three other subscriptions after switching. My page looks professional and converts better than ever.",
-    initials: "AC",
+    initials: "ND",
     avatarColor: "#ec4899",
   },
   {
     id: "4",
-    name: "María G",
-    location: "Mexico",
+    name: "Thandi P",
+    location: "Durban",
     headline: "Finally, one tool that does it all",
     body: "I used to juggle Linktree, Mailchimp, and a separate analytics tool. Xhuma replaced all of them. The themes are beautiful and my followers love the AI assistant.",
     avatar: `${BIO_ASSETS}/user2.CiMA-Ti0.png`,
   },
   {
     id: "5",
-    name: "James K",
-    location: "United Kingdom",
-    headline: "Worth every penny",
+    name: "Sipho K",
+    location: "Midrand",
+    headline: "Worth every rand",
     body: "The yearly plan is a steal. Custom domain, unlimited visitors, and the AI actually answers questions about my courses. Support responded within hours when I had a domain question.",
     avatar: `${BIO_ASSETS}/user3.w1PRNQjx.png`,
   },
   {
     id: "6",
-    name: "Sofia R",
-    location: "Spain",
+    name: "Amahle Z",
+    location: "Pretoria",
     headline: "Creators, this is it",
     body: "As a musician I needed streaming links, tour dates, and merch in one place. Xhuma made it effortless. The mobile preview alone sold me — it just looks premium.",
-    initials: "SR",
+    initials: "AZ",
     avatarColor: "#38bdf8",
   },
   {
     id: "7",
     name: "David L",
-    location: "Canada",
+    location: "Gqeberha",
     headline: "Setup in under 10 minutes",
     body: "I'm not technical at all. I picked a theme, dropped my links, and was live before my coffee got cold. The receipt-style pricing page convinced me I was saving money too.",
     avatar: `${BIO_ASSETS}/user5.CwX5k9hm.png`,
@@ -202,7 +202,7 @@ export const bioTestimonials: BioTestimonial[] = [
   {
     id: "8",
     name: "Priya N",
-    location: "India",
+    location: "Durban",
     headline: "AI that actually helps",
     body: "Visitors ask about my coaching packages and the AI points them to the right link. I wake up to booked calls without answering the same DMs over and over.",
     initials: "PN",
@@ -211,7 +211,7 @@ export const bioTestimonials: BioTestimonial[] = [
   {
     id: "9",
     name: "Lucas M",
-    location: "Portugal",
+    location: "Cape Town",
     headline: "Clean, fast, reliable",
     body: "Page loads instantly on mobile. Analytics are clear. I can see which links perform and adjust weekly. Exactly what a link-in-bio should be in 2026.",
     avatar: `${BIO_ASSETS}/user6.BtYp0XeA.png`,
@@ -219,7 +219,7 @@ export const bioTestimonials: BioTestimonial[] = [
   {
     id: "10",
     name: "Emma T",
-    location: "Australia",
+    location: "Johannesburg",
     headline: "Better than Linktree",
     body: "Switched from Linktree Pro and I'm not going back. More features, better design, and the AI chat keeps people on my page longer. My click-through rate doubled.",
     avatar: `${BIO_ASSETS}/user7.BJbxwnbs.png`,
@@ -227,7 +227,7 @@ export const bioTestimonials: BioTestimonial[] = [
   {
     id: "11",
     name: "Carlos V",
-    location: "Colombia",
+    location: "Bloemfontein",
     headline: "Perfect for small business",
     body: "My bakery uses Xhuma for the menu, WhatsApp orders, and Instagram. Customers find everything in one tap. The holiday theme was a hit in December.",
     initials: "CV",
@@ -236,7 +236,7 @@ export const bioTestimonials: BioTestimonial[] = [
   {
     id: "12",
     name: "Hannah W",
-    location: "Germany",
+    location: "Polokwane",
     headline: "Design that stands out",
     body: "Every other link-in-bio looks the same. Xhuma themes feel custom. I get compliments on my page weekly — and I didn't hire a designer.",
     avatar: `${BIO_ASSETS}/user9.BTGRzHLW.png`,
@@ -294,16 +294,15 @@ export const bioAiSection = {
 }
 
 export const bioFooterLinks = [
-  { label: "Features", href: "/features" },
-  { label: "Help Center", href: "/faq" },
-  { label: "Terms of Use", href: "/about" },
-  { label: "Privacy Policy", href: "/about" },
-  { label: "Report", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Contact", href: "/contact" },
+  { label: "About", href: "/about" },
 ]
 
 export const bioSocialLinks = [
-  { label: "X", href: "https://twitter.com/@biodotlink" },
-  { label: "Instagram", href: "https://www.instagram.com/biodotlink/" },
-  { label: "YouTube", href: "https://www.youtube.com/channel/UCMtHlkP8mJDQjxHPkwOOnbQ" },
-  { label: "TikTok", href: "https://tiktok.com/@biodotlink" },
+  { label: "X", href: "https://x.com/xhumacc" },
+  { label: "Instagram", href: "https://www.instagram.com/xhumacc/" },
+  { label: "YouTube", href: "https://www.youtube.com/@xhumacc" },
+  { label: "TikTok", href: "https://tiktok.com/@xhumacc" },
 ]

@@ -1,41 +1,20 @@
 import Link from "next/link"
-import { BIO_CDN, bioFooterLinks, bioSocialLinks } from "@/data/bio-link"
+import { bioFooterLinks, bioSocialLinks } from "@/data/bio-link"
 import { LogoMark } from "@/components/marketing/biolink/logo-mark"
 
 export function BiolinkFooter() {
   return (
-    <footer className="mx-auto w-[min(1100px,92%)] bg-white pb-10 pt-4 max-sm:pb-8">
+    <footer className="mx-auto w-[min(1100px,92%)] bg-white pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-4 max-sm:pb-8">
       <WaveDivider />
 
       <div className="mt-14 flex flex-wrap items-start justify-between gap-10 max-lg:flex-col max-lg:items-center max-sm:mt-10">
         <div className="max-lg:flex max-lg:flex-col max-lg:items-center">
-          <div className="flex items-center gap-2">
-            <a
-              href="https://play.google.com/store/apps/details?id=app.biolink"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-transform hover:-translate-y-0.5"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`${BIO_CDN}/landing/google-play2.png`} alt="Get it on Google Play" className="h-[42px] w-auto" />
-            </a>
-            <a
-              href="https://apps.apple.com/app/bio-link-link-in-bio/id1573294119"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-transform hover:-translate-y-0.5"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`${BIO_CDN}/landing/app-store1.png`} alt="Download on the App Store" className="h-[42px] w-auto" />
-            </a>
-          </div>
-
-          <nav className="mt-8 flex flex-wrap gap-x-8 gap-y-3 max-lg:justify-center">
+          <nav className="flex flex-wrap gap-x-8 gap-y-3 max-lg:justify-center">
             {bioFooterLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-base font-normal text-bio-dark transition-colors hover:text-bio-dark/70"
+                className="min-h-11 py-2 text-base font-normal text-bio-dark transition-colors hover:text-bio-dark/70"
               >
                 {link.label}
               </Link>
@@ -51,7 +30,9 @@ export function BiolinkFooter() {
         </div>
       </div>
 
-      <p className="mt-12 text-center text-sm text-bio-grey max-sm:mt-8">© {new Date().getFullYear()} Xhuma. All rights reserved.</p>
+      <p className="mt-12 text-center text-sm text-bio-grey max-sm:mt-8">
+        © 2026 Xhuma. Built by BDL Corp. All rights reserved.
+      </p>
     </footer>
   )
 }
@@ -62,7 +43,7 @@ function SocialIcon({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-bio-dark transition-transform hover:scale-105"
+      className="flex min-h-11 min-w-11 items-center justify-center text-bio-dark transition-transform hover:scale-105"
       aria-label={label}
     >
       <SocialGlyph name={label} />

@@ -25,8 +25,8 @@ const groups = [
     title: "Resources",
     links: [
       { label: "Help Center", href: "/contact" },
-      { label: "Privacy", href: "/about" },
-      { label: "Terms", href: "/about" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
       { label: "Status", href: "/about" },
     ],
   },
@@ -81,7 +81,7 @@ export function MarketingFooter() {
           ))}
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 sm:flex-row">
-          <p className="text-sm text-muted-foreground">© 2026 Xhuma. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2026 Xhuma. Built by BDL Corp. All rights reserved.</p>
           <p className="text-sm text-muted-foreground">Made for creators, everywhere.</p>
         </div>
       </div>

@@ -32,7 +32,8 @@ import { SettingsPanel } from "@/components/editor/settings-panel"
 import { LinkEditorRow } from "@/components/editor/link-editor-row"
 import { QuickPlatformChips } from "@/components/editor/quick-platform-chips"
 import { AvatarUpload } from "@/components/editor/avatar-upload"
-import type { SocialIconName } from "@/lib/infer-link-icon"
+import { LinkStylePicker } from "@/components/editor/link-style-picker"
+import { resolveLinkCardStyle } from "@/lib/link-card-styles"
 
 export function PageEditor() {
   const router = useRouter()
@@ -288,16 +289,14 @@ export function PageEditor() {
                 <EditorPanel>
                   <EditorSectionTitle subtitle="Buttons visitors tap on your page.">Links</EditorSectionTitle>
                   <QuickPlatformChips onAdd={handleQuickAdd} />
-                  <div className="mt-4 rounded-2xl bg-bio-grey-f4 p-4">
+                  <div className="mt-4 rounded-xl border border-bio-dark/6 bg-bio-grey-f4 p-4">
                     <div className="flex flex-col gap-2">
-                      <input
-                        className="h-12 w-full rounded-xl bg-white px-4 text-bio-dark outline-none placeholder:text-bio-grey"
+                      <BioInput
                         placeholder="Button text"
                         value={newLink.title}
                         onChange={(e) => setNewLink((l) => ({ ...l, title: e.target.value }))}
                       />
-                      <input
-                        className="h-12 w-full rounded-xl bg-white px-4 text-bio-dark outline-none placeholder:text-bio-grey"
+                      <BioInput
                         placeholder="https://..."
                         value={newLink.url}
                         onChange={(e) => setNewLink((l) => ({ ...l, url: e.target.value }))}
@@ -326,12 +325,31 @@ export function PageEditor() {
                 </EditorPanel>
 
                 <EditorPanel>
+                  <EditorSectionTitle subtitle="Shape and feel of your link buttons.">
+                    Link style
+                  </EditorSectionTitle>
+                  <LinkStylePicker
+                    value={resolveLinkCardStyle(state?.profile.theme ?? { bg: "", text: "", button: "", radius: "14px" })}
+                    onChange={(link_style) =>
+                      setTheme({ ...state!.profile.theme, link_style })
+                    }
+                  />
+                </EditorPanel>
+
+                <EditorPanel>
                   <EditorSectionTitle subtitle="Same themes as the homepage gallery — background updates live.">
                     Theme
                   </EditorSectionTitle>
                   <ThemePicker
                     selectedId={themeId}
-                    onSelect={(id, theme) => setTheme(theme)}
+                    onSelect={(_id, theme) =>
+                      setTheme({
+                        ...theme,
+                        link_style:
+                          state?.profile.theme.link_style ??
+                          resolveLinkCardStyle(state?.profile.theme ?? theme),
+                      })
+                    }
                   />
                 </EditorPanel>
               </>

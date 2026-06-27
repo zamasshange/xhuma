@@ -59,7 +59,7 @@ export function AiAssistantSection() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={view === "app" ? bioAiSection.appImage : bioAiSection.webImage}
-          alt={view === "app" ? "Linkly mobile app" : "Linkly website"}
+          alt={view === "app" ? "Xhuma mobile app" : "Xhuma website"}
           className="h-[85%] w-auto object-cover transition-opacity duration-200 max-sm:h-auto max-sm:w-[65%]"
         />
       </div>

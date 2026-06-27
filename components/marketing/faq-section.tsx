@@ -17,7 +17,7 @@ export function FaqSection() {
         <SectionHeading
           eyebrow="FAQ"
           title="Questions, answered"
-          description="Everything you need to know about Linkly. Can't find what you're looking for? Reach out anytime."
+          description="Everything you need to know about Xhuma. Can't find what you're looking for? Reach out anytime."
         />
       </Reveal>
       <div className="mt-10 flex flex-col gap-3">

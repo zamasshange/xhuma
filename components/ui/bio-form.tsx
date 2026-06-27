@@ -8,7 +8,9 @@ export function BioCard({
   children: React.ReactNode
 }) {
   return (
-    <div className={cn("rounded-3xl bg-bio-grey-f4 p-5 sm:p-6", className)}>{children}</div>
+    <div className={cn("rounded-2xl border border-bio-dark/6 bg-bio-grey-f4 p-5 sm:p-6", className)}>
+      {children}
+    </div>
   )
 }
 
@@ -17,20 +19,20 @@ export function BioLabel({ className, children }: { className?: string; children
 }
 
 const fieldClass =
-  "w-full rounded-2xl border-2 border-bio-dark/10 bg-white px-4 text-base text-bio-dark outline-none transition-colors placeholder:text-bio-grey/60 focus:border-bio-dark/30"
+  "w-full rounded-xl border border-bio-dark/10 bg-white px-4 text-base text-bio-dark outline-none transition-colors placeholder:text-bio-grey/70 focus:border-bio-dark/25 focus:ring-2 focus:ring-bio-dark/5"
 
 export function BioInput({
   className,
   ...props
 }: React.ComponentProps<"input">) {
-  return <input className={cn(fieldClass, "h-12", className)} {...props} />
+  return <input className={cn(fieldClass, "h-11", className)} {...props} />
 }
 
 export function BioTextarea({
   className,
   ...props
 }: React.ComponentProps<"textarea">) {
-  return <textarea className={cn(fieldClass, "min-h-[88px] py-3 resize-y", className)} {...props} />
+  return <textarea className={cn(fieldClass, "min-h-[88px] resize-y py-3", className)} {...props} />
 }
 
 export function BioButton({
@@ -45,10 +47,11 @@ export function BioButton({
   href?: string
 }) {
   const classes = cn(
-    "bio-dark-btn inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors disabled:opacity-50",
-    variant === "primary" && "bg-bio-dark text-white hover:bg-bio-dark/85",
-    variant === "secondary" && "border-2 border-bio-dark/15 bg-white text-bio-dark hover:bg-bio-grey-f4",
-    variant === "ghost" && "text-bio-grey hover:text-bio-dark",
+    "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50",
+    variant === "primary" && "bio-dark-btn bg-bio-dark text-white hover:bg-bio-dark/90",
+    variant === "secondary" &&
+      "border border-bio-dark/12 bg-white text-bio-dark hover:bg-bio-grey-f4",
+    variant === "ghost" && "text-bio-grey hover:bg-bio-grey-f4 hover:text-bio-dark",
     className,
   )
 
@@ -83,18 +86,26 @@ export function BioGradientButton({
   disabled,
   type = "button",
   onClick,
-}: React.ComponentProps<"button">) {
+  href,
+}: React.ComponentProps<"button"> & { href?: string }) {
+  const classes = cn(
+    "bio-continue-btn inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50",
+    className,
+  )
+
+  const inner = children
+
+  if (href) {
+    return (
+      <a href={href} className={classes}>
+        {inner}
+      </a>
+    )
+  }
+
   return (
-    <button
-      type={type}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "bio-continue-btn inline-flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-semibold text-white transition-opacity disabled:opacity-50",
-        className,
-      )}
-    >
-      {children}
+    <button type={type} disabled={disabled} onClick={onClick} className={classes}>
+      {inner}
     </button>
   )
 }

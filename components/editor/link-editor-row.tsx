@@ -36,7 +36,7 @@ export function LinkEditorRow({
   return (
     <div
       className={cn(
-        "rounded-2xl bg-bio-grey-f4 p-4",
+        "rounded-xl border border-bio-dark/6 bg-bio-grey-f4 p-3 sm:p-4",
         !link.is_active && "opacity-50",
       )}
     >
@@ -46,7 +46,7 @@ export function LinkEditorRow({
             type="button"
             disabled={index === 0}
             onClick={() => onMove(-1)}
-            className="rounded-lg p-1 hover:bg-white disabled:opacity-30"
+            className="rounded-md p-1 hover:bg-white disabled:opacity-30"
             aria-label="Move up"
           >
             <ChevronUp className="size-4" />
@@ -55,25 +55,25 @@ export function LinkEditorRow({
             type="button"
             disabled={index >= total - 1}
             onClick={() => onMove(1)}
-            className="rounded-lg p-1 hover:bg-white disabled:opacity-30"
+            className="rounded-md p-1 hover:bg-white disabled:opacity-30"
             aria-label="Move down"
           >
             <ChevronDown className="size-4" />
           </button>
         </div>
 
-        <SocialIconBadge icon={displayIcon} size={48} className="mt-0.5" />
+        <SocialIconBadge icon={displayIcon} size={44} className="mt-0.5 rounded-lg" />
 
         <div className="min-w-0 flex-1 space-y-2">
           <input
-            className="h-11 w-full rounded-xl bg-white px-4 text-sm font-medium text-bio-dark outline-none placeholder:font-normal placeholder:text-bio-grey"
+            className="h-10 w-full rounded-lg border border-bio-dark/8 bg-white px-3 text-sm font-medium text-bio-dark outline-none placeholder:font-normal placeholder:text-bio-grey focus:border-bio-dark/20"
             value={link.title}
             placeholder="Button text"
             onChange={(e) => patchWithIcon({ title: e.target.value })}
             onBlur={onBlur}
           />
           <input
-            className="h-11 w-full rounded-xl bg-white px-4 text-sm text-bio-dark outline-none placeholder:text-bio-grey"
+            className="h-10 w-full rounded-lg border border-bio-dark/8 bg-white px-3 text-sm text-bio-dark outline-none placeholder:text-bio-grey focus:border-bio-dark/20"
             value={link.url}
             placeholder="https://..."
             onChange={(e) => patchWithIcon({ url: e.target.value })}

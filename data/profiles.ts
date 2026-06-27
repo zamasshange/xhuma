@@ -2,16 +2,16 @@ import type { Profile } from "@/lib/types"
 
 export const profiles: Profile[] = [
   {
-    username: "ariastone",
-    displayName: "Aria Stone",
-    headline: "Music Producer & DJ",
-    bio: "Crafting late-night soundscapes and warm analog beats. Booking shows worldwide for 2026. Let's make something unforgettable.",
-    occupation: "Music Producer",
+    username: "leratophotos",
+    displayName: "Lerato Nkosi",
+    headline: "Photographer & Visual Storyteller",
+    bio: "Capturing Cape Town's coastlines, weddings, and brand stories. Available for bookings across South Africa.",
+    occupation: "Photographer",
     pronouns: "she/her",
-    location: "Los Angeles, CA",
-    website: "ariastone.fm",
-    email: "hi@ariastone.fm",
-    phone: "+1 (555) 012-3344",
+    location: "Cape Town",
+    website: "leratophotos.co.za",
+    email: "hello@leratophotos.co.za",
+    phone: "+27 82 123 4567",
     avatar: "/images/avatars/aria.png",
     verified: true,
     category: "Musicians",
@@ -33,8 +33,8 @@ export const profiles: Profile[] = [
       { id: "g3", src: "/images/gallery/desk.png", alt: "Production desk" },
     ],
     services: [
-      { id: "s1", title: "Custom Beat Production", description: "A bespoke track built around your vision.", price: "From $850" },
-      { id: "s2", title: "Mixing & Mastering", description: "Radio-ready polish for your record.", price: "From $300" },
+      { id: "s1", title: "Portrait Session", description: "A bespoke shoot built around your vision.", price: "From R1 500" },
+      { id: "s2", title: "Brand Photography", description: "Professional imagery for your business.", price: "From R3 200" },
     ],
     testimonials: [
       { id: "t1", name: "Jordan Reese", role: "Recording Artist", avatar: "/images/avatars/leo.png", quote: "Aria turned my rough demo into a chart-ready single. Pure magic." },
@@ -80,7 +80,7 @@ export const profiles: Profile[] = [
       { id: "g1", src: "/images/gallery/desk.png", alt: "Coding setup" },
     ],
     services: [
-      { id: "s1", title: "1:1 Mentorship", description: "Level up your career in 60 minutes.", price: "$180/hr" },
+      { id: "s1", title: "1:1 Mentorship", description: "Level up your career in 60 minutes.", price: "R1 800/hr" },
     ],
     testimonials: [
       { id: "t1", name: "Sam Okafor", role: "Junior Dev", avatar: "/images/avatars/noah.png", quote: "Maya's mentorship landed me my first senior role. Worth every minute." },
@@ -123,7 +123,7 @@ export const profiles: Profile[] = [
       { id: "g2", src: "/images/gallery/studio.png", alt: "Studio" },
     ],
     services: [
-      { id: "s1", title: "Custom Portrait", description: "Hand-painted, A2, framed.", price: "From $640" },
+      { id: "s1", title: "Custom Portrait", description: "Hand-painted, A2, framed.", price: "From R4 800" },
     ],
     testimonials: [],
     theme: {

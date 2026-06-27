@@ -21,10 +21,10 @@ export function ThemePicker({
           onClick={() => onSelect(t.id, resolveThemeBackground(t.theme))}
           className={cn(
             "text-left transition-transform hover:scale-[1.02]",
-            selectedId === t.id && "rounded-2xl ring-2 ring-bio-dark ring-offset-2",
+            selectedId === t.id && "rounded-xl ring-2 ring-bio-dark ring-offset-2",
           )}
         >
-          <div className="overflow-hidden rounded-2xl shadow-[0_4px_20px_rgba(13,12,34,0.06)] ring-1 ring-black/5">
+          <div className="overflow-hidden rounded-xl shadow-[0_4px_20px_rgba(13,12,34,0.06)] ring-1 ring-black/5">
             <ThemePreviewImage src={t.image} alt={t.name} compact />
           </div>
           <p className="mt-1.5 truncate text-center text-[11px] font-medium text-bio-dark sm:text-xs">

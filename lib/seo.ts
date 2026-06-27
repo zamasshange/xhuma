@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { SITE_DOMAIN, SITE_NAME, SITE_URL } from "@/lib/brand"
+import { DEFAULT_LOCALE } from "@/lib/locale"
 
 export const SEO_KEYWORDS = [
   "link in bio",
@@ -10,10 +11,12 @@ export const SEO_KEYWORDS = [
   "social media landing page",
   "linktree alternative",
   "xhuma",
+  "link in bio South Africa",
+  "South African creators",
 ] as const
 
 export const SEO_DEFAULT_DESCRIPTION =
-  "Xhuma is the AI-powered link in bio platform that helps creators build a beautiful, high-converting page in minutes. Free to start."
+  "Xhuma is the AI-powered link in bio platform built for South African creators and businesses. Build a beautiful, high-converting page in minutes. Free to start."
 
 export const NOINDEX_ROBOTS: Metadata["robots"] = {
   index: false,
@@ -66,7 +69,7 @@ export function buildMetadata({
 
   const openGraph: Metadata["openGraph"] = {
     type,
-    locale: "en_US",
+    locale: DEFAULT_LOCALE.replace("-", "_"),
     url,
     siteName: SITE_NAME,
     title: fullTitle,
@@ -155,6 +158,16 @@ export const marketingPages = {
     title: "FAQ",
     description: "Answers to common questions about Xhuma — AI link in bio, pricing, and domains.",
     path: "/faq",
+  },
+  privacy: {
+    title: "Privacy Policy",
+    description: `How ${SITE_NAME} collects, uses, and protects your personal information.`,
+    path: "/privacy",
+  },
+  terms: {
+    title: "Terms of Service",
+    description: `Terms and conditions for using the ${SITE_NAME} link-in-bio platform.`,
+    path: "/terms",
   },
 } as const
 

@@ -14,7 +14,7 @@ export default function AboutPage() {
         <SectionHeading
           eyebrow="About"
           title="We're building the future of creator presence"
-          description="Linkly helps millions of creators own their audience with beautiful, AI-powered Link in Bio pages."
+          description="Xhuma helps South African creators and businesses own their audience with beautiful, AI-powered Link in Bio pages."
           align="left"
         />
       </Reveal>

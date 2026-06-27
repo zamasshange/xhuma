@@ -23,7 +23,7 @@ export function CtaSection() {
               Your whole world, one link away
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg">
-              Join millions of creators using Linkly to grow their audience with AI. Start free, no credit card
+              Join millions of creators using Xhuma to grow their audience with AI. Start free, no credit card
               required.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

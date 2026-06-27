@@ -103,13 +103,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <h2 className="font-heading mt-10 text-2xl font-semibold">Start with clarity</h2>
         <p className="mt-4 text-base leading-relaxed">
           Your headline should answer one question in under five seconds: what do you do, and why should I care?
-          AI tools like Linkly&apos;s Bio Generator can produce three on-brand variants — professional, friendly, and creator —
+          AI tools like Xhuma&apos;s Bio Generator can produce three on-brand variants — professional, friendly, and creator —
           so you can A/B test without the blank-page anxiety.
         </p>
         <h2 className="font-heading mt-10 text-2xl font-semibold">Design for thumbs</h2>
         <p className="mt-4 text-base leading-relaxed">
           Over 70% of Link in Bio traffic comes from mobile. Large touch targets, full-width buttons, and comfortable
-          spacing aren&apos;t nice-to-haves — they&apos;re conversion requirements. Every Linkly page is built mobile-first,
+          spacing aren&apos;t nice-to-haves — they&apos;re conversion requirements. Every Xhuma page is built mobile-first,
           then enhanced for tablet and desktop.
         </p>
       </div>

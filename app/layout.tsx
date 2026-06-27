@@ -4,6 +4,7 @@ import type { Viewport } from 'next'
 import { Geist, Geist_Mono, Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from 'sonner'
+import { LOCALE_HTML_LANG, DEFAULT_LOCALE } from "@/lib/i18n"
 import { rootMetadata } from '@/lib/seo'
 import './globals.css'
 
@@ -32,11 +33,11 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang={LOCALE_HTML_LANG[DEFAULT_LOCALE]}
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} xhuma-site`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh font-sans antialiased text-bio-dark bg-white">
+      <body className="min-h-dvh font-sans antialiased text-bio-dark bg-white pb-[env(safe-area-inset-bottom)]">
         <ConditionalClerkProvider>
           <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
             {children}

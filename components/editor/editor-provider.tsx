@@ -147,10 +147,19 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const setTheme = useCallback(
     (theme: ProfileTheme) => {
-      patchState((s) => ({
-        ...s,
-        profile: { ...s.profile, theme: resolveThemeBackground(theme) },
-      }))
+      patchState((s) => {
+        const resolved = resolveThemeBackground(theme)
+        return {
+          ...s,
+          profile: {
+            ...s.profile,
+            theme: {
+              ...resolved,
+              link_style: theme.link_style ?? s.profile.theme.link_style,
+            },
+          },
+        }
+      })
     },
     [patchState],
   )

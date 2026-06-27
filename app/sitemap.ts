@@ -12,6 +12,8 @@ const STATIC_PATHS = [
   marketingPages.explore.path,
   marketingPages.blog.path,
   marketingPages.faq.path,
+  marketingPages.privacy.path,
+  marketingPages.terms.path,
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

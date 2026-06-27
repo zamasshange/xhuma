@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { bioPricing, BIO_ASSETS } from "@/data/bio-link"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
 import { DarkButton, ArrowIcon } from "@/components/marketing/biolink/dark-button"
+import { formatCurrency } from "@/lib/locale"
 
 function GradientCheck() {
   return (
@@ -80,7 +81,7 @@ export function BiolinkPricing() {
       <div className="bio-plan-gradient relative z-10 mx-auto mt-10 w-[min(440px,100%)] rounded-[32px] p-1.5 max-sm:mt-8">
         <div className="rounded-[30px] bg-white p-10 text-bio-dark max-sm:p-5">
           <div className="flex items-center text-base font-semibold">
-            Pro plan
+            Creator plan
             {yearly && (
               <span className="bio-shine relative ml-2 flex items-center overflow-hidden rounded-full bg-[#28c76f] px-2.5 py-1 text-xs font-semibold text-white">
                 Save 50%
@@ -88,7 +89,7 @@ export function BiolinkPricing() {
             )}
           </div>
           <div className="mt-3 flex items-baseline border-b border-bio-dark/15 pb-6 max-sm:pb-3">
-            <h2 className="text-5xl font-semibold tracking-tight max-sm:text-4xl">${price.toFixed(2)}</h2>
+            <h2 className="text-5xl font-semibold tracking-tight max-sm:text-4xl">{formatCurrency(price)}</h2>
             <span className="mb-2 ml-1 text-base text-bio-grey">/mo</span>
           </div>
           <ul className="mt-6 space-y-4 max-sm:mt-3">
