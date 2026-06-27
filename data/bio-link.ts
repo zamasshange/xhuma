@@ -7,8 +7,6 @@ export const bioHero = {
   title: "Your link-in-bio,\nnow with a brain",
   subtitle:
     "Join 3M+ creators and brands using Xhuma. Add your links, share posts, send emails, and let AI greet and guide your visitors.",
-  heroFront: `${BIO_ASSETS}/hero1.DbxcVcFn.png`,
-  heroBack: `${BIO_ASSETS}/hero2.Dj6JJlAa.png`,
 }
 
 export const bioCreators = [
