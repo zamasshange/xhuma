@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Camera, Plus } from "lucide-react"
 import { toast } from "sonner"
-import { PhoneDeviceFrame } from "@/components/device/phone-device-frame"
+import { ScaledPhonePreview } from "@/components/device/scaled-phone-preview"
 import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
 import {
   ContinueButton,
@@ -237,6 +237,7 @@ export function OnboardingWizard() {
       step={stepIndex + 1}
       totalSteps={totalSteps}
       onBack={stepIndex > 0 ? goBack : undefined}
+      contentClassName={step === "preview" ? "min-h-0 overflow-hidden" : undefined}
       footer={
         <ContinueButton disabled={!canContinue || saving} onClick={handleContinue}>
           {saving ? "Launching…" : "Continue"}
@@ -387,7 +388,7 @@ export function OnboardingWizard() {
             <button
               type="button"
               onClick={() => setLinks((prev) => [...prev, { title: "", url: "" }])}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-sky-50 py-3 text-sm font-semibold text-sky-600"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-bio-dark/12 bg-white py-3 text-sm font-semibold text-bio-dark hover:bg-bio-grey-f4"
             >
               <Plus className="size-4" />
               Add another
@@ -421,11 +422,11 @@ export function OnboardingWizard() {
 
       {step === "preview" && (
         <>
-          <OnboardingTitle>Looking Good!</OnboardingTitle>
-          <div className="flex flex-1 items-center justify-center py-2">
-            <PhoneDeviceFrame size="preview" showLabel={false} glow>
-              <DbPublicProfileView profile={previewProfile} links={previewLinks} density="device" />
-            </PhoneDeviceFrame>
+          <OnboardingTitle compact>Looking Good!</OnboardingTitle>
+          <div className="mx-auto flex h-full min-h-0 w-full max-w-[min(78vw,250px)] flex-1 items-center justify-center">
+              <ScaledPhonePreview>
+                <DbPublicProfileView profile={previewProfile} links={previewLinks} density="device" />
+              </ScaledPhonePreview>
           </div>
         </>
       )}

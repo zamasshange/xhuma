@@ -55,7 +55,7 @@ export function ScaledPhonePreview({
         }}
       >
         <PhoneDeviceFrame size="native" showLabel={false} glow={false} clipContent>
-          {children}
+          <div className="min-h-full w-full">{children}</div>
         </PhoneDeviceFrame>
       </div>
     </div>

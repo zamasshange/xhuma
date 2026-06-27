@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { UserButton } from "@clerk/nextjs"
+import { Avatar } from "@/components/ui/avatar"
 import {
   Plus,
   ExternalLink,
@@ -30,7 +31,7 @@ import {
   type EditorTabId,
 } from "@/components/editor/editor-shell"
 import { ThemePicker } from "@/components/editor/theme-picker"
-import { BioButton, BioGradientButton, BioInput, BioMuted, BioTextarea } from "@/components/ui/bio-form"
+import { BioButton, BioInput, BioMuted, BioTextarea } from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
 import type { DbProfile } from "@/lib/database.types"
 import { onboardingThemePresets } from "@/data/onboarding"
@@ -199,13 +200,13 @@ export function PageEditor() {
         <span className="hidden text-xs text-bio-grey sm:inline">Saving…</span>
       )}
       {isDraft && tab === "page" && (
-        <BioGradientButton
-          className="h-9 px-4 text-xs sm:text-sm"
+        <BioButton
+          className="h-9 shrink-0 px-3 text-xs sm:px-4 sm:text-sm"
           onClick={() => handleGoLive("/claim")}
         >
           <Rocket className="size-4" />
           <span className="hidden sm:inline">Go live</span>
-        </BioGradientButton>
+        </BioButton>
       )}
       {profile && tab === "page" && (
         <>
@@ -227,10 +228,19 @@ export function PageEditor() {
         </>
       )}
       <EditorHomeLink />
-      <UserButton
-        afterSignOutUrl="/"
-        appearance={{ elements: { avatarBox: "size-8 ring-2 ring-bio-dark/10" } }}
-      />
+      <UserButton afterSignOutUrl="/">
+        <button
+          type="button"
+          className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-bio-dark/10"
+          aria-label="Account menu"
+        >
+          <Avatar
+            src={state?.profile.avatar_url ?? profile?.avatar_url ?? undefined}
+            alt={state?.profile.display_name ?? profile?.display_name ?? "You"}
+            className="size-8"
+          />
+        </button>
+      </UserButton>
     </>
   )
 
@@ -250,9 +260,9 @@ export function PageEditor() {
             <EditorPanel className="text-center">
               <p className="text-lg font-semibold">Pick a template first</p>
               <BioMuted className="mt-1">Choose a layout on the homepage, then customize here.</BioMuted>
-              <BioGradientButton className="mx-auto mt-5 max-w-xs" href="/#templates">
+              <BioButton className="mx-auto mt-5 max-w-xs" href="/#templates">
                 Browse templates
-              </BioGradientButton>
+              </BioButton>
             </EditorPanel>
           ) : (
             <EditorPanel>
@@ -271,9 +281,9 @@ export function PageEditor() {
                 <BioMuted className="mt-2">
                   Templates are JSON layouts — pick one, edit everything, then claim your link.
                 </BioMuted>
-                <BioGradientButton className="mx-auto mt-6 max-w-xs" href="/#templates">
+                <BioButton className="mx-auto mt-6 max-w-xs" href="/#templates">
                   Choose a template
-                </BioGradientButton>
+                </BioButton>
               </EditorPanel>
             ) : (
               <>
@@ -303,10 +313,10 @@ export function PageEditor() {
                       </span>
                       <span className="ml-2">template · autosaves every second</span>
                     </p>
-                    <BioGradientButton className="mt-4 max-w-xs" onClick={() => handleGoLive("/claim")}>
+                    <BioButton className="mt-4 max-w-xs" onClick={() => handleGoLive("/claim")}>
                       <Rocket className="size-4" />
                       Claim username & go live
-                    </BioGradientButton>
+                    </BioButton>
                   </EditorPanel>
                 )}
 
@@ -374,10 +384,10 @@ export function PageEditor() {
                         value={newLink.url}
                         onChange={(e) => setNewLink((l) => ({ ...l, url: e.target.value }))}
                       />
-                      <BioGradientButton onClick={handleAddLink} disabled={addingLink}>
+                      <BioButton onClick={handleAddLink} disabled={addingLink}>
                         <Plus className="size-4" />
                         {addingLink ? "Adding…" : "Add link"}
-                      </BioGradientButton>
+                      </BioButton>
                     </div>
                   </div>
 

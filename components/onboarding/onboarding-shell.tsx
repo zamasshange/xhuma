@@ -55,6 +55,7 @@ export function OnboardingShell({
   children,
   footer,
   className,
+  contentClassName,
 }: {
   step: number
   totalSteps: number
@@ -62,10 +63,12 @@ export function OnboardingShell({
   children: React.ReactNode
   footer?: React.ReactNode
   className?: string
+  /** e.g. overflow-hidden for preview step so footer stays on screen */
+  contentClassName?: string
 }) {
   return (
-    <div className="xhuma-site flex min-h-dvh flex-col bg-[#f7f7f8] text-bio-dark">
-      <header className="shrink-0 border-b border-bio-dark/8 bg-white px-4 py-4 sm:px-6">
+    <div className="xhuma-site flex h-dvh flex-col overflow-hidden bg-[#f7f7f8] text-bio-dark">
+      <header className="shrink-0 border-b border-bio-dark/8 bg-white px-4 py-3 sm:px-6 sm:py-4">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
           <LogoMark height={28} maxWidth={118} />
         </div>
@@ -73,14 +76,25 @@ export function OnboardingShell({
 
       <main
         className={cn(
-          "mx-auto flex w-full max-w-lg min-h-0 flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8",
+          "mx-auto flex w-full max-w-lg min-h-0 flex-1 flex-col px-4 py-4 sm:px-6 sm:py-5",
           className,
         )}
       >
-        <OnboardingProgress step={step} total={totalSteps} onBack={onBack} />
-        <div className="mt-6 min-h-0 flex-1 overflow-y-auto">{children}</div>
+        <div className="shrink-0">
+          <OnboardingProgress step={step} total={totalSteps} onBack={onBack} />
+        </div>
+
+        <div
+          className={cn(
+            "mt-4 flex min-h-0 flex-1 flex-col",
+            contentClassName ?? "overflow-y-auto",
+          )}
+        >
+          {children}
+        </div>
+
         {footer ? (
-          <div className="sticky bottom-0 -mx-4 shrink-0 border-t border-bio-dark/8 bg-[#f7f7f8]/95 px-4 py-4 backdrop-blur-sm sm:-mx-6 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="shrink-0 border-t border-bio-dark/8 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pt-4">
             {footer}
           </div>
         ) : null}
@@ -89,10 +103,27 @@ export function OnboardingShell({
   )
 }
 
-export function OnboardingTitle({ children, subtitle }: { children: React.ReactNode; subtitle?: string }) {
+export function OnboardingTitle({
+  children,
+  subtitle,
+  className,
+  compact,
+}: {
+  children: React.ReactNode
+  subtitle?: string
+  className?: string
+  compact?: boolean
+}) {
   return (
-    <div className="mb-6">
-      <h1 className="text-2xl font-semibold tracking-tight text-bio-dark sm:text-3xl">{children}</h1>
+    <div className={cn(compact ? "mb-2 shrink-0" : "mb-6", className)}>
+      <h1
+        className={cn(
+          "font-semibold tracking-tight text-bio-dark",
+          compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl",
+        )}
+      >
+        {children}
+      </h1>
       {subtitle && <p className="mt-2 text-base text-bio-grey">{subtitle}</p>}
     </div>
   )
@@ -114,9 +145,9 @@ export function ContinueButton({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className="bio-continue-btn w-full rounded-2xl py-4 text-base font-semibold text-white transition-opacity disabled:opacity-50"
+      className="bio-dark-btn w-full rounded-xl bg-bio-dark py-3.5 text-base font-semibold text-white transition-colors hover:bg-bio-dark/90 disabled:opacity-50 sm:py-4"
     >
-      {children}
+      <span className="relative z-10">{children}</span>
     </button>
   )
 }

@@ -62,6 +62,7 @@ export function DbPublicProfileView({
   const decorClass =
     !theme.bg_image && theme.preset_id ? PRESET_DECOR_CLASS[theme.preset_id] : undefined
   const staticPreview = !isFull
+  const isFramePreview = isDevice || isCompact
 
   const handleClick = async (linkId: string, url: string) => {
     if (trackClicks) {
@@ -138,7 +139,7 @@ export function DbPublicProfileView({
           className={cn("opacity-90", isCompact && "mt-2", isDevice && "mt-3", isFull && "mt-4")}
           size={isCompact ? 14 : isDevice ? 17 : 20}
           badgeSize={isCompact ? 24 : isDevice ? 28 : undefined}
-          variant={useThemeIcons ? "theme" : "badge"}
+          variant={staticPreview ? "plain" : useThemeIcons ? "theme" : "badge"}
           themeColors={useThemeIcons ? linkColors : undefined}
         />
       </div>
@@ -149,7 +150,8 @@ export function DbPublicProfileView({
     <div
       className={cn(
         "relative isolate w-full",
-        isFull ? "min-h-dvh overflow-hidden" : "min-h-0",
+        isFull ? "min-h-dvh overflow-hidden" : isFramePreview && "flex min-h-full flex-col",
+        !isFull && !isFramePreview && "min-h-0",
         decorClass,
       )}
       style={{
@@ -163,14 +165,15 @@ export function DbPublicProfileView({
           src={theme.bg_image}
           alt=""
           aria-hidden
-          className="pointer-events-none absolute inset-0 size-full object-cover"
+          className="pointer-events-none absolute inset-0 size-full object-cover object-center"
         />
       )}
       <div
         className={cn(
           "relative z-10 mx-auto w-full max-w-md",
+          isFramePreview && "flex min-h-full flex-1 flex-col justify-center",
           isCompact && "px-2.5 pb-4 pt-9",
-          isDevice && "px-4 pb-6 pt-11",
+          isDevice && "px-4 py-8 pt-11",
           isFull && "px-4 pb-10 pt-8",
         )}
       >

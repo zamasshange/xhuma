@@ -90,11 +90,11 @@ export function BioGradientButton({
   href,
 }: React.ComponentProps<"button"> & { href?: string }) {
   const classes = cn(
-    "bio-continue-btn inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50",
+    "bio-dark-btn inline-flex w-full items-center justify-center gap-2 rounded-xl bg-bio-dark px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/90 disabled:opacity-50",
     className,
   )
 
-  const inner = children
+  const inner = <span className="relative z-10 inline-flex items-center justify-center gap-2">{children}</span>
 
   if (href) {
     return (

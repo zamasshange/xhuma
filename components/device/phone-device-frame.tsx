@@ -147,7 +147,7 @@ export function PhoneDeviceFrame({
             />
 
             {/* Screen */}
-            <div className={cn("phone-device-screen relative overflow-hidden bg-black", s.screen)}>
+            <div className={cn("phone-device-screen relative overflow-hidden", s.screen, clipContent && "bg-[#0d0c22]")}>
               {/* Dynamic Island */}
               <div
                 className={cn(
@@ -163,7 +163,7 @@ export function PhoneDeviceFrame({
               <div
                 className={cn(
                   "phone-device-screen-inner no-scrollbar",
-                  clipContent ? "overflow-hidden" : "overflow-x-hidden overflow-y-auto overscroll-contain",
+                  clipContent ? "flex min-h-full flex-col overflow-hidden" : "overflow-x-hidden overflow-y-auto overscroll-contain",
                   s.maxH,
                 )}
                 style={{ WebkitOverflowScrolling: clipContent ? undefined : "touch" }}
