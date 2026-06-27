@@ -30,6 +30,7 @@ import { getStaticTemplate } from "@/data/templates"
 import { resolveTemplateForCreate } from "@/lib/templates/catalog"
 import { saveUserTemplate } from "@/lib/user-templates"
 import { getThemePreset, resolveThemeBackground } from "@/lib/theme-presets"
+import { normalizeUrl } from "@/lib/normalize-url"
 
 export type EditorMode = "empty" | "draft" | "live"
 
@@ -54,7 +55,7 @@ type EditorContextValue = {
   saveAsTemplate: (name: string) => void
   syncLiveLink: (id: string) => Promise<void>
   deleteLiveLink: (id: string) => Promise<void>
-  persistLiveLink: (title: string, url: string, icon?: string | null) => Promise<boolean>
+  persistLiveLink: (title: string, url: string, icon?: string | null) => Promise<{ ok: boolean; error?: string }>
   refresh: () => Promise<void>
 }
 
@@ -380,18 +381,49 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       if (!state) return
       const link = state.links.find((l) => l.id === id)
       if (!link) return
+
+      const title = link.title.trim()
+      const url = normalizeUrl(link.url)
+      const icon = link.icon ?? inferLinkIcon(title, url)
+      if (!title || !url) return
+
+      if (id.startsWith("temp-")) {
+        const res = await apiFetch<DbLink>("/api/links", {
+          method: "POST",
+          body: JSON.stringify({ title, url, icon }),
+        })
+        if (res.success && res.data) {
+          patchState((s) => ({
+            ...s,
+            links: s.links.map((l) =>
+              l.id === id
+                ? {
+                    id: res.data!.id,
+                    title: res.data!.title,
+                    url: res.data!.url,
+                    icon: res.data!.icon ?? icon,
+                    position: l.position,
+                    is_active: res.data!.is_active !== false,
+                  }
+                : l,
+            ),
+          }))
+        }
+        return
+      }
+
       await apiFetch("/api/links", {
         method: "PATCH",
         body: JSON.stringify({
           id,
-          title: link.title,
-          url: link.url || "https://example.com",
-          icon: link.icon ?? inferLinkIcon(link.title, link.url),
+          title,
+          url,
+          icon,
           is_active: link.is_active,
         }),
       })
     },
-    [state],
+    [patchState, state],
   )
 
   const deleteLiveLink = useCallback(
@@ -402,51 +434,60 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [removeLink],
   )
 
-  const persistLiveLink = useCallback(async (title: string, url: string, icon?: string | null) => {
-    const resolvedIcon = icon ?? inferLinkIcon(title, url)
-    const tempId = `temp-${crypto.randomUUID()}`
-    patchState((s) => ({
-      ...s,
-      links: [
-        ...s.links,
-        {
-          id: tempId,
-          title,
-          url,
-          icon: resolvedIcon,
-          position: s.links.length,
-          is_active: true,
-        },
-      ],
-    }))
+  const persistLiveLink = useCallback(
+    async (title: string, url: string, icon?: string | null) => {
+      const trimmedTitle = title.trim()
+      const normalizedUrl = normalizeUrl(url)
+      const resolvedIcon = icon ?? inferLinkIcon(trimmedTitle, normalizedUrl)
+      const tempId = `temp-${crypto.randomUUID()}`
 
-    const res = await apiFetch<DbLink>("/api/links", {
-      method: "POST",
-      body: JSON.stringify({ title, url, icon: resolvedIcon }),
-    })
-
-    if (res.success && res.data) {
       patchState((s) => ({
         ...s,
-        links: s.links.map((l) =>
-          l.id === tempId
-            ? {
-                id: res.data!.id,
-                title: res.data!.title,
-                url: res.data!.url,
-                icon: res.data!.icon ?? resolvedIcon,
-                position: l.position,
-                is_active: res.data!.is_active !== false,
-              }
-            : l,
-        ),
+        links: [
+          ...s.links,
+          {
+            id: tempId,
+            title: trimmedTitle,
+            url: normalizedUrl,
+            icon: resolvedIcon,
+            position: s.links.length,
+            is_active: true,
+          },
+        ],
       }))
-      return true
-    }
 
-    // Keep link in editor preview even if save failed — user can edit URL and retry
-    return false
-  }, [patchState])
+      const res = await apiFetch<DbLink>("/api/links", {
+        method: "POST",
+        body: JSON.stringify({ title: trimmedTitle, url: normalizedUrl, icon: resolvedIcon }),
+      })
+
+      if (res.success && res.data) {
+        patchState((s) => ({
+          ...s,
+          links: s.links.map((l) =>
+            l.id === tempId
+              ? {
+                  id: res.data!.id,
+                  title: res.data!.title,
+                  url: res.data!.url,
+                  icon: res.data!.icon ?? resolvedIcon,
+                  position: l.position,
+                  is_active: res.data!.is_active !== false,
+                }
+              : l,
+          ),
+        }))
+        return { ok: true }
+      }
+
+      patchState((s) => ({
+        ...s,
+        links: s.links.filter((l) => l.id !== tempId),
+      }))
+      return { ok: false, error: res.error ?? "Could not add link" }
+    },
+    [patchState],
+  )
 
   const value = useMemo<EditorContextValue>(
     () => ({

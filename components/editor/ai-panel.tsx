@@ -99,9 +99,9 @@ export function AiPanel() {
       toast.success(`${link.title} added!`)
       return
     }
-    const ok = await persistLiveLink(link.title, link.url, icon)
-    if (!ok) {
-      toast.error("Could not add link")
+    const result = await persistLiveLink(link.title, link.url, icon)
+    if (!result.ok) {
+      toast.error(result.error ?? "Could not add link")
       return
     }
     toast.success(`${link.title} added!`)

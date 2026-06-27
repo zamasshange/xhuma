@@ -30,9 +30,9 @@ export function AiLinkRecommendations() {
       toast.success(`${title} added`)
       return
     }
-    const ok = await persistLiveLink(title, url, icon)
-    if (ok) toast.success(`${title} added`)
-    else toast.error("Could not save link")
+    const result = await persistLiveLink(title, url, icon)
+    if (result.ok) toast.success(`${title} added`)
+    else toast.error(result.error ?? "Could not save link")
   }
 
   const addAll = async () => {

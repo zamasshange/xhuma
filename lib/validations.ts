@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { isValidHttpUrl, normalizeUrl } from "@/lib/normalize-url"
 
 export const usernameSchema = z
   .string()
@@ -32,21 +33,19 @@ export const linkCreateSchema = z.object({
   url: z
     .string()
     .min(1, "URL is required")
-    .refine((value) => {
-      try {
-        new URL(value)
-        return true
-      } catch {
-        return false
-      }
-    }, "Enter a valid URL (e.g. https://open.spotify.com)"),
+    .transform(normalizeUrl)
+    .refine(isValidHttpUrl, "Enter a valid URL (e.g. https://instagram.com/you)"),
   icon: z.string().max(40).optional().nullable(),
 })
 
 export const linkUpdateSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(120).optional(),
-  url: z.string().url().optional(),
+  url: z
+    .string()
+    .transform(normalizeUrl)
+    .refine(isValidHttpUrl, "Enter a valid URL")
+    .optional(),
   icon: z.string().max(40).optional().nullable(),
   is_active: z.boolean().optional(),
   position: z.number().int().min(0).optional(),

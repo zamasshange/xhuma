@@ -75,82 +75,93 @@ export function DbPublicProfileView({
   }
 
   const header = (
-    <>
-      {onShare && (
-        <div className="mb-4 flex justify-end">
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-11 rounded-full border-white/20 bg-white/10"
-            onClick={onShare}
-          >
-            <Share2 className="size-4.5" />
-          </Button>
-        </div>
-      )}
-
-      <div className="flex flex-col items-center text-center">
-        <Avatar
-          src={profile.avatar_url || undefined}
-          alt={profile.display_name}
-          fallback={(profile.display_name || "You").slice(0, 2).toUpperCase()}
+    <div className="flex flex-col items-center text-center">
+      <Avatar
+        src={profile.avatar_url || undefined}
+        alt={profile.display_name}
+        fallback={(profile.display_name || "You").slice(0, 2).toUpperCase()}
+        className={cn(
+          "rounded-full border-4 border-white/30 bg-black/10 shadow-[0_8px_32px_rgba(0,0,0,0.18)]",
+          isCompact && "size-[52px] border-2",
+          isDevice && "size-[72px] border-[3px]",
+          isFull && "size-[104px] border-[3px] sm:size-28",
+        )}
+      />
+      <h1
+        className={cn(
+          "flex items-center justify-center gap-1.5 font-heading font-semibold tracking-tight",
+          isCompact && "mt-2 text-base",
+          isDevice && "mt-3 text-[17px] leading-tight",
+          isFull && "mt-5 text-[1.75rem] leading-tight sm:text-3xl",
+        )}
+      >
+        {profile.display_name}
+        {verified && (
+          <BadgeCheck
+            className={cn(
+              "shrink-0 text-sky-300",
+              isCompact && "size-3.5",
+              isDevice && "size-4",
+              isFull && "size-5",
+            )}
+            aria-label="Verified"
+          />
+        )}
+      </h1>
+      {profile.bio && (
+        <p
           className={cn(
-            "rounded-full border-4 border-white/25 bg-black/20 shadow-xl",
-            isCompact && "size-[52px] border-2",
-            isDevice && "size-[72px] border-[3px]",
-            isFull && "size-28",
-          )}
-        />
-        <h1
-          className={cn(
-            "flex items-center justify-center gap-1.5 font-heading font-semibold tracking-tight",
-            isCompact && "mt-2 text-base",
-            isDevice && "mt-3 text-[17px] leading-tight",
-            isFull && "mt-4 text-3xl",
+            "max-w-sm leading-relaxed opacity-90",
+            isCompact && "mt-1 line-clamp-2 text-[10px]",
+            isDevice && "mt-1.5 line-clamp-3 px-1 text-[12px] leading-snug",
+            isFull && "mt-3 max-w-[26ch] text-pretty text-base leading-relaxed sm:max-w-sm",
           )}
         >
-          {profile.display_name}
-          {verified && (
-            <BadgeCheck
-              className={cn(
-                "shrink-0 text-sky-300",
-                isCompact && "size-3.5",
-                isDevice && "size-4",
-                isFull && "size-5",
-              )}
-              aria-label="Verified"
-            />
-          )}
-        </h1>
-        {profile.bio && (
-          <p
-            className={cn(
-              "max-w-sm leading-relaxed opacity-90",
-              isCompact && "mt-1 line-clamp-2 text-[10px]",
-              isDevice && "mt-1.5 line-clamp-3 px-1 text-[12px] leading-snug",
-              isFull && "mt-2 text-base",
-            )}
-          >
-            {profile.bio}
-          </p>
-        )}
+          {profile.bio}
+        </p>
+      )}
+      {links.length > 0 && (
         <SocialIconRow
           icons={links.map((l) => resolveLinkIcon(l.icon, l.title, l.url))}
-          className={cn("opacity-90", isCompact && "mt-2", isDevice && "mt-3", isFull && "mt-4")}
+          className={cn("opacity-90", isCompact && "mt-2", isDevice && "mt-3", isFull && "mt-5")}
           size={isCompact ? 14 : isDevice ? 17 : 20}
           badgeSize={isCompact ? 24 : isDevice ? 28 : undefined}
           variant={staticPreview ? "plain" : useThemeIcons ? "theme" : "badge"}
           themeColors={useThemeIcons ? linkColors : undefined}
         />
-      </div>
-    </>
+      )}
+    </div>
+  )
+
+  const linkList = (
+    <div
+      className={cn(
+        "flex w-full flex-col",
+        isCompact && "mt-3 gap-1.5",
+        isDevice && "mt-4 gap-2",
+        isFull && "mt-8 gap-3",
+      )}
+    >
+      {links.map((link, i) => (
+        <ProfileLinkButton
+          key={link.id}
+          title={link.title}
+          icon={resolveLinkIcon(link.icon, link.title, link.url)}
+          theme={theme}
+          delay={0.05 * i}
+          density={viewDensity}
+          staticPreview={staticPreview}
+          onClick={() => handleClick(link.id, link.url)}
+        />
+      ))}
+    </div>
   )
 
   return (
     <div
       className={cn(
         "relative isolate w-full",
-        isFull ? "min-h-dvh overflow-hidden" : isFramePreview && "flex min-h-full flex-col",
+        isFull ? "flex min-h-dvh flex-col overflow-hidden" : isFramePreview && "flex min-h-full flex-col",
         !isFull && !isFramePreview && "min-h-0",
         decorClass,
       )}
@@ -168,57 +179,87 @@ export function DbPublicProfileView({
           className="pointer-events-none absolute inset-0 size-full object-cover object-center"
         />
       )}
+      {isFull && (
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/[0.06] via-transparent to-black/[0.12]"
+          aria-hidden
+        />
+      )}
+
+      {onShare && isFull && (
+        <div className="fixed right-4 top-4 z-30 pt-[env(safe-area-inset-top)]">
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-11 rounded-full border-white/25 bg-white/15 text-inherit backdrop-blur-sm hover:bg-white/25"
+            onClick={onShare}
+            aria-label="Share profile"
+          >
+            <Share2 className="size-4.5" />
+          </Button>
+        </div>
+      )}
+
       <div
         className={cn(
           "relative z-10 mx-auto w-full max-w-md",
           isFramePreview && "flex min-h-full flex-1 flex-col justify-center",
           isCompact && "px-2.5 pb-4 pt-9",
           isDevice && "px-4 py-8 pt-11",
-          isFull && "px-4 pb-10 pt-8",
+          isFull && "flex flex-1 flex-col items-center justify-center px-5 py-16 sm:px-6 sm:py-20",
         )}
       >
-        {staticPreview ? (
-          header
-        ) : (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-            {header}
-          </motion.div>
+        {onShare && !isFull && (
+          <div className="mb-4 flex justify-end">
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-11 rounded-full border-white/20 bg-white/10"
+              onClick={onShare}
+            >
+              <Share2 className="size-4.5" />
+            </Button>
+          </div>
         )}
 
-        <div
-          className={cn(
-            "flex flex-col",
-            isCompact && "mt-3 gap-1.5",
-            isDevice && "mt-4 gap-2",
-            isFull && "mt-8 gap-3",
+        <div className={cn(isFull && "w-full")}>
+          {staticPreview ? (
+            header
+          ) : (
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+              {header}
+            </motion.div>
           )}
-        >
-          {links.map((link, i) => (
-            <ProfileLinkButton
-              key={link.id}
-              title={link.title}
-              icon={resolveLinkIcon(link.icon, link.title, link.url)}
+
+          {links.length > 0 ? (
+            staticPreview ? (
+              linkList
+            ) : (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+                {linkList}
+              </motion.div>
+            )
+          ) : isFull ? (
+            <p className="mt-8 text-center text-sm opacity-60">No links yet</p>
+          ) : null}
+
+          {sections && (
+            <ProfileSectionBlocks
+              sections={sections}
               theme={theme}
-              delay={0.05 * i}
               density={viewDensity}
-              staticPreview={staticPreview}
-              onClick={() => handleClick(link.id, link.url)}
+              onLinkClick={(url) => {
+                if (url !== "#") window.open(url, "_blank", "noopener,noreferrer")
+              }}
             />
-          ))}
+          )}
         </div>
 
-        {sections && (
-          <ProfileSectionBlocks
-            sections={sections}
-            theme={theme}
-            density={viewDensity}
-            onLinkClick={(url) => {
-              if (url !== "#") window.open(url, "_blank", "noopener,noreferrer")
-            }}
-          />
+        {isFull && (
+          <p className="mt-10 w-full text-center text-xs font-medium opacity-55 sm:mt-12">
+            Powered by Xhuma
+          </p>
         )}
-
-        {isFull && <p className="mt-8 text-center text-[10px] opacity-45">Powered by Xhuma</p>}
       </div>
     </div>
   )

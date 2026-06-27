@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const userId = await requireUserId(request)
-  if (typeof userId === "object") return apiError(userId.error, 401)
+  if (typeof userId === "object") return apiError("Sign in to add links to your live page", 401)
 
   const body = await request.json()
   const parsed = linkCreateSchema.safeParse(body)

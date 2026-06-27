@@ -143,9 +143,9 @@ export function PageEditor() {
       toast.success(`${title} added!`)
       return
     }
-    const ok = await persistLiveLink(title, url, icon)
-    if (ok) toast.success(`${title} added!`)
-    else toast.message(`${title} added to preview`, { description: "Update the URL with your profile link — it will save when you blur the field." })
+    const result = await persistLiveLink(title, url, icon)
+    if (result.ok) toast.success(`${title} added!`)
+    else toast.error(result.error ?? "Could not add link")
   }
 
   const handleAddLink = async () => {
@@ -160,10 +160,10 @@ export function PageEditor() {
       return
     }
     setAddingLink(true)
-    const ok = await persistLiveLink(newLink.title.trim(), newLink.url.trim())
+    const result = await persistLiveLink(newLink.title.trim(), newLink.url.trim())
     setAddingLink(false)
-    if (!ok) {
-      toast.error("Could not add link")
+    if (!result.ok) {
+      toast.error(result.error ?? "Could not add link")
       return
     }
     setNewLink({ title: "", url: "" })
@@ -287,8 +287,6 @@ export function PageEditor() {
               </EditorPanel>
             ) : (
               <>
-                <ProfileHealthCard />
-
                 {isDraft && (
                   <EditorPanel>
                     <button
@@ -408,6 +406,10 @@ export function PageEditor() {
                   <div className="mt-4">
                     <AiLinkRecommendations />
                   </div>
+                </EditorPanel>
+
+                <EditorPanel className="p-4 sm:p-5">
+                  <ProfileHealthCard compact />
                 </EditorPanel>
 
                 <PageSectionsPanel />
