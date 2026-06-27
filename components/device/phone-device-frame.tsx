@@ -30,7 +30,7 @@ const SIZES = {
     island: "top-[8px] h-[18px] w-[72px]",
     islandCam: "size-[5px]",
     indicator: "h-[3px] w-[76px]",
-    maxH: "max-h-[min(400px,calc(100vh-12rem))]",
+    maxH: "h-[380px]",
     sideBtn: { left: "top-[86px] h-7", leftLow: "top-[128px] h-11", right: "top-[106px] h-14" },
   },
   lg: {
@@ -118,9 +118,10 @@ export function PhoneDeviceFrame({
               {/* Scrollable content */}
               <div
                 className={cn(
-                  "phone-device-screen-inner overflow-x-hidden overflow-y-auto no-scrollbar",
+                  "phone-device-screen-inner overflow-x-hidden overflow-y-auto overscroll-contain no-scrollbar",
                   s.maxH,
                 )}
+                style={{ WebkitOverflowScrolling: "touch" }}
               >
                 {children}
               </div>

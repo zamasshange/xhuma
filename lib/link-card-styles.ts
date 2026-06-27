@@ -40,6 +40,13 @@ export function resolveLinkCardStyle(theme: ProfileTheme): LinkCardStyle {
   return "rounded"
 }
 
+export function resolveLinkButtonColors(theme: ProfileTheme): { bg: string; text: string } {
+  return {
+    bg: theme.button?.trim() || PROFILE_LINK_BUTTON_BG,
+    text: theme.button_text?.trim() || PROFILE_LINK_BUTTON_TEXT,
+  }
+}
+
 export function linkCardClasses(style: LinkCardStyle): string {
   switch (style) {
     case "square":
@@ -67,8 +74,7 @@ export function linkCardInlineStyle(
   style: LinkCardStyle,
   theme: ProfileTheme,
 ): CSSProperties {
-  const bg = PROFILE_LINK_BUTTON_BG
-  const text = PROFILE_LINK_BUTTON_TEXT
+  const { bg, text } = resolveLinkButtonColors(theme)
   const radius = theme.radius ?? "14px"
 
   switch (style) {
@@ -83,14 +89,15 @@ export function linkCardInlineStyle(
       return {
         backgroundColor: bg,
         color: text,
-        border: "2.5px solid #0d0c22",
-        boxShadow: "4px 4px 0 #0d0c22",
+        border: `2.5px solid ${bg}`,
+        boxShadow: `4px 4px 0 ${bg}`,
+        filter: "brightness(1.05)",
       }
     case "outline":
       return {
-        backgroundColor: bg,
+        backgroundColor: "transparent",
         color: text,
-        border: `2px solid rgba(255,255,255,0.2)`,
+        border: `2px solid ${text}`,
         borderRadius: radius,
       }
     case "soft":
@@ -104,7 +111,7 @@ export function linkCardInlineStyle(
       return {
         backgroundColor: bg,
         color: text,
-        boxShadow: "0 0 16px rgba(13,12,34,0.45), inset 0 0 0 1px rgba(255,255,255,0.1)",
+        boxShadow: `0 0 16px ${bg}80, inset 0 0 0 1px rgba(255,255,255,0.1)`,
         borderRadius: radius,
       }
     case "wavy":

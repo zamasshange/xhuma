@@ -6,7 +6,7 @@ import type { ProfileTheme } from "@/lib/database.types"
 import {
   linkCardClasses,
   linkCardInlineStyle,
-  PROFILE_LINK_BUTTON_TEXT,
+  resolveLinkButtonColors,
   resolveLinkCardStyle,
 } from "@/lib/link-card-styles"
 import { cn } from "@/lib/utils"
@@ -28,20 +28,21 @@ export function ProfileLinkButton({
 }) {
   const styleId = resolveLinkCardStyle(theme)
   const displayIcon = resolveLinkIcon(icon, title)
+  const { text: iconColor } = resolveLinkButtonColors(theme)
 
   const className = cn(
-    "flex w-full min-h-[48px] items-center justify-center gap-2.5 px-4 py-3 text-[15px]",
+    "flex w-full items-center justify-center gap-2 px-3",
+    staticPreview ? "min-h-[34px] py-1.5 text-[11px]" : "min-h-[48px] py-3 text-[15px] gap-2.5 px-4",
     !staticPreview && "transition-transform hover:scale-[1.01] active:scale-[0.99]",
     linkCardClasses(styleId),
   )
 
   const style = linkCardInlineStyle(styleId, theme)
-  const iconColor = PROFILE_LINK_BUTTON_TEXT
 
   const content = (
     <>
-      <SocialIcon name={displayIcon} size={18} color={iconColor} />
-      <span>{title}</span>
+      <SocialIcon name={displayIcon} size={staticPreview ? 14 : 18} color={iconColor} />
+      <span className="truncate">{title}</span>
     </>
   )
 

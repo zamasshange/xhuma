@@ -135,12 +135,16 @@ export function SocialIconRow({
   icons,
   className,
   size = 20,
+  badgeSize,
   variant = "badge",
+  themeColors,
 }: {
   icons: string[]
   className?: string
   size?: number
-  variant?: "plain" | "badge"
+  badgeSize?: number
+  variant?: "plain" | "badge" | "theme"
+  themeColors?: { bg: string; text: string }
 }) {
   const unique = [
     ...new Set(
@@ -149,11 +153,33 @@ export function SocialIconRow({
   ]
   if (unique.length === 0) return null
 
+  const resolvedBadgeSize = badgeSize ?? Math.max(size * 1.6, 32)
+
+  if (variant === "theme" && themeColors) {
+    return (
+      <div className={cn("flex items-center justify-center gap-1.5", className)}>
+        {unique.map((icon) => (
+          <span
+            key={icon}
+            className="flex shrink-0 items-center justify-center rounded-full ring-1 ring-white/10"
+            style={{
+              width: resolvedBadgeSize,
+              height: resolvedBadgeSize,
+              backgroundColor: themeColors.bg,
+            }}
+          >
+            <SocialIcon name={icon} size={Math.round(resolvedBadgeSize * 0.45)} color={themeColors.text} />
+          </span>
+        ))}
+      </div>
+    )
+  }
+
   if (variant === "badge") {
     return (
       <div className={cn("flex items-center justify-center gap-2.5", className)}>
         {unique.map((icon) => (
-          <SocialIconBadge key={icon} icon={icon} size={Math.max(size * 1.6, 32)} className="rounded-full" />
+          <SocialIconBadge key={icon} icon={icon} size={resolvedBadgeSize} className="rounded-full" />
         ))}
       </div>
     )

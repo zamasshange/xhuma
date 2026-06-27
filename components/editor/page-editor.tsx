@@ -42,6 +42,7 @@ import { LinkEditorRow } from "@/components/editor/link-editor-row"
 import { QuickPlatformChips } from "@/components/editor/quick-platform-chips"
 import { AvatarUpload } from "@/components/editor/avatar-upload"
 import { LinkStylePicker } from "@/components/editor/link-style-picker"
+import { LinkColorPicker } from "@/components/editor/link-color-picker"
 import { resolveLinkCardStyle } from "@/lib/link-card-styles"
 import type { SocialIconName } from "@/lib/infer-link-icon"
 
@@ -407,6 +408,10 @@ export function PageEditor() {
                     onChange={(link_style) =>
                       setTheme({ ...state!.profile.theme, link_style })
                     }
+                  />
+                  <LinkColorPicker
+                    theme={state?.profile.theme ?? { bg: "", text: "", button: "#0d0c22", button_text: "#ffffff", radius: "14px" }}
+                    onChange={(patch) => setTheme({ ...state!.profile.theme, ...patch })}
                   />
                 </EditorPanel>
 

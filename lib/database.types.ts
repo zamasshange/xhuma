@@ -9,6 +9,8 @@ export type ProfileTheme = {
   button_style?: "rounded" | "wavy" | "pill"
   /** Link button visual style (rounded, glass, comic, etc.) */
   link_style?: LinkCardStyle
+  /** Social icon row on profile: brand colours or match link buttons */
+  social_icon_style?: "brand" | "theme"
   /** Full-bleed background image (bio.link theme art) */
   bg_image?: string
   /** Editor / picker reference */

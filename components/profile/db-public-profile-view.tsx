@@ -10,6 +10,7 @@ import type { DbLink, DbProfile } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
 import { resolveThemeBackground } from "@/lib/theme-presets"
+import { resolveLinkButtonColors } from "@/lib/link-card-styles"
 
 const PRESET_DECOR_CLASS: Record<string, string> = {
   summer: "profile-theme-summer",
@@ -38,6 +39,8 @@ export function DbPublicProfileView({
   verified?: boolean
 }) {
   const theme = resolveThemeBackground({ ...DEFAULT_THEME, ...profile.theme_json })
+  const linkColors = resolveLinkButtonColors(theme)
+  const useThemeIcons = theme.social_icon_style === "theme"
   const decorClass =
     !theme.bg_image && theme.preset_id ? PRESET_DECOR_CLASS[theme.preset_id] : undefined
   const staticPreview = compact
@@ -74,27 +77,37 @@ export function DbPublicProfileView({
           fallback={(profile.display_name || "You").slice(0, 2).toUpperCase()}
           className={cn(
             "rounded-full border-4 border-white/25 bg-black/20 shadow-xl",
-            compact ? "size-24" : "size-28",
+            compact ? "size-[52px] border-2" : "size-28",
           )}
         />
         <h1
           className={cn(
-            "mt-4 flex items-center justify-center gap-1.5 font-heading font-semibold tracking-tight",
-            compact ? "text-2xl" : "text-3xl",
+            "flex items-center justify-center gap-1.5 font-heading font-semibold tracking-tight",
+            compact ? "mt-2 text-base" : "mt-4 text-3xl",
           )}
         >
           {profile.display_name}
-          {verified && <BadgeCheck className="size-5 shrink-0 text-sky-300" aria-label="Verified" />}
+          {verified && (
+            <BadgeCheck className={cn("shrink-0 text-sky-300", compact ? "size-3.5" : "size-5")} aria-label="Verified" />
+          )}
         </h1>
         {profile.bio && (
-          <p className={cn("mt-2 max-w-sm leading-relaxed opacity-90", compact ? "text-sm" : "text-base")}>
+          <p
+            className={cn(
+              "max-w-sm leading-relaxed opacity-90",
+              compact ? "mt-1 line-clamp-2 text-[10px]" : "mt-2 text-base",
+            )}
+          >
             {profile.bio}
           </p>
         )}
         <SocialIconRow
           icons={links.map((l) => resolveLinkIcon(l.icon, l.title, l.url))}
-          className={cn("opacity-90", compact ? "mt-3" : "mt-4")}
-          size={compact ? 18 : 20}
+          className={cn("opacity-90", compact ? "mt-2" : "mt-4")}
+          size={compact ? 14 : 20}
+          badgeSize={compact ? 24 : undefined}
+          variant={useThemeIcons ? "theme" : "badge"}
+          themeColors={useThemeIcons ? linkColors : undefined}
         />
       </div>
     </>
@@ -103,8 +116,8 @@ export function DbPublicProfileView({
   return (
     <div
       className={cn(
-        "relative isolate w-full overflow-hidden",
-        compact ? "min-h-full" : "min-h-dvh",
+        "relative isolate w-full",
+        compact ? "min-h-0" : "min-h-dvh overflow-hidden",
         decorClass,
       )}
       style={{
@@ -123,8 +136,8 @@ export function DbPublicProfileView({
       )}
       <div
         className={cn(
-          "relative z-10 mx-auto max-w-md px-4 pb-12",
-          compact ? "pt-12" : "pb-10 pt-8",
+          "relative z-10 mx-auto max-w-md",
+          compact ? "px-2.5 pb-4 pt-9" : "px-4 pb-10 pt-8",
         )}
       >
         {staticPreview ? (
@@ -135,7 +148,7 @@ export function DbPublicProfileView({
           </motion.div>
         )}
 
-        <div className={cn("flex flex-col overflow-hidden", compact ? "mt-6 gap-2.5" : "mt-8 gap-3")}>
+        <div className={cn("flex flex-col", compact ? "mt-3 gap-1.5" : "mt-8 gap-3")}>
           {links.map((link, i) => (
             <ProfileLinkButton
               key={link.id}
@@ -149,7 +162,7 @@ export function DbPublicProfileView({
           ))}
         </div>
 
-        <p className="mt-8 text-center text-[10px] opacity-45">Powered by Xhuma</p>
+        {!compact && <p className="mt-8 text-center text-[10px] opacity-45">Powered by Xhuma</p>}
       </div>
     </div>
   )
