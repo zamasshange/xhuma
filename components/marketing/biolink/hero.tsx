@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { bioHero } from "@/data/bio-link"
 import { ClaimLinkInput } from "@/components/marketing/biolink/claim-link"
 import { PhoneDeviceFrame } from "@/components/device/phone-device-frame"
@@ -14,10 +14,10 @@ import {
 } from "@/lib/demo-profile"
 
 export function BiolinkHero() {
-  const [flipped, setFlipped] = useState(false)
+  const [showSummer, setShowSummer] = useState(true)
 
   useEffect(() => {
-    const interval = setInterval(() => setFlipped((f) => !f), 4000)
+    const interval = setInterval(() => setShowSummer((s) => !s), 4000)
     return () => clearInterval(interval)
   }, [])
 
@@ -35,32 +35,45 @@ export function BiolinkHero() {
         </div>
 
         <div className="flex w-2/5 items-center justify-center max-md:mt-10 max-md:w-full max-sm:mt-7">
-          <div className="relative inline-block cursor-pointer [perspective:2000px]">
-            <motion.div
-              className="relative [transform-style:preserve-3d]"
-              animate={{ rotateY: flipped ? 180 : 0 }}
-              transition={{ duration: 0.9, ease: [0.19, 1, 0.22, 1] }}
-            >
-              <div className="[backface-visibility:hidden]">
-                <PhoneDeviceFrame size="md" showLabel={false}>
-                  <DbPublicProfileView
-                    profile={DEMO_SUMMER_PROFILE}
-                    links={DEMO_SUMMER_LINKS}
-                    compact
-                    verified
-                  />
-                </PhoneDeviceFrame>
-              </div>
-              <div className="absolute left-0 top-0 w-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                <PhoneDeviceFrame size="md" showLabel={false}>
-                  <DbPublicProfileView
-                    profile={DEMO_DARK_PROFILE}
-                    links={DEMO_DARK_LINKS}
-                    compact
-                  />
-                </PhoneDeviceFrame>
-              </div>
-            </motion.div>
+          <div className="relative inline-block min-h-[520px] w-[260px] sm:w-[280px]">
+            <AnimatePresence mode="wait">
+              {showSummer ? (
+                <motion.div
+                  key="summer"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0"
+                >
+                  <PhoneDeviceFrame size="md" showLabel={false}>
+                    <DbPublicProfileView
+                      profile={DEMO_SUMMER_PROFILE}
+                      links={DEMO_SUMMER_LINKS}
+                      compact
+                      verified
+                    />
+                  </PhoneDeviceFrame>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="dark"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0"
+                >
+                  <PhoneDeviceFrame size="md" showLabel={false}>
+                    <DbPublicProfileView
+                      profile={DEMO_DARK_PROFILE}
+                      links={DEMO_DARK_LINKS}
+                      compact
+                    />
+                  </PhoneDeviceFrame>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

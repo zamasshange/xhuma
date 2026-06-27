@@ -107,7 +107,9 @@ export function EditorPreviewFrame({ children }: { children: React.ReactNode }) 
       <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-bio-grey">
         Live preview
       </p>
-      <PhoneDeviceFrame size="lg">{children}</PhoneDeviceFrame>
+      <PhoneDeviceFrame size="lg" showLabel={false}>
+        {children}
+      </PhoneDeviceFrame>
     </div>
   )
 }

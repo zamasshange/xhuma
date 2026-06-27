@@ -290,24 +290,18 @@
 }
 .phone-device-screen {
   -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+  isolation: isolate;
 }
 
-/* Wavy link buttons — Summer theme style */
+/* Wavy link buttons — scalloped edges without clip-path (avoids 3D preview glitches) */
 .profile-link-wavy {
-  clip-path: polygon(
-    0% 10%, 2.5% 2%, 5% 10%, 7.5% 2%, 10% 10%, 12.5% 2%, 15% 10%, 17.5% 2%, 20% 10%,
-    22.5% 2%, 25% 10%, 27.5% 2%, 30% 10%, 32.5% 2%, 35% 10%, 37.5% 2%, 40% 10%,
-    42.5% 2%, 45% 10%, 47.5% 2%, 50% 10%, 52.5% 2%, 55% 10%, 57.5% 2%, 60% 10%,
-    62.5% 2%, 65% 10%, 67.5% 2%, 70% 10%, 72.5% 2%, 75% 10%, 77.5% 2%, 80% 10%,
-    82.5% 2%, 85% 10%, 87.5% 2%, 90% 10%, 92.5% 2%, 95% 10%, 97.5% 2%, 100% 10%,
-    100% 90%, 97.5% 98%, 95% 90%, 92.5% 98%, 90% 90%, 87.5% 98%, 85% 90%, 82.5% 98%,
-    80% 90%, 77.5% 98%, 75% 90%, 72.5% 98%, 70% 90%, 67.5% 98%, 65% 90%, 62.5% 98%,
-    60% 90%, 57.5% 98%, 55% 90%, 52.5% 98%, 50% 90%, 47.5% 98%, 45% 90%, 42.5% 98%,
-    40% 90%, 37.5% 98%, 35% 90%, 32.5% 98%, 30% 90%, 27.5% 98%, 25% 90%, 22.5% 98%,
-    20% 90%, 17.5% 98%, 15% 90%, 12.5% 98%, 10% 90%, 7.5% 98%, 5% 90%, 2.5% 98%, 0% 90%
-  );
-  padding-top: 0.65rem;
-  padding-bottom: 0.65rem;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 -3px 0 rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .bio-continue-btn:hover:not(:disabled) {
