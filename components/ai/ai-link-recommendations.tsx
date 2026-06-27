@@ -1,7 +1,8 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Loader2, Plus, Sparkles } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { toast } from "sonner"
 import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioMuted } from "@/components/ui/bio-form"
@@ -46,7 +47,7 @@ export function AiLinkRecommendations() {
   return (
     <div className="rounded-xl border border-bio-dark/6 bg-bio-grey-f4/50 p-4">
       <div className="flex items-center gap-2">
-        <Sparkles className="size-4 text-bio-dark" />
+        <AiIcon className="size-4 text-bio-dark" />
         <p className="text-sm font-semibold text-bio-dark">AI Link Recommendations</p>
       </div>
       <BioMuted className="mt-1 text-xs">Tailored for South African creators — add individually or all at once.</BioMuted>

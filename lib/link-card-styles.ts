@@ -40,10 +40,10 @@ export function resolveLinkCardStyle(theme: ProfileTheme): LinkCardStyle {
   return "rounded"
 }
 
-export function resolveLinkButtonColors(theme: ProfileTheme): { bg: string; text: string } {
+export function resolveLinkButtonColors(_theme: ProfileTheme): { bg: string; text: string } {
   return {
-    bg: theme.button?.trim() || PROFILE_LINK_BUTTON_BG,
-    text: theme.button_text?.trim() || PROFILE_LINK_BUTTON_TEXT,
+    bg: PROFILE_LINK_BUTTON_BG,
+    text: PROFILE_LINK_BUTTON_TEXT,
   }
 }
 

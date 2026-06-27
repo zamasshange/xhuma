@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { toast } from "sonner"
-import { Loader2, Sparkles } from "lucide-react"
+import { Loader2 } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { AiLinkRecommendations } from "@/components/ai/ai-link-recommendations"
 import { AiQuickActions } from "@/components/ai/ai-quick-actions"
 import { AiThemeAssistant } from "@/components/ai/ai-theme-assistant"
@@ -154,7 +155,7 @@ export function AiPanel() {
             onChange={(e) => setBioInput(e.target.value)}
           />
           <BioButton onClick={generateBio} disabled={loading || !bioInput.trim()} className="h-11">
-            {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+            {loading ? <Loader2 className="size-4 animate-spin" /> : <AiIcon className="size-4" />}
             Generate Bio
           </BioButton>
           {bios.length > 0 && (
@@ -182,7 +183,7 @@ export function AiPanel() {
             placeholder="Your profession or bio snippet"
           />
           <BioButton onClick={generateLinks} disabled={loading || !profession.trim()} className="h-11">
-            {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+            {loading ? <Loader2 className="size-4 animate-spin" /> : <AiIcon className="size-4" />}
             Get Suggestions
           </BioButton>
           {suggestedLinks.length > 0 && (
@@ -219,7 +220,7 @@ export function AiPanel() {
             </div>
           )}
           <BioButton onClick={generateButton} disabled={loading || !buttonPlatform.trim()} className="h-11">
-            {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+            {loading ? <Loader2 className="size-4 animate-spin" /> : <AiIcon className="size-4" />}
             Generate CTA
           </BioButton>
           {buttonText && (

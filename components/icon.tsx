@@ -1,5 +1,6 @@
 import { SocialIcon, resolveSocialIconName } from "@/components/icons/social-icon"
-import { Globe, Sparkles, BarChart3, Smartphone, Zap, ShieldCheck, PenLine, Type, ScanLine, Gem, Eye, MousePointerClick, Users, TrendingUp, UserPlus, Share2, Link as LinkIcon, Music, Calendar, ShoppingBag, BookOpen, GraduationCap, Mail, Palette, Image as ImageIcon, Briefcase, Play, type LucideIcon } from "lucide-react"
+import { FaRobot } from "react-icons/fa6"
+import { Globe, BarChart3, Smartphone, Zap, ShieldCheck, PenLine, Type, ScanLine, Gem, Eye, MousePointerClick, Users, TrendingUp, UserPlus, Share2, Link as LinkIcon, Music, Calendar, ShoppingBag, BookOpen, GraduationCap, Mail, Palette, Image as ImageIcon, Briefcase, Play, type LucideIcon } from "lucide-react"
 
 const lucideMap: Record<string, LucideIcon> = {
   music: Music,
@@ -12,7 +13,7 @@ const lucideMap: Record<string, LucideIcon> = {
   video: Play,
   image: ImageIcon,
   link: LinkIcon,
-  sparkles: Sparkles,
+  sparkles: FaRobot as unknown as LucideIcon,
   "bar-chart-3": BarChart3,
   smartphone: Smartphone,
   zap: Zap,
@@ -40,6 +41,10 @@ export function Icon({
 }) {
   if (resolveSocialIconName(name)) {
     return <SocialIcon name={name} size={size} className={className} />
+  }
+
+  if (name === "sparkles") {
+    return <FaRobot className={className} size={size} aria-hidden="true" />
   }
 
   const Cmp = lucideMap[name] ?? Globe

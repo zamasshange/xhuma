@@ -169,7 +169,7 @@ export const marketingPages = {
   contact: {
     title: "Contact Xhuma",
     description:
-      "Get in touch with the Xhuma team. Questions about your link in bio, AI features, pricing, or partnerships — we're here to help creators.",
+      "Contact Xhuma by BDL Corp — support, partnerships, and business inquiries. Email Burdolar@gmail.com or call +27 73 670 1175. South Africa.",
     path: "/contact",
   },
   explore: {
@@ -191,16 +191,18 @@ export const marketingPages = {
     path: "/faq",
   },
   privacy: {
-    title: "Privacy Policy",
+    title: "Privacy Policy — Xhuma",
     description:
-      "How Xhuma collects, uses, and protects your personal information. POPIA-aware privacy practices for creators and businesses in South Africa.",
-    path: "/privacy",
+      "How Xhuma by BDL Corp collects, uses, and protects your personal data. POPIA-aware privacy for South African creators.",
+    path: "/privacy-policy",
+    absoluteTitle: true,
   },
   terms: {
-    title: "Terms of Service",
+    title: "Terms of Service — Xhuma",
     description:
-      "Terms and conditions for using the Xhuma AI link in bio platform. Your rights, responsibilities, and acceptable use policy.",
-    path: "/terms",
+      "Terms and conditions for using the Xhuma AI link in bio platform by BDL Corp. User responsibilities and acceptable use.",
+    path: "/terms-of-service",
+    absoluteTitle: true,
   },
 } as const
 

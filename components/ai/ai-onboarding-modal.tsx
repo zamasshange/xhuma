@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronRight, Loader2, Sparkles, X } from "lucide-react"
+import { ChevronRight, Loader2, X } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { toast } from "sonner"
 import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioGradientButton, BioInput, BioMuted, BioTextarea } from "@/components/ui/bio-form"
@@ -86,7 +87,7 @@ export function AiOnboardingModal({ open, onClose }: Props) {
       <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="size-5 text-bio-dark" />
+            <AiIcon className="size-5 text-bio-dark" />
             <h2 className="text-lg font-semibold text-bio-dark">Set up with AI</h2>
           </div>
           <button type="button" onClick={onClose} className="rounded-lg p-1 hover:bg-bio-dark/5">
@@ -133,7 +134,7 @@ export function AiOnboardingModal({ open, onClose }: Props) {
             </BioGradientButton>
           ) : (
             <BioGradientButton className="flex-1" onClick={finish} disabled={loading}>
-              {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+              {loading ? <Loader2 className="size-4 animate-spin" /> : <AiIcon className="size-4" />}
               Generate my page
             </BioGradientButton>
           )}

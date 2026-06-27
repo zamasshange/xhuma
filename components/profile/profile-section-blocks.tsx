@@ -5,29 +5,50 @@ import { ProfileLinkButton } from "@/components/profile/profile-link-button"
 import { resolveLinkIcon } from "@/components/icons/social-icon"
 import type { ProfileTheme } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
+import type { ProfileViewDensity } from "@/lib/profile-view-density"
+import { resolveProfileDensity } from "@/lib/profile-view-density"
 
 type Item = { title?: string; description?: string; quote?: string; author?: string; q?: string; a?: string; price?: string }
 
 export function ProfileSectionBlocks({
   sections,
   theme,
+  density,
   compact,
   onLinkClick,
 }: {
   sections: PageSection[]
   theme: ProfileTheme
+  density?: ProfileViewDensity
+  /** @deprecated Use density */
   compact?: boolean
   onLinkClick?: (url: string) => void
 }) {
+  const viewDensity = resolveProfileDensity(density, compact)
+  const isCompact = viewDensity === "compact"
+  const isDevice = viewDensity === "device"
   const skip = new Set(["profile", "links", "social_icons"])
   const blocks = sections.filter((s) => !skip.has(s.type))
 
   if (blocks.length === 0) return null
 
   return (
-    <div className={cn("flex flex-col", compact ? "mt-3 gap-2" : "mt-6 gap-4")}>
+    <div
+      className={cn(
+        "flex flex-col",
+        isCompact && "mt-3 gap-2",
+        isDevice && "mt-4 gap-2.5",
+        viewDensity === "full" && "mt-6 gap-4",
+      )}
+    >
       {blocks.map((section) => (
-        <SectionBlock key={section.id} section={section} theme={theme} compact={compact} onLinkClick={onLinkClick} />
+        <SectionBlock
+          key={section.id}
+          section={section}
+          theme={theme}
+          density={viewDensity}
+          onLinkClick={onLinkClick}
+        />
       ))}
     </div>
   )
@@ -36,17 +57,19 @@ export function ProfileSectionBlocks({
 function SectionBlock({
   section,
   theme,
-  compact,
+  density,
   onLinkClick,
 }: {
   section: PageSection
   theme: ProfileTheme
-  compact?: boolean
+  density: ProfileViewDensity
   onLinkClick?: (url: string) => void
 }) {
   const c = section.content
-  const pad = compact ? "p-2.5" : "p-4"
-  const textSize = compact ? "text-[10px]" : "text-sm"
+  const isCompact = density === "compact"
+  const isDevice = density === "device"
+  const pad = isCompact ? "p-2.5" : isDevice ? "p-3" : "p-4"
+  const textSize = isCompact ? "text-[10px]" : isDevice ? "text-[12px]" : "text-sm"
 
   switch (section.type) {
     case "about":
@@ -106,7 +129,8 @@ function SectionBlock({
           title={String(c.cta ?? section.title ?? "Contact")}
           icon={section.type === "whatsapp" ? "whatsapp" : "link"}
           theme={theme}
-          staticPreview={compact}
+          density={density}
+          staticPreview={density !== "full"}
           onClick={() => onLinkClick?.(String(c.url ?? "#"))}
         />
       )

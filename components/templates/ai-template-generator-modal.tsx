@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, Sparkles, X } from "lucide-react"
+import { Loader2, X } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { BioButton, BioGradientButton, BioTextarea } from "@/components/ui/bio-form"
+import { BioButton, BioTextarea } from "@/components/ui/bio-form"
+import { AiIcon } from "@/components/icons/app-icons"
 import { apiFetch } from "@/lib/api-fetch"
 import type { TemplateDocument } from "@/lib/editor-state"
 import { BLANK_TEMPLATE_ID } from "@/lib/editor-sections"
@@ -53,7 +54,7 @@ export function AiTemplateGeneratorModal({ onClose }: { onClose: () => void }) {
       <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="size-5" />
+            <AiIcon className="size-5" />
             <h2 className="text-lg font-semibold">Generate template with AI</h2>
           </div>
           <button type="button" onClick={onClose} className="rounded-lg p-2 hover:bg-bio-grey-f4">
@@ -85,10 +86,10 @@ export function AiTemplateGeneratorModal({ onClose }: { onClose: () => void }) {
           <BioButton variant="secondary" className="flex-1" onClick={onClose}>
             Cancel
           </BioButton>
-          <BioGradientButton className="flex-1" onClick={generate} disabled={loading || !prompt.trim()}>
-            {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+          <BioButton className="flex-1" onClick={generate} disabled={loading || !prompt.trim()}>
+            {loading ? <Loader2 className="size-4 animate-spin" /> : <AiIcon className="size-4" />}
             Generate
-          </BioGradientButton>
+          </BioButton>
         </div>
       </div>
     </div>

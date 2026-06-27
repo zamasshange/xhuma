@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Loader2, Sparkles } from "lucide-react"
+import { Loader2 } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { BioCard, BioMuted } from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
 import { getAiCache, setAiCache } from "@/lib/ai/cache"
@@ -45,7 +46,7 @@ export function AiAnalyticsInsights({ analytics }: Props) {
   return (
     <BioCard className="border-dashed border-bio-dark/15 bg-gradient-to-br from-white to-bio-grey-f4/30">
       <div className="flex items-center gap-2">
-        <Sparkles className="size-4 text-bio-dark" />
+        <AiIcon className="size-4 text-bio-dark" />
         <h3 className="font-semibold text-bio-dark">AI Insights</h3>
       </div>
       <BioMuted className="mt-1 text-xs">What your numbers mean — in plain language.</BioMuted>

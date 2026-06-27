@@ -1,7 +1,8 @@
 "use client"
 
 import { useMemo } from "react"
-import { CheckCircle2, Circle, Sparkles } from "lucide-react"
+import { CheckCircle2, Circle } from "lucide-react"
+import { FaClipboardCheck } from "react-icons/fa6"
 import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioMuted } from "@/components/ui/bio-form"
 import { computeProfileHealth } from "@/lib/ai/profile-health"
@@ -46,7 +47,7 @@ export function ProfileHealthCard({ onAction, compact }: ProfileHealthCardProps)
           <p className="text-sm font-semibold text-bio-dark">Profile Health</p>
           <BioMuted className="text-xs">{health.suggestions[0]?.label ?? "Looking good!"}</BioMuted>
         </div>
-        <Sparkles className="size-4 shrink-0 text-bio-grey" />
+        <FaClipboardCheck className="size-4 shrink-0 text-bio-grey" />
       </div>
     )
   }
@@ -62,7 +63,7 @@ export function ProfileHealthCard({ onAction, compact }: ProfileHealthCardProps)
           </p>
         </div>
         <div className="flex size-12 items-center justify-center rounded-xl bg-bio-dark/5">
-          <Sparkles className="size-5 text-bio-dark" />
+          <FaClipboardCheck className="size-5 text-bio-dark" />
         </div>
       </div>
 

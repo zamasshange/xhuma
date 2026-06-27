@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, Sparkles } from "lucide-react"
+import { Loader2 } from "lucide-react"
+import { FaPen } from "react-icons/fa6"
 import { toast } from "sonner"
 import { BioButton } from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
@@ -48,7 +49,7 @@ export function ImproveWithAi({ field, text, context, onApply, className, compac
           compact ? "px-2 py-1 text-[11px]" : "px-2.5 py-1.5 text-xs",
         )}
       >
-        <Sparkles className={compact ? "size-3" : "size-3.5"} />
+        <FaPen className={compact ? "size-3" : "size-3.5"} />
         Improve with AI
       </button>
 
@@ -73,7 +74,7 @@ export function ImproveWithAi({ field, text, context, onApply, className, compac
               ))}
             </div>
             <BioButton className="mt-3 h-9 w-full text-xs" onClick={rewrite} disabled={loading}>
-              {loading ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
+              {loading ? <Loader2 className="size-3.5 animate-spin" /> : <FaPen className="size-3.5" />}
               {loading ? "Improving…" : "Apply"}
             </BioButton>
           </div>

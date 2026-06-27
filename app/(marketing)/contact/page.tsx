@@ -1,118 +1,88 @@
-"use client"
+import Link from "next/link"
+import { FaEnvelope, FaBuilding, FaLocationDot, FaPhone } from "react-icons/fa6"
+import { DarkButton } from "@/components/marketing/biolink/dark-button"
+import { SectionBadge } from "@/components/marketing/biolink/section-badge"
+import { BioContainer } from "@/components/marketing/biolink/bio-container"
+import { ContactForm } from "@/components/marketing/contact-form"
+import { SeoBreadcrumbs } from "@/components/seo/breadcrumb-json-ld"
+import { SiteJsonLd } from "@/components/seo/site-json-ld"
+import { pageMetadata } from "@/lib/seo"
+import { COMPANY } from "@/lib/company"
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { toast } from "sonner"
-import { Mail, MessageSquare, User } from "lucide-react"
-import { SectionHeading } from "@/components/section-heading"
-import { Reveal } from "@/components/motion/reveal"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
-import { SITE_DOMAIN } from "@/lib/brand"
+export const metadata = pageMetadata("contact")
 
-const schema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  subject: z.string().min(3, "Subject is required"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
-})
-
-type FormData = z.infer<typeof schema>
+const CONTACT_ITEMS = [
+  { icon: FaEnvelope, label: "Email", value: COMPANY.email, href: `mailto:${COMPANY.email}` },
+  { icon: FaPhone, label: "Phone", value: COMPANY.phone, href: `tel:${COMPANY.phone.replace(/\s/g, "")}` },
+  { icon: FaBuilding, label: "Company", value: COMPANY.legalName },
+  { icon: FaLocationDot, label: "Location", value: COMPANY.country },
+] as const
 
 export default function ContactPage() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({ resolver: zodResolver(schema) })
-
-  const onSubmit = () => {
-    toast.success("Message sent! We'll get back to you within 24 hours.")
-    reset()
-  }
-
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
-      <Reveal>
-        <SectionHeading
-          eyebrow="Contact"
-          title="We'd love to hear from you"
-          description="Questions about Xhuma, partnerships, or Business plans? Drop us a line — we're based in South Africa and reply within one business day."
-          align="left"
-        />
-      </Reveal>
+    <>
+      <SeoBreadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Contact", href: "/contact" },
+        ]}
+      />
+      <SiteJsonLd />
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-5">
-        <div className="flex flex-col gap-4 lg:col-span-2">
-          {[
-            { icon: Mail, title: "Email", value: "hello@xhuma.cc" },
-            { icon: MessageSquare, title: "Live chat", value: "Mon–Fri, 9am–5pm SAST" },
-            { icon: User, title: "Support", value: `${SITE_DOMAIN}/faq` },
-          ].map((item) => (
-            <Card key={item.title} className="flex items-center gap-4 p-5">
-              <div className="flex size-11 items-center justify-center rounded-xl bg-brand/10 text-brand">
-                <item.icon className="size-5" />
+      <section className="mx-auto w-[min(900px,92%)] pt-32 text-center text-bio-dark max-lg:pt-24">
+        <SectionBadge>Contact</SectionBadge>
+        <h1 className="mt-6 text-6xl font-semibold tracking-tighter max-lg:text-5xl max-sm:text-4xl">
+          Get in touch
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-bio-grey">
+          If you need support, partnerships, business inquiries, or technical help regarding {COMPANY.productName},
+          feel free to reach out. We typically respond within 24–48 hours.
+        </p>
+      </section>
+
+      <BioContainer className="pb-24 pt-12 max-sm:pb-16">
+        <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-5">
+          <div className="flex flex-col gap-3 lg:col-span-2">
+            {CONTACT_ITEMS.map((item) => (
+              <div
+                key={item.label}
+                className="flex items-center gap-4 rounded-2xl border border-bio-dark/8 bg-bio-grey-f4/40 p-5"
+              >
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-bio-dark text-white">
+                  <item.icon className="size-5" aria-hidden />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm text-bio-grey">{item.label}</p>
+                  {"href" in item && item.href ? (
+                    <a href={item.href} className="font-semibold text-bio-dark hover:underline">
+                      {item.value}
+                    </a>
+                  ) : (
+                    <p className="font-semibold text-bio-dark">{item.value}</p>
+                  )}
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{item.title}</p>
-                <p className="font-medium">{item.value}</p>
-              </div>
-            </Card>
-          ))}
+            ))}
+          </div>
+
+          <div className="rounded-2xl border border-bio-dark/8 bg-white p-6 shadow-sm sm:p-8 lg:col-span-3">
+            <h2 className="text-lg font-semibold text-bio-dark">Send us a message</h2>
+            <p className="mt-1 text-sm text-bio-grey">Fill in the form below and we&apos;ll get back to you soon.</p>
+            <div className="mt-6">
+              <ContactForm />
+            </div>
+          </div>
         </div>
 
-        <Reveal className="lg:col-span-3">
-          <Card className="p-5 sm:p-8">
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" className="h-12 text-base" placeholder="Your name" {...register("name")} />
-                  {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    className="h-12 text-base"
-                    placeholder="you@example.co.za"
-                    {...register("email")}
-                  />
-                  {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="subject">Subject</Label>
-                <Input id="subject" className="h-12 text-base" placeholder="How can we help?" {...register("subject")} />
-                {errors.subject && <p className="text-sm text-destructive">{errors.subject.message}</p>}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="message">Message</Label>
-                <Textarea
-                  id="message"
-                  className="min-h-[140px] text-base"
-                  placeholder="Tell us more..."
-                  {...register("message")}
-                />
-                {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
-              </div>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="h-12 min-h-11 w-full text-base bg-brand-gradient text-brand-foreground sm:w-auto sm:px-8"
-              >
-                Send message
-              </Button>
-            </form>
-          </Card>
-        </Reveal>
-      </div>
-    </div>
+        <div className="mx-auto mt-12 max-w-5xl text-center">
+          <DarkButton href="/editor">Start with Xhuma</DarkButton>
+          <p className="mt-4">
+            <Link href="/" className="text-sm text-bio-grey underline underline-offset-2 hover:text-bio-dark">
+              Back to homepage
+            </Link>
+          </p>
+        </div>
+      </BioContainer>
+    </>
   )
 }

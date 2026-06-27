@@ -2,16 +2,22 @@
 
 import { useState } from "react"
 import { Monitor, Smartphone, Tablet, X } from "lucide-react"
-import { PhoneDeviceFrame } from "@/components/device/phone-device-frame"
+import { PhoneDeviceFrame, type PhoneDeviceSize } from "@/components/device/phone-device-frame"
 import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
 import { editorStateFromDocument } from "@/lib/editor-state"
 import type { MarketplaceTemplate } from "@/lib/templates/catalog"
-import { BioGradientButton } from "@/components/ui/bio-form"
+import { BioButton } from "@/components/ui/bio-form"
 import { cn } from "@/lib/utils"
 import type { DbProfile } from "@/lib/database.types"
 import { resolveThemeBackground } from "@/lib/theme-presets"
 
 type Device = "mobile" | "tablet" | "desktop"
+
+const DEVICE_FRAME: Record<Device, PhoneDeviceSize> = {
+  mobile: "preview",
+  tablet: "md",
+  desktop: "lg",
+}
 
 export function TemplatePreviewModal({
   template,
@@ -39,12 +45,9 @@ export function TemplatePreviewModal({
     .filter((l) => l.title.trim())
     .map((l) => ({ id: l.id, title: l.title || "Link", url: l.url || "#", icon: l.icon }))
 
-  const frameWidth =
-    device === "desktop" ? "w-[320px]" : device === "tablet" ? "w-[260px]" : undefined
-
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center bg-bio-dark/50 p-4 sm:items-center">
-      <div className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="flex max-h-[94vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-bio-dark/8 px-4 py-3">
           <div>
             <p className="font-semibold text-bio-dark">{template.name}</p>
@@ -78,23 +81,21 @@ export function TemplatePreviewModal({
           ))}
         </div>
 
-        <div className="flex flex-1 justify-center overflow-auto bg-bio-grey-f4 p-6">
-          <div className={cn("transition-all", frameWidth)}>
-            <PhoneDeviceFrame size={device === "mobile" ? "editor" : "md"} showLabel={false} glow={false}>
-              <DbPublicProfileView
-                profile={previewProfile}
-                links={previewLinks}
-                pageSections={state.page_sections}
-                compact
-              />
-            </PhoneDeviceFrame>
-          </div>
+        <div className="flex flex-1 items-start justify-center overflow-auto bg-bio-grey-f4 p-6 sm:p-8">
+          <PhoneDeviceFrame size={DEVICE_FRAME[device]} showLabel={false} glow={device === "mobile"}>
+            <DbPublicProfileView
+              profile={previewProfile}
+              links={previewLinks}
+              pageSections={state.page_sections}
+              density="device"
+            />
+          </PhoneDeviceFrame>
         </div>
 
         <div className="border-t border-bio-dark/8 p-4">
-          <BioGradientButton className="w-full" onClick={onUse}>
+          <BioButton className="w-full" onClick={onUse}>
             Use this template
-          </BioGradientButton>
+          </BioButton>
         </div>
       </div>
     </div>

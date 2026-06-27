@@ -14,6 +14,7 @@ import { resolveLinkButtonColors } from "@/lib/link-card-styles"
 import { ProfileSectionBlocks } from "@/components/profile/profile-section-blocks"
 import type { PageSection } from "@/lib/editor-sections"
 import { normalizePageSections } from "@/lib/editor-sections"
+import { resolveProfileDensity, type ProfileViewDensity } from "@/lib/profile-view-density"
 
 const PRESET_DECOR_CLASS: Record<string, string> = {
   summer: "profile-theme-summer",
@@ -32,6 +33,7 @@ export function DbPublicProfileView({
   onShare,
   trackClicks = false,
   compact = false,
+  density,
   verified = false,
 }: {
   profile: DbProfile
@@ -39,10 +41,16 @@ export function DbPublicProfileView({
   pageSections?: PageSection[]
   onShare?: () => void
   trackClicks?: boolean
-  /** Tighter layout inside device frame */
+  /** @deprecated Use density="compact" */
   compact?: boolean
+  /** full = live page; device = phone frame preview; compact = tiny thumbnail */
+  density?: ProfileViewDensity
   verified?: boolean
 }) {
+  const viewDensity = resolveProfileDensity(density, compact)
+  const isDevice = viewDensity === "device"
+  const isCompact = viewDensity === "compact"
+  const isFull = viewDensity === "full"
   const theme = resolveThemeBackground({ ...DEFAULT_THEME, ...profile.theme_json })
   const sections =
     pageSections ??
@@ -53,7 +61,7 @@ export function DbPublicProfileView({
   const useThemeIcons = theme.social_icon_style === "theme"
   const decorClass =
     !theme.bg_image && theme.preset_id ? PRESET_DECOR_CLASS[theme.preset_id] : undefined
-  const staticPreview = compact
+  const staticPreview = !isFull
 
   const handleClick = async (linkId: string, url: string) => {
     if (trackClicks) {
@@ -87,25 +95,39 @@ export function DbPublicProfileView({
           fallback={(profile.display_name || "You").slice(0, 2).toUpperCase()}
           className={cn(
             "rounded-full border-4 border-white/25 bg-black/20 shadow-xl",
-            compact ? "size-[52px] border-2" : "size-28",
+            isCompact && "size-[52px] border-2",
+            isDevice && "size-[72px] border-[3px]",
+            isFull && "size-28",
           )}
         />
         <h1
           className={cn(
             "flex items-center justify-center gap-1.5 font-heading font-semibold tracking-tight",
-            compact ? "mt-2 text-base" : "mt-4 text-3xl",
+            isCompact && "mt-2 text-base",
+            isDevice && "mt-3 text-[17px] leading-tight",
+            isFull && "mt-4 text-3xl",
           )}
         >
           {profile.display_name}
           {verified && (
-            <BadgeCheck className={cn("shrink-0 text-sky-300", compact ? "size-3.5" : "size-5")} aria-label="Verified" />
+            <BadgeCheck
+              className={cn(
+                "shrink-0 text-sky-300",
+                isCompact && "size-3.5",
+                isDevice && "size-4",
+                isFull && "size-5",
+              )}
+              aria-label="Verified"
+            />
           )}
         </h1>
         {profile.bio && (
           <p
             className={cn(
               "max-w-sm leading-relaxed opacity-90",
-              compact ? "mt-1 line-clamp-2 text-[10px]" : "mt-2 text-base",
+              isCompact && "mt-1 line-clamp-2 text-[10px]",
+              isDevice && "mt-1.5 line-clamp-3 px-1 text-[12px] leading-snug",
+              isFull && "mt-2 text-base",
             )}
           >
             {profile.bio}
@@ -113,9 +135,9 @@ export function DbPublicProfileView({
         )}
         <SocialIconRow
           icons={links.map((l) => resolveLinkIcon(l.icon, l.title, l.url))}
-          className={cn("opacity-90", compact ? "mt-2" : "mt-4")}
-          size={compact ? 14 : 20}
-          badgeSize={compact ? 24 : undefined}
+          className={cn("opacity-90", isCompact && "mt-2", isDevice && "mt-3", isFull && "mt-4")}
+          size={isCompact ? 14 : isDevice ? 17 : 20}
+          badgeSize={isCompact ? 24 : isDevice ? 28 : undefined}
           variant={useThemeIcons ? "theme" : "badge"}
           themeColors={useThemeIcons ? linkColors : undefined}
         />
@@ -127,7 +149,7 @@ export function DbPublicProfileView({
     <div
       className={cn(
         "relative isolate w-full",
-        compact ? "min-h-0" : "min-h-dvh overflow-hidden",
+        isFull ? "min-h-dvh overflow-hidden" : "min-h-0",
         decorClass,
       )}
       style={{
@@ -146,8 +168,10 @@ export function DbPublicProfileView({
       )}
       <div
         className={cn(
-          "relative z-10 mx-auto max-w-md",
-          compact ? "px-2.5 pb-4 pt-9" : "px-4 pb-10 pt-8",
+          "relative z-10 mx-auto w-full max-w-md",
+          isCompact && "px-2.5 pb-4 pt-9",
+          isDevice && "px-4 pb-6 pt-11",
+          isFull && "px-4 pb-10 pt-8",
         )}
       >
         {staticPreview ? (
@@ -158,7 +182,14 @@ export function DbPublicProfileView({
           </motion.div>
         )}
 
-        <div className={cn("flex flex-col", compact ? "mt-3 gap-1.5" : "mt-8 gap-3")}>
+        <div
+          className={cn(
+            "flex flex-col",
+            isCompact && "mt-3 gap-1.5",
+            isDevice && "mt-4 gap-2",
+            isFull && "mt-8 gap-3",
+          )}
+        >
           {links.map((link, i) => (
             <ProfileLinkButton
               key={link.id}
@@ -166,6 +197,7 @@ export function DbPublicProfileView({
               icon={resolveLinkIcon(link.icon, link.title, link.url)}
               theme={theme}
               delay={0.05 * i}
+              density={viewDensity}
               staticPreview={staticPreview}
               onClick={() => handleClick(link.id, link.url)}
             />
@@ -176,14 +208,14 @@ export function DbPublicProfileView({
           <ProfileSectionBlocks
             sections={sections}
             theme={theme}
-            compact={compact}
+            density={viewDensity}
             onLinkClick={(url) => {
               if (url !== "#") window.open(url, "_blank", "noopener,noreferrer")
             }}
           />
         )}
 
-        {!compact && <p className="mt-8 text-center text-[10px] opacity-45">Powered by Xhuma</p>}
+        {isFull && <p className="mt-8 text-center text-[10px] opacity-45">Powered by Xhuma</p>}
       </div>
     </div>
   )

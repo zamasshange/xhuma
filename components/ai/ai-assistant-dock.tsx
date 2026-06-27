@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback, useRef, useState } from "react"
-import { Loader2, MessageCircle, Send, Sparkles, X } from "lucide-react"
+import { Loader2, MessageCircle, Send, X } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioInput, BioMuted } from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
@@ -74,7 +75,7 @@ export function AiAssistantDock({ tab }: { tab: EditorTabId }) {
           className="fixed bottom-20 right-4 z-40 flex size-14 items-center justify-center rounded-full bg-bio-dark text-white shadow-lg transition-transform hover:scale-105 lg:bottom-6"
           aria-label="Open AI assistant"
         >
-          <Sparkles className="size-6" />
+          <AiIcon className="size-6" />
         </button>
       )}
 

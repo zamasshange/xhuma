@@ -1,99 +1,99 @@
-import { SectionHeading } from "@/components/section-heading"
-import { Reveal } from "@/components/motion/reveal"
-import { Avatar } from "@/components/ui/avatar"
-import { Card } from "@/components/ui/card"
-import { aboutStats, team, timeline } from "@/data/about"
+import Link from "next/link"
+import { DarkButton } from "@/components/marketing/biolink/dark-button"
+import { SectionBadge } from "@/components/marketing/biolink/section-badge"
+import { BioContainer } from "@/components/marketing/biolink/bio-container"
+import { ProseSection } from "@/components/marketing/prose-section"
 import { SeoBreadcrumbs } from "@/components/seo/breadcrumb-json-ld"
+import { SiteJsonLd } from "@/components/seo/site-json-ld"
 import { pageMetadata } from "@/lib/seo"
+import { COMPANY } from "@/lib/company"
 
 export const metadata = pageMetadata("about")
 
+const CAPABILITIES = [
+  "Build a personalized link in bio page",
+  "Use AI to generate bios, layouts, and content",
+  "Share all social media links in one place",
+  "Track engagement and clicks",
+  "Customize themes and designs instantly",
+]
+
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+    <>
       <SeoBreadcrumbs
         items={[
           { label: "Home", href: "/" },
           { label: "About", href: "/about" },
         ]}
       />
-      <Reveal>
-        <SectionHeading
-          eyebrow="About"
-          title="We're building the future of creator presence"
-          description="Xhuma helps South African creators and businesses own their audience with beautiful, AI-powered Link in Bio pages."
-          align="left"
-        />
-      </Reveal>
+      <SiteJsonLd />
 
-      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {aboutStats.map((stat, i) => (
-          <Reveal key={stat.label} delay={i * 0.05}>
-            <Card className="p-5 text-center">
-              <p className="font-heading text-3xl font-semibold">{stat.value}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
-            </Card>
-          </Reveal>
-        ))}
-      </div>
+      <section className="mx-auto w-[min(900px,92%)] pt-32 text-center text-bio-dark max-lg:pt-24">
+        <SectionBadge>About</SectionBadge>
+        <h1 className="mt-6 text-6xl font-semibold tracking-tighter max-lg:text-5xl max-sm:text-4xl">
+          About Xhuma
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-bio-grey">
+          An AI-powered Link in Bio platform built for creators, businesses, and entrepreneurs across South Africa
+          and Africa.
+        </p>
+      </section>
 
-      <section className="mt-20 grid gap-10 lg:grid-cols-2">
-        <Reveal>
-          <Card className="p-6 sm:p-8">
-            <h2 className="font-heading text-2xl font-semibold">Our mission</h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Give every creator a premium, owned presence on the internet — without code, without compromise, and
-              without giving up their audience to algorithms.
+      <BioContainer className="pb-24 pt-12 max-sm:pb-16">
+        <div className="mx-auto max-w-3xl">
+          <ProseSection title="What is Xhuma?">
+            <p>
+              {COMPANY.productName} is an AI-powered Link in Bio platform designed to help creators, businesses,
+              freelancers, influencers, musicians, and entrepreneurs build a powerful online presence in minutes.
             </p>
-          </Card>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <Card className="p-6 sm:p-8">
-            <h2 className="font-heading text-2xl font-semibold">Our vision</h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              A world where your single link is as powerful as a full website — intelligent, beautiful, and entirely
-              yours. AI that amplifies your voice, never replaces it.
+            <p>
+              Instead of just sharing links, {COMPANY.productName} helps users create a fully branded digital identity
+              with AI assistance — a modern {COMPANY.tagline.toLowerCase()} experience from one smart page.
             </p>
-          </Card>
-        </Reveal>
-      </section>
+          </ProseSection>
 
-      <section className="mt-20">
-        <Reveal>
-          <SectionHeading title="Our journey" align="left" />
-        </Reveal>
-        <div className="mt-8 flex flex-col gap-6">
-          {timeline.map((item, i) => (
-            <Reveal key={item.year} delay={i * 0.06}>
-              <div className="flex gap-4 sm:gap-6">
-                <div className="font-heading w-16 shrink-0 text-lg font-semibold text-brand sm:w-20">{item.year}</div>
-                <Card className="flex-1 p-5">
-                  <h3 className="font-medium">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-                </Card>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+          <ProseSection title="What you can do on Xhuma">
+            <ul className="list-disc space-y-2 pl-5">
+              {CAPABILITIES.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <p>
+              {COMPANY.productName} is built for modern creators who want more than a basic link-in-bio tool — it is a
+              creator platform powered by intelligence and automation.
+            </p>
+          </ProseSection>
 
-      <section className="mt-20">
-        <Reveal>
-          <SectionHeading title="Meet the team" description="A small team with big ambitions." align="left" />
-        </Reveal>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {team.map((member, i) => (
-            <Reveal key={member.name} delay={i * 0.05}>
-              <Card className="p-5">
-                <Avatar src={member.avatar} alt={member.name} className="size-14" />
-                <h3 className="font-heading mt-4 font-semibold">{member.name}</h3>
-                <p className="text-sm text-brand">{member.role}</p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
-              </Card>
-            </Reveal>
-          ))}
+          <ProseSection title="Our vision">
+            <p>
+              To empower creators across South Africa and Africa to build their digital identity effortlessly using AI.
+            </p>
+          </ProseSection>
+
+          <ProseSection title="Built by BDL Corp">
+            <p>
+              {COMPANY.productName} is a product of <strong className="text-bio-dark">{COMPANY.legalName}</strong>,
+              based in {COMPANY.country}. We are committed to helping creators own their audience with beautiful,
+              intelligent link-in-bio pages.
+            </p>
+            <p>
+              Questions?{" "}
+              <Link href="/contact" className="font-medium text-bio-dark underline underline-offset-2">
+                Contact our team
+              </Link>
+              .
+            </p>
+          </ProseSection>
+
+          <div className="mt-12 flex flex-col items-center gap-4 text-center">
+            <DarkButton href="/editor">Start building for free</DarkButton>
+            <Link href="/" className="text-sm text-bio-grey underline underline-offset-2 hover:text-bio-dark">
+              Back to homepage
+            </Link>
+          </div>
         </div>
-      </section>
-    </div>
+      </BioContainer>
+    </>
   )
 }

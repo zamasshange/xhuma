@@ -1,9 +1,11 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Eye, Heart, Sparkles, Wand2 } from "lucide-react"
+import { Eye, Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { BioButton, BioGradientButton } from "@/components/ui/bio-form"
+import { BioButton } from "@/components/ui/bio-form"
+import { AiIcon, PlusIcon } from "@/components/icons/app-icons"
+import { TemplateCardPreview } from "@/components/templates/template-card-preview"
 import {
   MARKETPLACE_TEMPLATES,
   TEMPLATE_CATEGORIES,
@@ -24,7 +26,6 @@ import { TemplatePreviewModal } from "@/components/templates/template-preview-mo
 import { AiTemplateGeneratorModal } from "@/components/templates/ai-template-generator-modal"
 import { stashPendingDraft } from "@/lib/client-draft"
 import { useRouter } from "next/navigation"
-import { ThemePreviewImage } from "@/components/themes/theme-preview-image"
 
 type TabId = "all" | "featured" | "trending" | "new" | "popular" | "my" | "recent" | "ai" | "ai-saved"
 
@@ -136,10 +137,14 @@ export function TemplateMarketplace({
               </option>
             ))}
           </select>
-          <BioGradientButton type="button" className="h-11 shrink-0 px-4" onClick={() => setShowAi(true)}>
-            <Wand2 className="size-4" />
+          <BioButton
+            type="button"
+            className="h-11 w-full shrink-0 px-5 sm:w-auto"
+            onClick={() => setShowAi(true)}
+          >
+            <AiIcon className="size-4" />
             Generate with AI
-          </BioGradientButton>
+          </BioButton>
         </div>
 
         <div className="mt-4 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
@@ -187,13 +192,14 @@ function CreateFromScratchCard({ onSelect }: { onSelect: () => void }) {
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border-2 border-dashed border-bio-dark/20 bg-gradient-to-br from-bio-grey-f4 to-white p-5 shadow-sm">
       <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">
-        <Sparkles className="size-10 text-bio-dark" />
+        <PlusIcon className="size-10 text-bio-dark" />
         <h3 className="mt-3 text-lg font-semibold">Create from scratch</h3>
         <p className="mt-1 text-xs text-bio-grey">Blank profile + links — add sections with AI</p>
       </div>
-      <BioGradientButton className="w-full" onClick={onSelect}>
+      <BioButton className="w-full" onClick={onSelect}>
+        <PlusIcon className="size-4" />
         Start blank
-      </BioGradientButton>
+      </BioButton>
     </div>
   )
 }
@@ -215,12 +221,8 @@ function TemplateCard({
 }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-bio-dark/8 bg-white shadow-sm transition hover:shadow-md">
-      <div className="relative aspect-[9/14] overflow-hidden bg-bio-grey-f4">
-        {template.preview_image ? (
-          <ThemePreviewImage src={template.preview_image} alt={template.name} />
-        ) : (
-          <div className="flex size-full items-center justify-center text-sm text-bio-grey">Preview</div>
-        )}
+      <div className="relative overflow-hidden bg-bio-grey-f4">
+        <TemplateCardPreview template={template} />
         {template.aiReady && (
           <span className="absolute left-2 top-2 rounded-full bg-bio-dark px-2 py-0.5 text-[10px] font-semibold text-white">
             AI Ready
@@ -244,9 +246,9 @@ function TemplateCard({
             <Eye className="size-3.5" />
             Preview
           </BioButton>
-          <BioGradientButton className="h-8 flex-1 px-2 text-[11px]" onClick={onUse}>
+          <BioButton className="h-8 flex-1 px-2 text-[11px]" onClick={onUse}>
             Use
-          </BioGradientButton>
+          </BioButton>
         </div>
         <button type="button" onClick={onDuplicate} className="mt-2 text-center text-[10px] text-bio-grey hover:text-bio-dark">
           Duplicate to edit

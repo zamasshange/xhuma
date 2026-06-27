@@ -25,8 +25,8 @@ const groups = [
     title: "Resources",
     links: [
       { label: "Help Center", href: "/contact" },
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Service", href: "/terms-of-service" },
       { label: "Status", href: "/about" },
     ],
   },

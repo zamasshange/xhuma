@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, ChevronUp, GripVertical, Loader2, Plus, Sparkles, Trash2 } from "lucide-react"
+import { ChevronDown, ChevronUp, GripVertical, Loader2, Trash2 } from "lucide-react"
+import { AiIcon, PlusIcon } from "@/components/icons/app-icons"
 import { toast } from "sonner"
 import { useEditor } from "@/components/editor/editor-provider"
 import { EditorPanel, EditorSectionTitle } from "@/components/editor/editor-shell"
@@ -51,13 +52,13 @@ export function PageSectionsPanel() {
           onChange={(e) => setAiPrompt(e.target.value)}
         />
         <BioButton className="mt-2 h-9 w-full text-xs" onClick={addWithAi} disabled={aiLoading}>
-          {aiLoading ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
+          {aiLoading ? <Loader2 className="size-3.5 animate-spin" /> : <AiIcon className="size-3.5" />}
           Add with AI
         </BioButton>
       </div>
 
       <BioButton variant="secondary" className="mt-3 h-9 w-full text-xs" onClick={() => setShowCatalog((s) => !s)}>
-        <Plus className="size-3.5" />
+        <PlusIcon className="size-3.5" />
         {showCatalog ? "Hide section library" : "Add section manually"}
       </BioButton>
 

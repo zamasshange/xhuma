@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, Palette, Sparkles } from "lucide-react"
+import { Loader2, Palette } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { toast } from "sonner"
 import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioInput, BioMuted } from "@/components/ui/bio-form"
@@ -71,7 +72,7 @@ export function AiThemeAssistant() {
           className="h-10 flex-1 text-sm"
         />
         <BioButton className="h-10 shrink-0 px-4" onClick={generate} disabled={loading || !prompt.trim()}>
-          {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+          {loading ? <Loader2 className="size-4 animate-spin" /> : <AiIcon className="size-4" />}
           Apply
         </BioButton>
       </div>

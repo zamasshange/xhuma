@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ArrowRight, Play, Sparkles } from "lucide-react"
+import { ArrowRight, Play } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AnimatedBackground } from "@/components/animated-background"
@@ -21,7 +22,7 @@ export function Hero() {
             transition={{ duration: 0.5 }}
           >
             <Badge variant="default" className="gap-1.5 px-3 py-1">
-              <Sparkles className="size-3.5" />
+              <AiIcon className="size-3.5" />
               AI-powered Link in Bio
             </Badge>
           </motion.div>

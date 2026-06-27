@@ -9,8 +9,8 @@ import {
   ExternalLink,
   Share2,
   Rocket,
-  Sparkles,
 } from "lucide-react"
+import { AiIcon } from "@/components/icons/app-icons"
 import { AiAssistantDock } from "@/components/ai/ai-assistant-dock"
 import { AiDelightHints } from "@/components/ai/ai-delight-hints"
 import { AiLinkRecommendations } from "@/components/ai/ai-link-recommendations"
@@ -263,7 +263,7 @@ export function PageEditor() {
           )}
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_260px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)] lg:gap-8">
           <div className="flex flex-col gap-5">
             {!canEdit ? (
               <EditorPanel className="text-center">
@@ -290,7 +290,7 @@ export function PageEditor() {
                         <p className="text-sm font-semibold text-bio-dark">Set up with AI</p>
                         <BioMuted className="text-xs">Answer a few questions — we&apos;ll draft your page.</BioMuted>
                       </div>
-                      <Sparkles className="size-5 shrink-0 text-bio-dark" />
+                      <AiIcon className="size-5 shrink-0 text-bio-dark" />
                     </button>
                   </EditorPanel>
                 )}
@@ -347,7 +347,7 @@ export function PageEditor() {
                           field="bio"
                           text={state?.profile.bio ?? ""}
                           context={state?.profile.display_name}
-                          compact
+                          density="device"
                           onApply={(bio) => updateProfile({ bio })}
                         />
                       </div>
@@ -453,7 +453,7 @@ export function PageEditor() {
                     profile={previewProfile}
                     links={previewLinks}
                     pageSections={state?.page_sections}
-                    compact
+                    density="device"
                   />
                 ) : (
                   <div className="flex min-h-[280px] items-center justify-center p-4 text-center text-xs text-bio-grey">
@@ -473,7 +473,7 @@ export function PageEditor() {
               profile={previewProfile}
               links={previewLinks}
               pageSections={state?.page_sections}
-              compact
+              density="device"
             />
           </EditorPreviewFrame>
         </div>

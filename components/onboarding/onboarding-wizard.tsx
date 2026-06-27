@@ -423,8 +423,8 @@ export function OnboardingWizard() {
         <>
           <OnboardingTitle>Looking Good!</OnboardingTitle>
           <div className="flex flex-1 items-center justify-center py-2">
-            <PhoneDeviceFrame size="md" showLabel={false} glow>
-              <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
+            <PhoneDeviceFrame size="preview" showLabel={false} glow>
+              <DbPublicProfileView profile={previewProfile} links={previewLinks} density="device" />
             </PhoneDeviceFrame>
           </div>
         </>

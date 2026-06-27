@@ -102,7 +102,7 @@ export function EditorSectionTitle({
 export function EditorPreviewFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex justify-center">
-      <PhoneDeviceFrame size="editor" showLabel={false} glow={false}>
+      <PhoneDeviceFrame size="preview" showLabel={false} glow={false}>
         {children}
       </PhoneDeviceFrame>
     </div>
