@@ -1,27 +1,21 @@
 import type { Metadata } from "next"
 import { SITE_DOMAIN, SITE_NAME, SITE_URL } from "@/lib/brand"
 import { DEFAULT_LOCALE } from "@/lib/locale"
-
-export const SEO_KEYWORDS = [
-  "link in bio",
-  "link in bio tool",
-  "AI link in bio",
-  "creator link page",
-  "bio link",
-  "social media landing page",
-  "linktree alternative",
-  "xhuma",
-  "link in bio South Africa",
-  "South African creators",
-] as const
+import { SEO_KEYWORDS_ALL } from "@/lib/seo-keywords"
 
 export const SEO_DEFAULT_DESCRIPTION =
-  "Xhuma is the AI-powered link in bio platform built for South African creators and businesses. Build a beautiful, high-converting page in minutes. Free to start."
+  "Create a beautiful AI-powered link in bio page with Xhuma. Share Instagram, TikTok, YouTube, WhatsApp, portfolio, music and more from one smart link. Built for creators in South Africa, Africa, and beyond."
 
 export const NOINDEX_ROBOTS: Metadata["robots"] = {
   index: false,
   follow: false,
   googleBot: { index: false, follow: false },
+}
+
+export const INDEX_ROBOTS: Metadata["robots"] = {
+  index: true,
+  follow: true,
+  googleBot: { index: true, follow: true },
 }
 
 /** Build absolute URL from a site path */
@@ -35,13 +29,14 @@ type BuildMetadataOptions = {
   title: string
   description?: string
   path?: string
-  /** Absolute or site-relative image URL */
   image?: string | null
   noIndex?: boolean
   type?: "website" | "article" | "profile"
   publishedTime?: string
   authors?: string[]
   keywords?: string[]
+  /** Use full title as-is (no template suffix) */
+  absoluteTitle?: boolean
 }
 
 export function buildMetadata({
@@ -53,7 +48,8 @@ export function buildMetadata({
   type = "website",
   publishedTime,
   authors,
-  keywords = [...SEO_KEYWORDS],
+  keywords = [...SEO_KEYWORDS_ALL].slice(0, 32),
+  absoluteTitle = false,
 }: BuildMetadataOptions): Metadata {
   const url = absoluteUrl(path)
   const imageUrl = image
@@ -63,9 +59,9 @@ export function buildMetadata({
     : absoluteUrl("/opengraph-image")
 
   const fullTitle =
-    path === "/" || title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`
-
-  const useAbsoluteTitle = path === "/" || title.includes(SITE_NAME)
+    absoluteTitle || path === "/" || title.includes("Xhuma")
+      ? title
+      : `${title} | ${SITE_NAME}`
 
   const openGraph: Metadata["openGraph"] = {
     type,
@@ -74,22 +70,23 @@ export function buildMetadata({
     siteName: SITE_NAME,
     title: fullTitle,
     description,
-    images: [{ url: imageUrl, width: 1200, height: 630, alt: fullTitle }],
+    images: [{ url: imageUrl, width: 1200, height: 630, alt: `${fullTitle} — ${SITE_NAME}` }],
     ...(type === "article" && publishedTime ? { publishedTime, authors } : {}),
   }
 
   return {
-    title: useAbsoluteTitle ? { absolute: fullTitle } : title,
-    description,
+    title: absoluteTitle || path === "/" ? { absolute: fullTitle } : fullTitle,
+    description: description.slice(0, 160),
     keywords,
     metadataBase: new URL(SITE_URL),
     alternates: { canonical: url },
-    robots: noIndex ? NOINDEX_ROBOTS : { index: true, follow: true },
+    robots: noIndex ? NOINDEX_ROBOTS : INDEX_ROBOTS,
     openGraph,
     twitter: {
       card: "summary_large_image",
+      site: "@xhumacc",
       title: fullTitle,
-      description,
+      description: description.slice(0, 160),
       images: [imageUrl],
     },
   }
@@ -97,15 +94,35 @@ export function buildMetadata({
 
 /** Root layout defaults */
 export const rootMetadata: Metadata = {
-  ...buildMetadata({
-    title: `${SITE_NAME} — Your Entire Online Presence, Powered by AI`,
-    description: SEO_DEFAULT_DESCRIPTION,
-    path: "/",
-  }),
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Xhuma – AI Link in Bio Platform for Creators",
+    template: "%s | Xhuma",
+  },
+  description: SEO_DEFAULT_DESCRIPTION,
   applicationName: SITE_NAME,
-  authors: [{ name: SITE_NAME, url: SITE_URL }],
-  creator: SITE_NAME,
+  authors: [{ name: "BDL Corp", url: SITE_URL }],
+  creator: "BDL Corp",
   publisher: SITE_NAME,
+  keywords: [...SEO_KEYWORDS_ALL].slice(0, 32),
+  alternates: { canonical: absoluteUrl("/") },
+  robots: INDEX_ROBOTS,
+  openGraph: {
+    type: "website",
+    locale: DEFAULT_LOCALE.replace("-", "_"),
+    url: absoluteUrl("/"),
+    siteName: SITE_NAME,
+    title: "Xhuma – AI Link in Bio Platform for Creators",
+    description: SEO_DEFAULT_DESCRIPTION,
+    images: [{ url: absoluteUrl("/opengraph-image"), width: 1200, height: 630, alt: "Xhuma — AI link in bio platform" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@xhumacc",
+    title: "Xhuma – AI Link in Bio Platform for Creators",
+    description: SEO_DEFAULT_DESCRIPTION,
+    images: [absoluteUrl("/opengraph-image")],
+  },
   formatDetection: { email: false, address: false, telephone: false },
   icons: {
     icon: "/favicon.png",
@@ -117,61 +134,114 @@ export const rootMetadata: Metadata = {
 
 export const marketingPages = {
   home: {
-    title: `${SITE_NAME} — Your Entire Online Presence, Powered by AI`,
-    description: SEO_DEFAULT_DESCRIPTION,
+    title: "Xhuma – AI Link in Bio Platform",
+    description:
+      "Xhuma is the AI link in bio platform for creators and businesses. Build a beautiful page for Instagram, TikTok, YouTube, WhatsApp and more — free to start.",
     path: "/",
+    absoluteTitle: true,
   },
   features: {
-    title: "Features",
+    title: "AI Features for Creators",
     description:
-      "AI Studio, premium themes, analytics, and mobile-first link in bio pages — everything creators need on Xhuma.",
+      "AI Studio, smart themes, analytics, and mobile-first link in bio pages. Everything creators need to grow on Xhuma — built for South Africa and beyond.",
     path: "/features",
   },
-  pricing: {
-    title: "Pricing",
+  templates: {
+    title: "Link in Bio Templates",
     description:
-      "Start free on Xhuma. Upgrade to Pro for AI tools, custom domains, and advanced analytics.",
+      "Choose from beautiful link in bio templates on Xhuma. Creator, musician, business, and portfolio layouts — customise with AI in minutes.",
+    path: "/templates",
+  },
+  pricing: {
+    title: "Affordable Link in Bio Plans",
+    description:
+      "Start free on Xhuma. Creator, Pro, and Business plans in ZAR with AI tools, custom domains, and analytics for South African creators.",
     path: "/pricing",
   },
   about: {
-    title: "About",
+    title: "About Xhuma",
     description:
-      "Xhuma helps creators own their audience with beautiful, AI-powered link in bio pages.",
+      "Xhuma by BDL Corp helps creators and businesses own their audience with AI-powered link in bio pages — built for South Africa and Africa.",
     path: "/about",
   },
   contact: {
-    title: "Contact",
-    description: "Get in touch with the Xhuma team — we're here to help creators grow.",
+    title: "Contact Xhuma",
+    description:
+      "Get in touch with the Xhuma team. Questions about your link in bio, AI features, pricing, or partnerships — we're here to help creators.",
     path: "/contact",
   },
   explore: {
-    title: "Explore Creators",
-    description: `Discover link in bio pages built by creators on ${SITE_DOMAIN}.`,
+    title: "Explore Creator Pages",
+    description:
+      "Discover link in bio pages built by creators on Xhuma. Browse live profiles from South Africa, Africa, and around the world.",
     path: "/explore",
   },
   blog: {
-    title: "Blog",
-    description: "Tips, trends, and strategies to grow your audience with your link in bio.",
+    title: "Creator Blog & Guides",
+    description:
+      "Link in bio tips, Instagram growth, TikTok strategy, and AI productivity for creators. Insights from the Xhuma team and community.",
     path: "/blog",
   },
   faq: {
-    title: "FAQ",
-    description: "Answers to common questions about Xhuma — AI link in bio, pricing, and domains.",
+    title: "FAQ — Link in Bio Help",
+    description:
+      "Answers about Xhuma — AI link in bio, pricing in ZAR, custom domains, WhatsApp links, and getting started as a South African creator.",
     path: "/faq",
   },
   privacy: {
     title: "Privacy Policy",
-    description: `How ${SITE_NAME} collects, uses, and protects your personal information.`,
+    description:
+      "How Xhuma collects, uses, and protects your personal information. POPIA-aware privacy practices for creators and businesses in South Africa.",
     path: "/privacy",
   },
   terms: {
     title: "Terms of Service",
-    description: `Terms and conditions for using the ${SITE_NAME} link-in-bio platform.`,
+    description:
+      "Terms and conditions for using the Xhuma AI link in bio platform. Your rights, responsibilities, and acceptable use policy.",
     path: "/terms",
   },
 } as const
 
 export function pageMetadata(key: keyof typeof marketingPages): Metadata {
   const page = marketingPages[key]
-  return buildMetadata(page)
+  return buildMetadata({
+    title: page.title,
+    description: page.description,
+    path: page.path,
+    absoluteTitle: "absoluteTitle" in page ? page.absoluteTitle : false,
+  })
+}
+
+export function profileMetadata({
+  displayName,
+  username,
+  bio,
+  avatarUrl,
+}: {
+  displayName: string
+  username: string
+  bio?: string | null
+  avatarUrl?: string | null
+}): Metadata {
+  const title = `${displayName} (@${username}) | Xhuma`
+  const description =
+    bio?.trim().slice(0, 155) ||
+    `Visit ${displayName}'s AI-powered link in bio on Xhuma. Social links, WhatsApp, portfolio, music and more — one smart page for creators.`
+
+  return buildMetadata({
+    title,
+    description,
+    path: `/${username}`,
+    image: avatarUrl,
+    type: "profile",
+    absoluteTitle: true,
+    keywords: [
+      displayName,
+      username,
+      "link in bio",
+      "Xhuma profile",
+      "creator page",
+      `${displayName} links`,
+    ],
+  })
 }

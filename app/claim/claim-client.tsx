@@ -72,7 +72,7 @@ export default function ClaimPageClient() {
     <div className="flex min-h-dvh flex-col bg-[#f7f7f8] text-bio-dark">
       <header className="px-6 py-5">
         <Link href="/">
-          <LogoMark height={38} />
+          <LogoMark height={28} maxWidth={118} />
         </Link>
       </header>
 

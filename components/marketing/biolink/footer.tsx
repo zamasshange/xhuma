@@ -26,7 +26,7 @@ export function BiolinkFooter() {
           {bioSocialLinks.map((social) => (
             <SocialIcon key={social.label} href={social.href} label={social.label} />
           ))}
-          <LogoMark href="/" height={36} label="Xhuma home" className="transition-transform hover:scale-105" />
+          <LogoMark href="/" height={26} maxWidth={108} label="Xhuma home" className="transition-transform hover:scale-105" />
         </div>
       </div>
 

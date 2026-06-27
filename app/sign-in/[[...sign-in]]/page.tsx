@@ -5,7 +5,7 @@ import { clerkAppearance } from "@/lib/clerk-appearance"
 export default function SignInPage() {
   return (
     <div className="xhuma-site flex min-h-dvh flex-col items-center justify-center bg-[#f7f7f8] px-4 py-10">
-      <LogoMark height={44} className="mb-8" />
+      <LogoMark height={32} maxWidth={136} className="mb-8" />
       <SignIn
         appearance={clerkAppearance}
         routing="path"

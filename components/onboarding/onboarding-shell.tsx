@@ -67,7 +67,7 @@ export function OnboardingShell({
     <div className="xhuma-site flex min-h-dvh flex-col bg-[#f7f7f8] text-bio-dark">
       <header className="shrink-0 border-b border-bio-dark/8 bg-white px-4 py-4 sm:px-6">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
-          <LogoMark height={36} />
+          <LogoMark height={28} maxWidth={118} />
         </div>
       </header>
 

@@ -292,10 +292,15 @@ export const bioAiSection = {
 }
 
 export const bioFooterLinks = [
+  { label: "Features", href: "/features" },
+  { label: "Templates", href: "/templates" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Blog", href: "/blog" },
+  { label: "FAQ", href: "/faq" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
-  { label: "Contact", href: "/contact" },
-  { label: "About", href: "/about" },
 ]
 
 export const bioSocialLinks = [

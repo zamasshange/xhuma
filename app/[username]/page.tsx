@@ -5,8 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin"
 import { mapProfile, type DbLink } from "@/lib/database.types"
 import { PublicProfilePageClient } from "./public-profile-client"
 import { JsonLd } from "@/components/seo/json-ld"
-import { absoluteUrl, buildMetadata } from "@/lib/seo"
-import { SITE_NAME } from "@/lib/brand"
+import { profileMetadata, absoluteUrl } from "@/lib/seo"
 
 async function fetchPublicProfile(username: string) {
   const supabase = createAdminClient()
@@ -49,17 +48,11 @@ export async function generateMetadata({
   if (!data) return { title: "Profile not found" }
 
   const { profile } = data
-  const title = `${profile.display_name} (@${profile.username})`
-  const description =
-    profile.bio?.trim() ||
-    `Visit ${profile.display_name}'s link in bio page on ${SITE_NAME} — links, socials, and more.`
-
-  return buildMetadata({
-    title,
-    description,
-    path: `/${profile.username}`,
-    image: profile.avatar_url,
-    type: "profile",
+  return profileMetadata({
+    displayName: profile.display_name,
+    username: profile.username,
+    bio: profile.bio,
+    avatarUrl: profile.avatar_url,
   })
 }
 
@@ -74,16 +67,17 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     "@context": "https://schema.org",
     "@type": "ProfilePage",
     name: profile.display_name,
-    description: profile.bio ?? undefined,
+    description: profile.bio ?? `Link in bio page for ${profile.display_name} on Xhuma`,
     url: absoluteUrl(`/${profile.username}`),
+    isPartOf: { "@type": "WebSite", name: "Xhuma", url: absoluteUrl("/") },
     mainEntity: {
       "@type": "Person",
       name: profile.display_name,
-      alternateName: profile.username,
+      alternateName: `@${profile.username}`,
       description: profile.bio ?? undefined,
       image: profile.avatar_url ?? undefined,
       url: absoluteUrl(`/${profile.username}`),
-      sameAs: links.map((l) => l.url).filter(Boolean),
+      sameAs: links.map((l) => l.url).filter((u) => u && u !== "#"),
     },
   }
 

@@ -83,7 +83,7 @@ export function CompareSection() {
 
         <div className="relative mx-auto mt-4 flex w-[min(420px,88%)] items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2.5">
-            <LogoMark href="#" height={30} className="shrink-0" />
+            <LogoMark href="#" height={24} maxWidth={100} className="shrink-0" />
             <p className="text-base font-medium text-bio-dark max-sm:text-sm">
               Get everything with {SITE_NAME}
             </p>

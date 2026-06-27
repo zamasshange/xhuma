@@ -6,6 +6,7 @@ import { absoluteUrl, marketingPages } from "@/lib/seo"
 const STATIC_PATHS = [
   marketingPages.home.path,
   marketingPages.features.path,
+  marketingPages.templates.path,
   marketingPages.pricing.path,
   marketingPages.about.path,
   marketingPages.contact.path,
