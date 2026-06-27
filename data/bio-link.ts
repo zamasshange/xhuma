@@ -120,13 +120,137 @@ export const bioPricing = {
 }
 
 export const bioComparison = [
-  { title: "Mobile-first Link-in-bio page", replaces: "Replaces Linktree, Beacons", price: 15 },
-  { title: "Smart AI Assistant", replaces: "Replaces ManyChat, ChatGPT widgets", price: 20 },
-  { title: "Custom domain support", replaces: "Replaces Framer, Webflow", price: 14 },
-  { title: "Built‑in analytics & SEO", replaces: "Replaces Google Analytics, Bit.ly", price: 10 },
-  { title: "Email list & newsletter builder", replaces: "Replaces Mailchimp, ActiveCampaign", price: 15 },
-  { title: "Publish blog posts/updates", replaces: "Replaces Substack, Blogger", price: 10 },
+  { title: "Mobile-first Link-in-bio page", replaces: "Replaces Linktree, Beacons", price: 15, icon: "📱" },
+  { title: "Smart AI Assistant", replaces: "Replaces ManyChat, ChatGPT widgets", price: 20, icon: "🧠" },
+  { title: "Custom domain support", replaces: "Replaces Framer, Webflow", price: 14, icon: "🌐" },
+  { title: "Built‑in analytics & SEO", replaces: "Replaces Google Analytics, Bit.ly", price: 10, icon: "📈" },
+  { title: "Email list & newsletter builder", replaces: "Replaces Mailchimp, ActiveCampaign", price: 15, icon: "✉️" },
+  { title: "Publish blog posts/updates", replaces: "Replaces Substack, Blogger", price: 10, icon: "📝" },
 ]
+
+export type BioTestimonial = {
+  id: string
+  name: string
+  location: string
+  headline: string
+  body: string
+  avatar?: string
+  initials?: string
+  avatarColor?: string
+}
+
+export const bioTestimonials: BioTestimonial[] = [
+  {
+    id: "1",
+    name: "Yan P",
+    location: "Peru",
+    headline: "Freedom like no other",
+    body: "I love the freedom Xhuma gives me. I can customize my page exactly how I want, add my links, and even use AI to engage with my audience. It's the best link-in-bio tool I've ever used.",
+    avatar: `${BIO_ASSETS}/user1.Ba8DzGMp.png`,
+  },
+  {
+    id: "2",
+    name: "Tatiana I",
+    location: "Brazil",
+    headline: "Awesome service, fair price, very fast",
+    body: "I was looking for a link-in-bio tool that was easy to use and affordable. Xhuma exceeded my expectations. The setup was quick, and the AI assistant is a game-changer for my business.",
+    initials: "TI",
+    avatarColor: "#a855f7",
+  },
+  {
+    id: "3",
+    name: "Alex C",
+    location: "United States",
+    headline: "My go-to for everything",
+    body: "From links to email capture to AI chat — it's all here. I cancelled three other subscriptions after switching. My page looks professional and converts better than ever.",
+    initials: "AC",
+    avatarColor: "#ec4899",
+  },
+  {
+    id: "4",
+    name: "María G",
+    location: "Mexico",
+    headline: "Finally, one tool that does it all",
+    body: "I used to juggle Linktree, Mailchimp, and a separate analytics tool. Xhuma replaced all of them. The themes are beautiful and my followers love the AI assistant.",
+    avatar: `${BIO_ASSETS}/user2.CiMA-Ti0.png`,
+  },
+  {
+    id: "5",
+    name: "James K",
+    location: "United Kingdom",
+    headline: "Worth every penny",
+    body: "The yearly plan is a steal. Custom domain, unlimited visitors, and the AI actually answers questions about my courses. Support responded within hours when I had a domain question.",
+    avatar: `${BIO_ASSETS}/user3.w1PRNQjx.png`,
+  },
+  {
+    id: "6",
+    name: "Sofia R",
+    location: "Spain",
+    headline: "Creators, this is it",
+    body: "As a musician I needed streaming links, tour dates, and merch in one place. Xhuma made it effortless. The mobile preview alone sold me — it just looks premium.",
+    initials: "SR",
+    avatarColor: "#38bdf8",
+  },
+  {
+    id: "7",
+    name: "David L",
+    location: "Canada",
+    headline: "Setup in under 10 minutes",
+    body: "I'm not technical at all. I picked a theme, dropped my links, and was live before my coffee got cold. The receipt-style pricing page convinced me I was saving money too.",
+    avatar: `${BIO_ASSETS}/user5.CwX5k9hm.png`,
+  },
+  {
+    id: "8",
+    name: "Priya N",
+    location: "India",
+    headline: "AI that actually helps",
+    body: "Visitors ask about my coaching packages and the AI points them to the right link. I wake up to booked calls without answering the same DMs over and over.",
+    initials: "PN",
+    avatarColor: "#f59e0b",
+  },
+  {
+    id: "9",
+    name: "Lucas M",
+    location: "Portugal",
+    headline: "Clean, fast, reliable",
+    body: "Page loads instantly on mobile. Analytics are clear. I can see which links perform and adjust weekly. Exactly what a link-in-bio should be in 2026.",
+    avatar: `${BIO_ASSETS}/user6.BtYp0XeA.png`,
+  },
+  {
+    id: "10",
+    name: "Emma T",
+    location: "Australia",
+    headline: "Better than Linktree",
+    body: "Switched from Linktree Pro and I'm not going back. More features, better design, and the AI chat keeps people on my page longer. My click-through rate doubled.",
+    avatar: `${BIO_ASSETS}/user7.BJbxwnbs.png`,
+  },
+  {
+    id: "11",
+    name: "Carlos V",
+    location: "Colombia",
+    headline: "Perfect for small business",
+    body: "My bakery uses Xhuma for the menu, WhatsApp orders, and Instagram. Customers find everything in one tap. The holiday theme was a hit in December.",
+    initials: "CV",
+    avatarColor: "#22c55e",
+  },
+  {
+    id: "12",
+    name: "Hannah W",
+    location: "Germany",
+    headline: "Design that stands out",
+    body: "Every other link-in-bio looks the same. Xhuma themes feel custom. I get compliments on my page weekly — and I didn't hire a designer.",
+    avatar: `${BIO_ASSETS}/user9.BTGRzHLW.png`,
+  },
+]
+
+export const bioTestimonialSocialProof = {
+  count: "1.5 million",
+  avatars: [
+    `${BIO_ASSETS}/user1.Ba8DzGMp.png`,
+    `${BIO_ASSETS}/user4.Bo0FbbWl.png`,
+    `${BIO_ASSETS}/user10.Dzm4B_2D.png`,
+  ],
+}
 
 export const bioFaqs = [
   {
@@ -170,15 +294,11 @@ export const bioAiSection = {
 }
 
 export const bioFooterLinks = [
-  { label: "Home", href: "/" },
   { label: "Features", href: "/features" },
-  { label: "Explore", href: "/explore" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Blog", href: "/blog" },
-  { label: "FAQ", href: "/faq" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-  { label: "My page", href: "/editor" },
+  { label: "Help Center", href: "/faq" },
+  { label: "Terms of Use", href: "/about" },
+  { label: "Privacy Policy", href: "/about" },
+  { label: "Report", href: "/contact" },
 ]
 
 export const bioSocialLinks = [

@@ -437,3 +437,15 @@
     radial-gradient(ellipse 100% 40% at 50% 100%, rgba(146, 64, 14, 0.25), transparent 60%),
     radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.15) 0%, transparent 35%);
 }
+
+/* bio.link-style marketing sections */
+.bio-testimonial-card {
+  border-radius: 1.25rem;
+  background: #fff;
+  padding: 1.5rem;
+  box-shadow: 0 2px 24px rgba(13, 12, 34, 0.06);
+}
+
+.bio-testimonial-cta {
+  max-width: calc(100vw - 2rem);
+}

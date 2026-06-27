@@ -5,6 +5,7 @@ import { AiAssistantSection } from "@/components/marketing/biolink/ai-assistant-
 import { BiolinkFeaturesGrid } from "@/components/marketing/biolink/features-grid"
 import { BiolinkPricing } from "@/components/marketing/biolink/pricing-section"
 import { CompareSection } from "@/components/marketing/biolink/compare-section"
+import { TestimonialsSection } from "@/components/marketing/biolink/testimonials-section"
 import { BiolinkFaq } from "@/components/marketing/biolink/faq-section"
 import { ClaimFooterSection } from "@/components/marketing/biolink/claim-footer"
 import { HomeJsonLd } from "@/components/seo/home-json-ld"
@@ -22,6 +23,7 @@ export default function HomePage() {
       <AiAssistantSection />
       <BiolinkFeaturesGrid />
       <BiolinkPricing />
+      <TestimonialsSection />
       <CompareSection />
       <BiolinkFaq />
       <ClaimFooterSection />

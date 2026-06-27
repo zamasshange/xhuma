@@ -12,6 +12,8 @@ type ClaimLinkInputProps = {
   className?: string
   buttonLabel?: string
   onSuccess?: () => void
+  /** Grey pill style for footer CTA (bio.link style) */
+  variant?: "default" | "muted"
 }
 
 export async function isSignedInViaApi(): Promise<boolean> {
@@ -23,6 +25,7 @@ export function ClaimLinkInput({
   className,
   buttonLabel = "Start for free",
   onSuccess,
+  variant = "default",
 }: ClaimLinkInputProps) {
   const [username, setUsername] = useState("")
 
@@ -68,14 +71,21 @@ export function ClaimLinkInput({
 
   return (
     <form onSubmit={handleSubmit} className={cn("relative z-20", className)}>
-      <div className="flex items-center overflow-hidden rounded-full border-2 border-bio-dark bg-white shadow-sm">
-        <span className="shrink-0 pl-5 text-base text-bio-grey max-sm:pl-4 max-sm:text-sm">{SITE_DOMAIN}/</span>
+      <div
+        className={cn(
+          "flex items-center overflow-hidden rounded-full",
+          variant === "muted"
+            ? "bg-bio-grey-f4"
+            : "border-2 border-bio-dark bg-white shadow-sm",
+        )}
+      >
+        <span className="shrink-0 pl-5 text-base text-bio-dark max-sm:pl-4 max-sm:text-sm">{SITE_DOMAIN}/</span>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="yourname"
-          className="min-w-0 flex-1 bg-transparent py-4 pr-2 text-base text-bio-dark outline-none placeholder:text-bio-grey/60 max-sm:py-3.5 max-sm:text-sm"
+          placeholder="name"
+          className="min-w-0 flex-1 bg-transparent py-4 pr-2 text-base text-bio-dark outline-none placeholder:text-bio-grey max-sm:py-3.5 max-sm:text-sm"
           aria-label="Choose your username"
           autoComplete="off"
           autoCapitalize="off"
