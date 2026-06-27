@@ -1,12 +1,13 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { unstable_cache } from "next/cache"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { mapProfile } from "@/lib/database.types"
 import { fetchActiveLinksForUser } from "@/lib/supabase/fetch-links"
 import { PublicProfilePageClient } from "./public-profile-client"
 import { JsonLd } from "@/components/seo/json-ld"
 import { profileMetadata, absoluteUrl } from "@/lib/seo"
+
+export const dynamic = "force-dynamic"
 
 async function fetchPublicProfile(username: string) {
   const supabase = createAdminClient()
@@ -26,21 +27,13 @@ async function fetchPublicProfile(username: string) {
   }
 }
 
-const getCachedProfile = (username: string) =>
-  unstable_cache(() => fetchPublicProfile(username), [`profile-${username}`], {
-    revalidate: 60,
-    tags: [`profile-${username}`],
-  })()
-
-export const revalidate = 60
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ username: string }>
 }): Promise<Metadata> {
   const { username } = await params
-  const data = await getCachedProfile(username)
+  const data = await fetchPublicProfile(username)
   if (!data) return { title: "Profile not found" }
 
   const { profile } = data
@@ -54,7 +47,7 @@ export async function generateMetadata({
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
-  const data = await getCachedProfile(username)
+  const data = await fetchPublicProfile(username)
   if (!data) notFound()
 
   const { profile, links } = data
