@@ -3,6 +3,12 @@ import { apiSuccess, apiError } from "@/lib/api-response"
 import { linkCreateSchema, linkUpdateSchema, linksReorderSchema } from "@/lib/validations"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { isMissingColumnError, omitColumn, withSchemaHint } from "@/lib/schema-hint"
+import { revalidatePublicProfile } from "@/lib/revalidate-profile"
+
+async function revalidateProfileForUser(supabase: ReturnType<typeof createAdminClient>, userId: string) {
+  const { data } = await supabase.from("profiles").select("username").eq("id", userId).maybeSingle()
+  if (data?.username) revalidatePublicProfile(data.username)
+}
 
 export async function GET(request: Request) {
   const userId = await getUserId(request)
@@ -52,6 +58,7 @@ export async function POST(request: Request) {
   }
 
   if (error) return apiError(withSchemaHint(error.message), 500)
+  await revalidateProfileForUser(supabase, userId)
   return apiSuccess(data, 201)
 }
 
@@ -73,6 +80,7 @@ export async function PATCH(request: Request) {
         .eq("id", link.id)
         .eq("user_id", userId)
     }
+    await revalidateProfileForUser(supabase, userId)
     return apiSuccess({ reordered: true })
   }
 
@@ -99,6 +107,7 @@ export async function PATCH(request: Request) {
   }
 
   if (error) return apiError(withSchemaHint(error.message), 500)
+  await revalidateProfileForUser(supabase, userId)
   return apiSuccess(data)
 }
 
@@ -113,5 +122,6 @@ export async function DELETE(request: Request) {
   const { error } = await supabase.from("links").delete().eq("id", id).eq("user_id", userId)
   if (error) return apiError(error.message, 500)
 
+  await revalidateProfileForUser(supabase, userId)
   return apiSuccess({ deleted: true })
 }

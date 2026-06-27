@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { unstable_cache } from "next/cache"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { mapProfile, type DbLink } from "@/lib/database.types"
+import { mapProfile } from "@/lib/database.types"
+import { fetchActiveLinksForUser } from "@/lib/supabase/fetch-links"
 import { PublicProfilePageClient } from "./public-profile-client"
 import { JsonLd } from "@/components/seo/json-ld"
 import { profileMetadata, absoluteUrl } from "@/lib/seo"
@@ -17,16 +18,11 @@ async function fetchPublicProfile(username: string) {
 
   if (!profile) return null
 
-  const { data: links } = await supabase
-    .from("links")
-    .select("id, title, url, icon, position")
-    .eq("user_id", profile.id)
-    .eq("is_active", true)
-    .order("position", { ascending: true })
+  const links = await fetchActiveLinksForUser(supabase, profile.id)
 
   return {
     profile: mapProfile(profile),
-    links: (links ?? []) as Pick<DbLink, "id" | "title" | "url" | "icon">[],
+    links,
   }
 }
 

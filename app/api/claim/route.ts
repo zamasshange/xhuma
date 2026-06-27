@@ -6,6 +6,7 @@ import { normalizeDraftData } from "@/lib/templates-server"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import type { TemplateDocument } from "@/lib/editor-state"
 import { isMissingColumnError, omitColumn, withSchemaHint } from "@/lib/schema-hint"
+import { revalidatePublicProfile } from "@/lib/revalidate-profile"
 
 export async function POST(request: Request) {
   const sessionId = await requireUserId(request)
@@ -99,6 +100,8 @@ export async function POST(request: Request) {
   }
 
   await supabase.from("profile_drafts").delete().eq("session_id", sessionId)
+
+  revalidatePublicProfile(username)
 
   return apiSuccess(mapProfile(profile), 201)
 }

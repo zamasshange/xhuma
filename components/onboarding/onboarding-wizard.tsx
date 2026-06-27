@@ -179,13 +179,18 @@ export function OnboardingWizard() {
     }
 
     for (const link of linkItems) {
-      await apiFetch("/api/links", {
+      const res = await apiFetch("/api/links", {
         method: "POST",
         body: JSON.stringify({
           ...link,
           icon: "icon" in link ? link.icon : inferLinkIcon(link.title, link.url),
         }),
       })
+      if (!res.success) {
+        setSaving(false)
+        toast.error(res.error ?? `Could not add link: ${link.title}`)
+        return
+      }
     }
 
     setSaving(false)
