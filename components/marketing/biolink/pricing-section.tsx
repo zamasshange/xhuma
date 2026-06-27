@@ -29,62 +29,71 @@ export function BiolinkPricing() {
 
   return (
     <section className="relative mx-auto w-[min(900px,92%)] pt-28 max-lg:pt-16">
-      <div className="mb-5 text-center">
-        <SectionBadge>Pricing</SectionBadge>
-      </div>
-      <h1 className="relative z-10 text-center text-6xl font-semibold tracking-tighter text-bio-dark max-lg:text-5xl max-sm:px-2 max-sm:text-4xl">
-        All features,
-        <br />
-        One simple plan
-      </h1>
+      {/* Soft glow behind heading + card */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`${BIO_ASSETS}/price-plan-bg.B1mGKs9M.png`}
         alt=""
-        className="pointer-events-none absolute -left-4 top-10 -z-10 object-contain max-sm:-left-4"
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 w-[min(780px,130vw)] max-w-none -translate-x-1/2 object-contain"
       />
 
-      <div className="relative mx-auto mt-10 flex w-[242px] rounded-full bg-white/60 px-1.5 py-[3px] max-sm:mt-6">
+      <div className="relative z-10 mb-5 text-center">
+        <SectionBadge>Pricing</SectionBadge>
+      </div>
+      <h1 className="relative z-10 text-center text-6xl font-semibold leading-[1.05] tracking-tighter text-bio-dark max-lg:text-5xl max-sm:px-2 max-sm:text-4xl">
+        All features,
+        <br />
+        One simple plan
+      </h1>
+
+      <div className="relative z-10 mx-auto mt-10 flex w-[250px] rounded-full bg-[#f0ebe3] p-1 max-sm:mt-6">
         <button
           type="button"
           onClick={() => setYearly(false)}
-          className="relative z-10 flex h-10 flex-1 items-center justify-center px-3 text-sm font-semibold text-bio-dark"
+          className={cn(
+            "relative z-10 flex h-10 flex-1 items-center justify-center px-2 text-sm font-semibold transition-colors",
+            !yearly ? "text-bio-dark" : "text-bio-grey",
+          )}
         >
           Monthly
         </button>
         <button
           type="button"
           onClick={() => setYearly(true)}
-          className="relative z-10 flex h-10 flex-1 items-center justify-center px-3 text-sm font-semibold text-bio-dark"
+          className={cn(
+            "relative z-10 flex h-10 flex-1 items-center justify-center px-2 text-sm font-semibold transition-colors",
+            yearly ? "text-bio-dark" : "text-bio-grey",
+          )}
         >
           Yearly (Save 50%)
         </button>
         <div
-          className="absolute top-[5px] h-9 rounded-full bg-white shadow-md transition-transform duration-300"
+          className="absolute top-1 bottom-1 rounded-full bg-white shadow-[0_2px_10px_rgba(13,12,34,0.1)] transition-all duration-300 ease-out"
           style={{
-            width: yearly ? "147px" : "88px",
-            transform: yearly ? "translateX(88px)" : "translateX(6px)",
+            width: yearly ? "calc(58% - 4px)" : "calc(42% - 4px)",
+            left: yearly ? "calc(42% + 2px)" : "4px",
           }}
         />
       </div>
 
-      <div className="bio-plan-gradient mx-auto mt-10 w-[min(440px,100%)] rounded-[32px] p-1.5 max-sm:mt-8">
+      <div className="bio-plan-gradient relative z-10 mx-auto mt-10 w-[min(440px,100%)] rounded-[32px] p-1.5 max-sm:mt-8">
         <div className="rounded-[30px] bg-white p-10 text-bio-dark max-sm:p-5">
           <div className="flex items-center text-base font-semibold">
             Pro plan
             {yearly && (
-              <span className="bio-shine relative ml-2 flex items-center overflow-hidden rounded-full bg-bio-green px-2.5 py-1 text-xs text-white">
+              <span className="bio-shine relative ml-2 flex items-center overflow-hidden rounded-full bg-[#28c76f] px-2.5 py-1 text-xs font-semibold text-white">
                 Save 50%
               </span>
             )}
           </div>
-          <div className="mt-3 flex items-baseline border-b border-bio-dark/20 pb-6 max-sm:pb-3">
-            <h2 className="text-5xl font-semibold max-sm:text-4xl">${price.toFixed(2)}</h2>
-            <span className="mb-3 ml-1 text-base text-bio-grey">/mo</span>
+          <div className="mt-3 flex items-baseline border-b border-bio-dark/15 pb-6 max-sm:pb-3">
+            <h2 className="text-5xl font-semibold tracking-tight max-sm:text-4xl">${price.toFixed(2)}</h2>
+            <span className="mb-2 ml-1 text-base text-bio-grey">/mo</span>
           </div>
           <ul className="mt-6 space-y-4 max-sm:mt-3">
             {bioPricing.features.map((feature) => (
-              <li key={feature} className="flex text-base max-sm:text-sm">
+              <li key={feature} className="flex text-base leading-snug max-sm:text-sm">
                 <GradientCheck />
                 {feature}
               </li>

@@ -4,6 +4,14 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { bioHero } from "@/data/bio-link"
 import { ClaimLinkInput } from "@/components/marketing/biolink/claim-link"
+import { PhoneDeviceFrame } from "@/components/device/phone-device-frame"
+import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
+import {
+  DEMO_DARK_LINKS,
+  DEMO_DARK_PROFILE,
+  DEMO_SUMMER_LINKS,
+  DEMO_SUMMER_PROFILE,
+} from "@/lib/demo-profile"
 
 export function BiolinkHero() {
   const [flipped, setFlipped] = useState(false)
@@ -27,19 +35,30 @@ export function BiolinkHero() {
         </div>
 
         <div className="flex w-2/5 items-center justify-center max-md:mt-10 max-md:w-full max-sm:mt-7">
-          <div className="cursor-pointer [perspective:2000px]">
+          <div className="relative inline-block cursor-pointer [perspective:2000px]">
             <motion.div
-              className="relative h-[min(520px,70vw)] w-[min(280px,55vw)] [transform-style:preserve-3d]"
+              className="relative [transform-style:preserve-3d]"
               animate={{ rotateY: flipped ? 180 : 0 }}
               transition={{ duration: 0.9, ease: [0.19, 1, 0.22, 1] }}
             >
-              <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={bioHero.heroFront} alt="Linkly profile preview" className="size-full object-cover" />
+              <div className="[backface-visibility:hidden]">
+                <PhoneDeviceFrame size="md" showLabel={false}>
+                  <DbPublicProfileView
+                    profile={DEMO_SUMMER_PROFILE}
+                    links={DEMO_SUMMER_LINKS}
+                    compact
+                    verified
+                  />
+                </PhoneDeviceFrame>
               </div>
-              <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={bioHero.heroBack} alt="Linkly profile alternate view" className="size-full object-cover" />
+              <div className="absolute left-0 top-0 w-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <PhoneDeviceFrame size="md" showLabel={false}>
+                  <DbPublicProfileView
+                    profile={DEMO_DARK_PROFILE}
+                    links={DEMO_DARK_LINKS}
+                    compact
+                  />
+                </PhoneDeviceFrame>
               </div>
             </motion.div>
           </div>

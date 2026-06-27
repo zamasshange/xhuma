@@ -8,14 +8,9 @@ import { LogoMark } from "@/components/marketing/biolink/logo-mark"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
-  { href: "/", label: "Home" },
   { href: "/features", label: "Features" },
   { href: "/explore", label: "Explore" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
 ]
 
 const authLinks = [

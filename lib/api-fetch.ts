@@ -6,10 +6,11 @@ export async function apiFetch<T>(
 ): Promise<{ success: boolean; data?: T; error?: string }> {
   try {
     const userId = typeof window !== "undefined" ? getUserId() : ""
+    const isFormData = options?.body instanceof FormData
     const res = await fetch(url, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(userId ? { "X-User-Id": userId } : {}),
         ...options?.headers,
       },

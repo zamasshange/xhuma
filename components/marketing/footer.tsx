@@ -9,7 +9,7 @@ const groups = [
       { label: "Explore", href: "/explore" },
       { label: "Pricing", href: "/pricing" },
       { label: "My page", href: "/editor" },
-      { label: "AI Studio", href: "/dashboard/ai-studio" },
+      { label: "AI tools", href: "/editor?tab=ai" },
     ],
   },
   {

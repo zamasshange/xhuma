@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { apiFetch } from "@/lib/api-fetch"
 import { getUserId } from "@/lib/temp-user"
-import { displayNameFromUsername, isValidUsername, sanitizeUsername } from "@/lib/username"
+import { isValidUsername, sanitizeUsername } from "@/lib/username"
 import type { DbProfile } from "@/lib/database.types"
 
 type ClaimLinkInputProps = {
@@ -20,10 +20,9 @@ export function ClaimLinkInput({
   onSuccess,
 }: ClaimLinkInputProps) {
   const [username, setUsername] = useState("")
-  const [loading, setLoading] = useState(false)
 
-  const goToEditor = (slug?: string) => {
-    const url = slug ? `/editor?username=${encodeURIComponent(slug)}` : "/editor"
+  const goToOnboarding = (slug?: string) => {
+    const url = slug ? `/onboarding?username=${encodeURIComponent(slug)}` : "/onboarding"
     window.location.assign(url)
   }
 
@@ -37,40 +36,15 @@ export function ClaimLinkInput({
     }
 
     getUserId()
-    setLoading(true)
+    onSuccess?.()
 
-    const res = await apiFetch<DbProfile>("/api/profile", {
-      method: "POST",
-      body: JSON.stringify({
-        username: slug,
-        display_name: displayNameFromUsername(slug),
-        bio: "",
-      }),
-    })
-
-    setLoading(false)
-
-    if (res.success) {
-      onSuccess?.()
-      toast.success("Your page is ready — add your links!")
-      goToEditor()
+    const existing = await apiFetch<DbProfile | null>("/api/profile")
+    if (existing.success && existing.data) {
+      goToOnboarding()
       return
     }
 
-    const err = res.error ?? ""
-
-    if (err.includes("Profile already exists")) {
-      goToEditor()
-      return
-    }
-
-    if (err.includes("Username already taken")) {
-      toast.error("That username is taken — try another")
-      return
-    }
-
-    toast.error(err || "Could not create page — try again in the editor")
-    goToEditor(slug)
+    goToOnboarding(slug)
   }
 
   return (
@@ -87,14 +61,12 @@ export function ClaimLinkInput({
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
-          disabled={loading}
         />
         <button
           type="submit"
-          disabled={loading}
-          className="m-1.5 shrink-0 rounded-full bg-bio-dark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 disabled:opacity-60 max-sm:px-4 max-sm:py-2.5"
+          className="m-1.5 shrink-0 rounded-full bg-bio-dark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 max-sm:px-4 max-sm:py-2.5"
         >
-          {loading ? "Starting…" : buttonLabel}
+          {buttonLabel}
         </button>
       </div>
     </form>

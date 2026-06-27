@@ -1,8 +1,45 @@
 import Link from "next/link"
+import { createAdminClient } from "@/lib/supabase/admin"
+import { mapProfile } from "@/lib/database.types"
 import { bioCreators } from "@/data/bio-link"
 
-export function CreatorMarquee() {
-  const items = [...bioCreators, ...bioCreators]
+export async function CreatorMarquee() {
+  let creators: { username: string; name: string; image: string; href: string }[] = []
+
+  try {
+    const supabase = createAdminClient()
+    const { data } = await supabase
+      .from("profiles")
+      .select("username, display_name, avatar_url")
+      .order("created_at", { ascending: false })
+      .limit(14)
+
+    if (data && data.length >= 3) {
+      creators = data.map((p) => {
+        const profile = mapProfile(p as Record<string, unknown>)
+        const fallback = bioCreators.find((c) => c.username === profile.username)
+        return {
+          username: profile.username,
+          name: profile.display_name,
+          image: profile.avatar_url || fallback?.image || bioCreators[0].image,
+          href: `/${profile.username}`,
+        }
+      })
+    }
+  } catch {
+    // fall through to static creators
+  }
+
+  if (creators.length === 0) {
+    creators = bioCreators.map((c) => ({
+      username: c.username,
+      name: c.name,
+      image: c.image,
+      href: `/editor?username=${c.username}`,
+    }))
+  }
+
+  const items = [...creators, ...creators]
 
   return (
     <section className="pt-28 max-lg:pt-16">
@@ -14,7 +51,7 @@ export function CreatorMarquee() {
           {items.map((creator, i) => (
             <Link
               key={`${creator.username}-${i}`}
-              href={`/${creator.username === "charlymatashow" ? "ariastone" : creator.username === "austinarcher" ? "mayadev" : "leoart"}`}
+              href={creator.href}
               className="block h-[220px] w-[180px] shrink-0 overflow-hidden rounded-2xl transition-transform hover:scale-[1.02]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

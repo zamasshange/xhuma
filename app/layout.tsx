@@ -40,16 +40,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} bg-background`}
+      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} xhuma-site`}
       suppressHydrationWarning
     >
-      <body className="font-sans antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body className="min-h-dvh font-sans antialiased text-bio-dark bg-white">
+        <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
           {children}
           <Toaster position="top-center" richColors />
         </ThemeProvider>

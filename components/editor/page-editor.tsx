@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
 import { toast } from "sonner"
 import {
   Plus,
@@ -10,42 +9,55 @@ import {
   ChevronUp,
   ChevronDown,
   ExternalLink,
-  Sparkles,
   Eye,
   EyeOff,
   Share2,
 } from "lucide-react"
 import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
 import { useDashboard } from "@/components/dashboard/dashboard-provider"
-import { LogoMark } from "@/components/marketing/biolink/logo-mark"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
+import {
+  EditorHomeLink,
+  EditorPanel,
+  EditorPreviewFrame,
+  EditorSectionTitle,
+  EditorShell,
+  type EditorTabId,
+} from "@/components/editor/editor-shell"
+import { ThemePicker } from "@/components/editor/theme-picker"
+import {
+  BioButton,
+  BioGradientButton,
+  BioInput,
+  BioLabel,
+  BioMuted,
+  BioTextarea,
+} from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
 import { getUserId } from "@/lib/temp-user"
 import { SITE_DOMAIN } from "@/lib/brand"
 import { displayNameFromUsername, isValidUsername, sanitizeUsername } from "@/lib/username"
-import type { DbLink, DbProfile } from "@/lib/database.types"
+import type { DbLink, DbProfile, ProfileTheme } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
+import { onboardingThemePresets } from "@/data/onboarding"
+import { AnalyticsPanel } from "@/components/editor/analytics-panel"
+import { AiPanel } from "@/components/editor/ai-panel"
+import { SettingsPanel } from "@/components/editor/settings-panel"
 import { cn } from "@/lib/utils"
-
-const THEME_PRESETS = [
-  { name: "Dark", theme: { bg: "#0f0f0f", text: "#ffffff", button: "#7c3aed", radius: "14px" } },
-  { name: "Ocean", theme: { bg: "#0f172a", text: "#e2e8f0", button: "#3b82f6", radius: "12px" } },
-  { name: "Clean", theme: { bg: "#fafafa", text: "#171717", button: "#171717", radius: "14px" } },
-]
 
 export function PageEditor() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { profile, links, loading, setProfile, setLinks, refreshLinks } = useDashboard()
 
+  const tab = (searchParams.get("tab") as EditorTabId) || "page"
+  const setTab = (next: EditorTabId) =>
+    router.replace(next === "page" ? "/editor" : `/editor?tab=${next}`, { scroll: false })
+
   const [username, setUsername] = useState("")
   const [displayName, setDisplayName] = useState("")
   const [bio, setBio] = useState("")
   const [creating, setCreating] = useState(false)
+  const [themeId, setThemeId] = useState("basic")
   const [drafts, setDrafts] = useState<Record<string, { title: string; url: string }>>({})
   const [newLink, setNewLink] = useState({ title: "", url: "" })
   const [addingLink, setAddingLink] = useState(false)
@@ -64,6 +76,10 @@ export function PageEditor() {
       setDisplayName(profile.display_name)
       setBio(profile.bio ?? "")
       setUsername(profile.username)
+      const match = onboardingThemePresets.find(
+        (p) => p.theme.bg === profile.theme_json.bg && p.theme.button === profile.theme_json.button,
+      )
+      if (match) setThemeId(match.id)
     }
   }, [profile])
 
@@ -75,23 +91,15 @@ export function PageEditor() {
   const launchPage = async (e: React.FormEvent) => {
     e.preventDefault()
     const slug = sanitizeUsername(username)
-    if (!isValidUsername(slug)) {
-      toast.error("Username must be 3–20 characters (letters, numbers, _ or -)")
-      return
-    }
-    if (!displayName.trim()) {
-      toast.error("Add a display name")
+    if (!isValidUsername(slug) || !displayName.trim()) {
+      toast.error("Enter a valid username and display name")
       return
     }
     getUserId()
     setCreating(true)
     const res = await apiFetch<DbProfile>("/api/profile", {
       method: "POST",
-      body: JSON.stringify({
-        username: slug,
-        display_name: displayName.trim(),
-        bio: bio.trim(),
-      }),
+      body: JSON.stringify({ username: slug, display_name: displayName.trim(), bio: bio.trim() }),
     })
     setCreating(false)
     if (!res.success) {
@@ -113,12 +121,11 @@ export function PageEditor() {
         username: username.toLowerCase().trim(),
       }),
     })
-    if (!res.success) {
-      toast.error(res.error ?? "Save failed")
-      return
+    if (!res.success) toast.error(res.error ?? "Save failed")
+    else if (res.data) {
+      setProfile(res.data)
+      toast.success("Profile updated")
     }
-    if (res.data) setProfile(res.data)
-    toast.success("Profile updated")
   }
 
   const addLink = async () => {
@@ -132,13 +139,12 @@ export function PageEditor() {
       body: JSON.stringify({ title: newLink.title.trim(), url: newLink.url.trim() }),
     })
     setAddingLink(false)
-    if (!res.success) {
-      toast.error(res.error ?? "Could not add link")
-      return
+    if (!res.success) toast.error(res.error ?? "Could not add link")
+    else {
+      setNewLink({ title: "", url: "" })
+      await refreshLinks()
+      toast.success("Link added!")
     }
-    setNewLink({ title: "", url: "" })
-    await refreshLinks()
-    toast.success("Link added!")
   }
 
   const saveLink = async (link: DbLink) => {
@@ -177,8 +183,9 @@ export function PageEditor() {
     })
   }
 
-  const applyTheme = async (theme: typeof DEFAULT_THEME) => {
+  const applyTheme = async (id: string, theme: ProfileTheme) => {
     if (!profile) return
+    setThemeId(id)
     const res = await apiFetch<DbProfile>("/api/profile", {
       method: "PATCH",
       body: JSON.stringify({ theme }),
@@ -206,269 +213,256 @@ export function PageEditor() {
       return { id: l.id, title: d.title, url: d.url }
     })
 
+  const headerActions = (
+    <>
+      {profile && tab === "page" && (
+        <>
+          <BioButton
+            variant="secondary"
+            className="h-9 px-3 py-2 text-xs sm:px-4 sm:text-sm"
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/${profile.username}`)
+              toast.success("Link copied!")
+            }}
+          >
+            <Share2 className="size-4" />
+            <span className="hidden sm:inline">Share</span>
+          </BioButton>
+          <BioButton className="h-9 px-3 py-2 text-xs sm:px-4 sm:text-sm" href={`/${profile.username}`}>
+            <ExternalLink className="size-4" />
+            <span className="hidden sm:inline">View live</span>
+          </BioButton>
+        </>
+      )}
+      <EditorHomeLink />
+    </>
+  )
+
   if (loading) {
     return (
-      <div className="flex min-h-dvh items-center justify-center text-muted-foreground">
+      <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f8] text-bio-grey">
         Loading your page…
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      {/* Top bar — bio.link style */}
-      <header className="sticky top-0 z-50 flex h-14 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur sm:px-6">
-        <LogoMark height={32} />
-        {profile && (
-          <p className="hidden truncate text-sm text-muted-foreground sm:block">
-            {SITE_DOMAIN}/{profile.username}
-          </p>
-        )}
-        <div className="flex items-center gap-2">
-          {profile && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9"
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/${profile.username}`)
-                  toast.success("Link copied!")
-                }}
-              >
-                <Share2 className="size-4" />
-                <span className="hidden sm:inline">Share</span>
-              </Button>
-              <Button render={<Link href={`/${profile.username}`} target="_blank" />} size="sm" className="h-9">
-                <ExternalLink className="size-4" />
-                <span className="hidden sm:inline">View live</span>
-              </Button>
-            </>
-          )}
-          <Button render={<Link href="/dashboard/ai-studio" />} variant="outline" size="sm" className="h-9">
-            <Sparkles className="size-4" />
-            <span className="hidden sm:inline">AI</span>
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex flex-1 flex-col lg:flex-row">
-        {/* Editor panel */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:max-w-xl lg:border-r lg:border-border">
-          {!profile ? (
-            <Card className="p-5 sm:p-6">
-              <h1 className="font-heading text-2xl font-semibold">Claim your link</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Set up your page in seconds — then add links on the right.
-              </p>
-              <form onSubmit={launchPage} className="mt-6 flex flex-col gap-4">
-                <div>
-                  <Label>Your link</Label>
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">{SITE_DOMAIN}/</span>
-                    <Input
-                      className="h-11 flex-1"
-                      value={username}
-                      onChange={(e) => {
-                        const slug = sanitizeUsername(e.target.value)
-                        setUsername(slug)
-                        if (!displayName || displayName === displayNameFromUsername(username)) {
-                          setDisplayName(displayNameFromUsername(slug))
-                        }
-                      }}
-                      placeholder="yourname"
-                      required
-                      minLength={3}
-                      maxLength={20}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label>Display name</Label>
-                  <Input
-                    className="mt-1.5 h-11"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Your Name"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>Bio</Label>
-                  <Textarea
-                    className="mt-1.5 min-h-[80px]"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    placeholder="What should visitors know about you?"
-                  />
-                </div>
-                <Button type="submit" className="h-12 bg-brand-gradient text-brand-foreground" disabled={creating}>
-                  {creating ? "Creating…" : "Start building"}
-                </Button>
-              </form>
-            </Card>
+    <EditorShell tab={tab} onTabChange={setTab} username={profile?.username} actions={headerActions}>
+      {tab !== "page" ? (
+        <div className="mx-auto max-w-2xl">
+          {!profile && tab !== "settings" ? (
+            <EditorPanel className="text-center">
+              <p className="text-lg font-semibold">Create your page first</p>
+              <BioMuted className="mt-1">Set up your link-in-bio, then use stats and AI tools.</BioMuted>
+              <BioGradientButton className="mt-5 max-w-xs mx-auto" onClick={() => setTab("page")}>
+                Create my page
+              </BioGradientButton>
+            </EditorPanel>
           ) : (
-            <div className="flex flex-col gap-6">
-              {/* Profile */}
-              <section>
-                <h2 className="font-heading text-lg font-semibold">Profile</h2>
-                <div className="mt-3 flex flex-col gap-3">
-                  <Input
-                    className="h-11"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Display name"
-                  />
-                  <Textarea
-                    className="min-h-[72px]"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    placeholder="Bio"
-                  />
-                  <Button variant="outline" className="h-10 self-start" onClick={saveProfile}>
-                    Save profile
-                  </Button>
-                </div>
-              </section>
-
-              {/* Links — core bio.link flow */}
-              <section>
-                <h2 className="font-heading text-lg font-semibold">Links</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Add buttons visitors tap on your page.</p>
-
-                <Card className="mt-3 border-brand/30 bg-brand/5 p-4">
-                  <p className="mb-3 text-sm font-medium">Add a link</p>
-                  <div className="flex flex-col gap-2">
-                    <Input
-                      className="h-11"
-                      placeholder="Button text (e.g. Instagram)"
-                      value={newLink.title}
-                      onChange={(e) => setNewLink((l) => ({ ...l, title: e.target.value }))}
-                    />
-                    <Input
-                      className="h-11"
-                      placeholder="https://..."
-                      value={newLink.url}
-                      onChange={(e) => setNewLink((l) => ({ ...l, url: e.target.value }))}
-                    />
-                    <Button
-                      onClick={addLink}
-                      disabled={addingLink}
-                      className="h-11 bg-brand-gradient text-brand-foreground"
-                    >
-                      <Plus className="size-4" />
-                      {addingLink ? "Adding…" : "Add link"}
-                    </Button>
+            <EditorPanel>
+              {tab === "analytics" && <AnalyticsPanel />}
+              {tab === "ai" && <AiPanel />}
+              {tab === "settings" && <SettingsPanel />}
+            </EditorPanel>
+          )}
+        </div>
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
+          <div className="flex flex-col gap-5">
+            {!profile ? (
+              <EditorPanel>
+                <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Claim your link</h1>
+                <BioMuted className="mt-2">Set up your page in seconds — preview updates as you go.</BioMuted>
+                <form onSubmit={launchPage} className="mt-6 flex flex-col gap-4">
+                  <div>
+                    <BioLabel>Your link</BioLabel>
+                    <div className="mt-2 flex items-center gap-2 rounded-2xl bg-bio-grey-f4 px-4 py-3">
+                      <span className="text-sm text-bio-grey">{SITE_DOMAIN}/</span>
+                      <input
+                        className="min-w-0 flex-1 bg-transparent text-base text-bio-dark outline-none"
+                        value={username}
+                        onChange={(e) => {
+                          const slug = sanitizeUsername(e.target.value)
+                          setUsername(slug)
+                          if (!displayName || displayName === displayNameFromUsername(username)) {
+                            setDisplayName(displayNameFromUsername(slug))
+                          }
+                        }}
+                        placeholder="yourname"
+                        required
+                      />
+                    </div>
                   </div>
-                </Card>
+                  <div>
+                    <BioLabel>Display name</BioLabel>
+                    <BioInput className="mt-2 bg-bio-grey-f4 border-transparent focus:border-bio-dark/20" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
+                  </div>
+                  <div>
+                    <BioLabel>Bio</BioLabel>
+                    <BioTextarea className="mt-2 bg-bio-grey-f4 border-transparent focus:border-bio-dark/20" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="What should visitors know about you?" />
+                  </div>
+                  <BioGradientButton type="submit" disabled={creating}>
+                    {creating ? "Creating…" : "Start building"}
+                  </BioGradientButton>
+                </form>
+              </EditorPanel>
+            ) : (
+              <>
+                <EditorPanel>
+                  <EditorSectionTitle subtitle="How visitors see you at the top of your page.">Profile</EditorSectionTitle>
+                  <div className="flex flex-col gap-3">
+                    <input
+                      className="h-14 w-full rounded-2xl bg-bio-grey-f4 px-5 text-base text-bio-dark outline-none placeholder:text-bio-grey"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder="Your name"
+                    />
+                    <div className="relative">
+                      <textarea
+                        className="min-h-[100px] w-full resize-none rounded-2xl bg-bio-grey-f4 px-5 py-4 text-base text-bio-dark outline-none placeholder:text-bio-grey"
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        placeholder="Bio"
+                        maxLength={255}
+                      />
+                      <span className="absolute bottom-3 right-4 text-xs text-bio-grey">{bio.length}/255</span>
+                    </div>
+                    <BioButton variant="secondary" className="self-start" onClick={saveProfile}>
+                      Save profile
+                    </BioButton>
+                  </div>
+                </EditorPanel>
 
-                <div className="mt-3 flex flex-col gap-2">
-                  {links.length === 0 && (
-                    <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                      No links yet — add your Instagram, portfolio, or store above.
-                    </p>
-                  )}
-                  {links.map((link, index) => {
-                    const draft = getDraft(link)
-                    return (
-                      <Card key={link.id} className={cn("p-3", !link.is_active && "opacity-50")}>
-                        <div className="flex gap-2">
-                          <div className="flex flex-col gap-0.5">
-                            <button type="button" onClick={() => moveLink(index, -1)} className="rounded p-1 hover:bg-muted" aria-label="Up">
-                              <ChevronUp className="size-4" />
-                            </button>
-                            <button type="button" onClick={() => moveLink(index, 1)} className="rounded p-1 hover:bg-muted" aria-label="Down">
-                              <ChevronDown className="size-4" />
-                            </button>
-                          </div>
-                          <div className="min-w-0 flex-1 space-y-2">
-                            <Input
-                              className="h-10"
-                              value={draft.title}
-                              onChange={(e) =>
-                                setDrafts((d) => ({ ...d, [link.id]: { ...draft, title: e.target.value } }))
-                              }
-                            />
-                            <Input
-                              className="h-10"
-                              value={draft.url}
-                              onChange={(e) =>
-                                setDrafts((d) => ({ ...d, [link.id]: { ...draft, url: e.target.value } }))
-                              }
-                            />
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" onClick={() => saveLink(link)}>
-                                Save
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={async () => {
-                                  await apiFetch("/api/links", {
-                                    method: "PATCH",
-                                    body: JSON.stringify({ id: link.id, is_active: !link.is_active }),
-                                  })
-                                  await refreshLinks()
-                                }}
-                              >
-                                {link.is_active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-                              </Button>
-                              <Button size="sm" variant="destructive" onClick={() => removeLink(link.id)}>
-                                <Trash2 className="size-4" />
-                              </Button>
+                <EditorPanel>
+                  <EditorSectionTitle subtitle="Add buttons visitors tap on your page.">Links</EditorSectionTitle>
+                  <div className="rounded-2xl bg-bio-grey-f4 p-4">
+                    <p className="mb-3 text-sm font-semibold text-bio-dark">Add a link</p>
+                    <div className="flex flex-col gap-2">
+                      <input
+                        className="h-12 w-full rounded-xl bg-white px-4 text-bio-dark outline-none placeholder:text-bio-grey"
+                        placeholder="Button text (e.g. Instagram)"
+                        value={newLink.title}
+                        onChange={(e) => setNewLink((l) => ({ ...l, title: e.target.value }))}
+                      />
+                      <input
+                        className="h-12 w-full rounded-xl bg-white px-4 text-bio-dark outline-none placeholder:text-bio-grey"
+                        placeholder="https://..."
+                        value={newLink.url}
+                        onChange={(e) => setNewLink((l) => ({ ...l, url: e.target.value }))}
+                      />
+                      <BioGradientButton onClick={addLink} disabled={addingLink}>
+                        <Plus className="size-4" />
+                        {addingLink ? "Adding…" : "Add link"}
+                      </BioGradientButton>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-col gap-2">
+                    {links.length === 0 && (
+                      <p className="rounded-2xl border-2 border-dashed border-bio-dark/12 py-8 text-center text-sm text-bio-grey">
+                        No links yet — add your Instagram, portfolio, or store above.
+                      </p>
+                    )}
+                    {links.map((link, index) => {
+                      const draft = getDraft(link)
+                      return (
+                        <div
+                          key={link.id}
+                          className={cn(
+                            "rounded-2xl bg-bio-grey-f4 p-4",
+                            !link.is_active && "opacity-50",
+                          )}
+                        >
+                          <div className="flex gap-2">
+                            <div className="flex flex-col gap-0.5 pt-1">
+                              <button type="button" onClick={() => moveLink(index, -1)} className="rounded-lg p-1 hover:bg-white" aria-label="Up">
+                                <ChevronUp className="size-4" />
+                              </button>
+                              <button type="button" onClick={() => moveLink(index, 1)} className="rounded-lg p-1 hover:bg-white" aria-label="Down">
+                                <ChevronDown className="size-4" />
+                              </button>
+                            </div>
+                            <div className="min-w-0 flex-1 space-y-2">
+                              <input
+                                className="h-11 w-full rounded-xl bg-white px-4 text-sm text-bio-dark outline-none"
+                                value={draft.title}
+                                onChange={(e) =>
+                                  setDrafts((d) => ({ ...d, [link.id]: { ...draft, title: e.target.value } }))
+                                }
+                              />
+                              <input
+                                className="h-11 w-full rounded-xl bg-white px-4 text-sm text-bio-dark outline-none"
+                                value={draft.url}
+                                onChange={(e) =>
+                                  setDrafts((d) => ({ ...d, [link.id]: { ...draft, url: e.target.value } }))
+                                }
+                              />
+                              <div className="flex flex-wrap gap-2">
+                                <BioButton variant="secondary" className="h-9 px-4 text-xs" onClick={() => saveLink(link)}>
+                                  Save
+                                </BioButton>
+                                <BioButton
+                                  variant="secondary"
+                                  className="h-9 px-3"
+                                  onClick={async () => {
+                                    await apiFetch("/api/links", {
+                                      method: "PATCH",
+                                      body: JSON.stringify({ id: link.id, is_active: !link.is_active }),
+                                    })
+                                    await refreshLinks()
+                                  }}
+                                >
+                                  {link.is_active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+                                </BioButton>
+                                <BioButton
+                                  variant="secondary"
+                                  className="h-9 px-3 text-bio-red"
+                                  onClick={() => removeLink(link.id)}
+                                >
+                                  <Trash2 className="size-4" />
+                                </BioButton>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </Card>
-                    )
-                  })}
-                </div>
-              </section>
+                      )
+                    })}
+                  </div>
+                </EditorPanel>
 
-              {/* Quick theme */}
-              <section>
-                <h2 className="font-heading text-lg font-semibold">Theme</h2>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {THEME_PRESETS.map((p) => (
-                    <button
-                      key={p.name}
-                      type="button"
-                      onClick={() => applyTheme(p.theme)}
-                      className="flex items-center gap-2 rounded-full border border-border px-3 py-2 text-sm hover:border-brand"
-                    >
-                      <span className="size-4 rounded-full" style={{ backgroundColor: p.theme.button }} />
-                      {p.name}
-                    </button>
-                  ))}
-                </div>
-              </section>
-            </div>
-          )}
-        </div>
-
-        {/* Live preview — phone frame */}
-        <div className="hidden flex-1 items-start justify-center bg-muted/40 p-6 lg:flex lg:sticky lg:top-14 lg:h-[calc(100dvh-3.5rem)] lg:overflow-y-auto">
-          <div className="w-full max-w-[340px] overflow-hidden rounded-[2rem] border-[6px] border-foreground/10 bg-background shadow-2xl">
-            {previewProfile ? (
-              <DbPublicProfileView profile={previewProfile} links={previewLinks} />
-            ) : (
-              <div className="flex min-h-[520px] flex-col items-center justify-center p-8 text-center text-sm text-muted-foreground">
-                <p>Your live preview appears here once you launch your page.</p>
-              </div>
+                <EditorPanel>
+                  <EditorSectionTitle subtitle="Pick a look — same themes as onboarding.">Theme</EditorSectionTitle>
+                  <ThemePicker selectedId={themeId} onSelect={applyTheme} />
+                </EditorPanel>
+              </>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Mobile preview strip */}
-      {previewProfile && (
-        <div className="border-t border-border bg-muted/30 p-4 lg:hidden">
-          <p className="mb-2 text-center text-xs font-medium text-muted-foreground">Live preview</p>
-          <div className="mx-auto max-h-[50dvh] max-w-sm overflow-hidden rounded-2xl border border-border shadow-lg">
-            <DbPublicProfileView profile={previewProfile} links={previewLinks} />
+          <div className="lg:sticky lg:top-[140px] lg:self-start">
+            <EditorPanel className="hidden lg:block">
+              <EditorPreviewFrame>
+                {previewProfile ? (
+                  <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
+                ) : (
+                  <div className="flex min-h-[480px] items-center justify-center p-6 text-center text-sm text-bio-grey">
+                    Preview appears here once you launch your page.
+                  </div>
+                )}
+              </EditorPreviewFrame>
+            </EditorPanel>
           </div>
         </div>
       )}
-    </div>
+
+      {tab === "page" && previewProfile && (
+        <div className="mt-6 lg:hidden">
+          <EditorPanel>
+            <EditorPreviewFrame>
+              <DbPublicProfileView profile={previewProfile} links={previewLinks} />
+            </EditorPreviewFrame>
+          </EditorPanel>
+        </div>
+      )}
+    </EditorShell>
   )
 }

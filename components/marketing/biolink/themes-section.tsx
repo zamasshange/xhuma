@@ -1,7 +1,9 @@
+import Link from "next/link"
 import { bioThemes } from "@/data/bio-link"
 import { BioContainer } from "@/components/marketing/biolink/bio-container"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
+import { ThemePreviewImage } from "@/components/themes/theme-preview-image"
 
 export function ThemesSection() {
   return (
@@ -31,14 +33,18 @@ export function ThemesSection() {
         <div className="overflow-x-auto pb-4 no-scrollbar scroll-pl-5 sm:scroll-pl-6 md:scroll-pl-8 lg:scroll-pl-10">
           <div className="flex w-max gap-4 px-5 sm:px-6 md:px-8 lg:px-10">
             {bioThemes.map((theme) => (
-              <div
+              <Link
                 key={theme.id}
-                className="w-[200px] shrink-0 overflow-hidden rounded-2xl border border-black/5 bg-bio-grey shadow-sm max-sm:w-[180px]"
+                href="/editor"
+                className="w-[200px] shrink-0 transition-transform hover:scale-[1.02] max-sm:w-[180px]"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={theme.image} alt={theme.name} className="aspect-[9/16] w-full object-cover" />
-                <p className="p-3 text-center text-sm font-medium">{theme.name}</p>
-              </div>
+                <ThemePreviewImage
+                  src={theme.image}
+                  alt={theme.name}
+                  className="drop-shadow-[0_8px_30px_rgba(13,12,34,0.08)]"
+                />
+                <p className="mt-3 text-center text-sm font-medium">{theme.name}</p>
+              </Link>
             ))}
           </div>
         </div>

@@ -46,7 +46,7 @@
   --color-bio-grey: #717171;
   --color-bio-grey-f4: #f4f4f4;
   --color-bio-grey-d9: #d9d9d9;
-  --color-bio-green: #22c55e;
+  --color-bio-green: #28c76f;
   --color-bio-red: #e94560;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -189,12 +189,44 @@
   animation: float-slow-2 18s ease-in-out infinite;
 }
 
-/* Bio.link marketing styles */
+/* Xhuma site-wide design system (bio.link style) */
+.xhuma-site,
 .biolink-marketing {
   --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
   background: #ffffff;
   color: #0d0c22;
-  font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --background: #ffffff;
+  --foreground: #0d0c22;
+  --card: #f4f4f4;
+  --card-foreground: #0d0c22;
+  --popover: #ffffff;
+  --popover-foreground: #0d0c22;
+  --primary: #0d0c22;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f4;
+  --secondary-foreground: #0d0c22;
+  --muted: #f4f4f4;
+  --muted-foreground: #717171;
+  --accent: #f4f4f4;
+  --accent-foreground: #0d0c22;
+  --border: #e8e8ec;
+  --input: #e8e8ec;
+  --ring: #0d0c22;
+  --brand: #0d0c22;
+  --brand-foreground: #ffffff;
+  --brand-2: #0d0c22;
+  --radius: 1rem;
+}
+
+.xhuma-site .bio-app-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(13, 12, 34, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+.xhuma-site .bio-preview-pane {
+  background: #f4f4f4;
 }
 
 @keyframes bio-fade-up {
@@ -250,4 +282,34 @@
 }
 .bio-dark-btn:hover::before {
   opacity: 1;
+}
+
+.bio-continue-btn {
+  background: linear-gradient(90deg, #ff5858 0%, #c058ff 100%);
+  box-shadow: 0 8px 24px rgba(192, 88, 255, 0.25);
+}
+.phone-device-screen {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Wavy link buttons — Summer theme style */
+.profile-link-wavy {
+  clip-path: polygon(
+    0% 10%, 2.5% 2%, 5% 10%, 7.5% 2%, 10% 10%, 12.5% 2%, 15% 10%, 17.5% 2%, 20% 10%,
+    22.5% 2%, 25% 10%, 27.5% 2%, 30% 10%, 32.5% 2%, 35% 10%, 37.5% 2%, 40% 10%,
+    42.5% 2%, 45% 10%, 47.5% 2%, 50% 10%, 52.5% 2%, 55% 10%, 57.5% 2%, 60% 10%,
+    62.5% 2%, 65% 10%, 67.5% 2%, 70% 10%, 72.5% 2%, 75% 10%, 77.5% 2%, 80% 10%,
+    82.5% 2%, 85% 10%, 87.5% 2%, 90% 10%, 92.5% 2%, 95% 10%, 97.5% 2%, 100% 10%,
+    100% 90%, 97.5% 98%, 95% 90%, 92.5% 98%, 90% 90%, 87.5% 98%, 85% 90%, 82.5% 98%,
+    80% 90%, 77.5% 98%, 75% 90%, 72.5% 98%, 70% 90%, 67.5% 98%, 65% 90%, 62.5% 98%,
+    60% 90%, 57.5% 98%, 55% 90%, 52.5% 98%, 50% 90%, 47.5% 98%, 45% 90%, 42.5% 98%,
+    40% 90%, 37.5% 98%, 35% 90%, 32.5% 98%, 30% 90%, 27.5% 98%, 25% 90%, 22.5% 98%,
+    20% 90%, 17.5% 98%, 15% 90%, 12.5% 98%, 10% 90%, 7.5% 98%, 5% 90%, 2.5% 98%, 0% 90%
+  );
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
+.bio-continue-btn:hover:not(:disabled) {
+  opacity: 0.92;
 }

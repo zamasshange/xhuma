@@ -3,6 +3,8 @@ export type ProfileTheme = {
   text: string
   button: string
   radius: string
+  button_text?: string
+  button_style?: "rounded" | "wavy" | "pill"
 }
 
 export type DbProfile = {

@@ -1,9 +1,6 @@
 import {
   Home,
   LayoutDashboard,
-  User,
-  Link2,
-  Palette,
   BarChart3,
   Sparkles,
   Settings,
@@ -18,20 +15,17 @@ export type NavItem = {
   desktopOnly?: boolean
 }
 
+/** Legacy dashboard shell — all routes redirect to /editor */
 export const dashboardNav: NavItem[] = [
   { href: "/editor", label: "My page", icon: LayoutDashboard },
-  { href: "/dashboard/profile", label: "Profile", icon: User },
-  { href: "/dashboard/links", label: "Links", icon: Link2 },
-  { href: "/dashboard/appearance", label: "Appearance", icon: Palette },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/dashboard/ai-studio", label: "AI Studio", icon: Sparkles },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/editor?tab=analytics", label: "Stats", icon: BarChart3 },
+  { href: "/editor?tab=ai", label: "AI", icon: Sparkles },
+  { href: "/editor?tab=settings", label: "Settings", icon: Settings },
 ]
 
 export const mobileBottomNav: NavItem[] = [
   { href: "/editor", label: "Page", icon: Home },
-  { href: "/dashboard/links", label: "More", icon: LayoutDashboard },
-  { href: "/dashboard/ai-studio", label: "AI Studio", icon: Sparkles },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/editor?tab=analytics", label: "Stats", icon: BarChart3 },
+  { href: "/editor?tab=ai", label: "AI", icon: Sparkles },
+  { href: "/editor?tab=settings", label: "Settings", icon: Settings },
 ]

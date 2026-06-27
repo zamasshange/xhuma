@@ -27,7 +27,7 @@ export function AiAssistantSection() {
           answer questions, and keep them engaged.
         </h5>
         <div className="mt-8 flex justify-center max-sm:mt-6">
-          <DarkButton href="/dashboard/ai-studio" className="w-[220px] max-sm:w-[200px]">
+          <DarkButton href="/editor?tab=ai" className="w-[220px] max-sm:w-[200px]">
             Get started for free
           </DarkButton>
         </div>
