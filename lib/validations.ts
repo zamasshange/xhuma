@@ -29,7 +29,17 @@ export const profileCreateSchema = z.object({
 
 export const linkCreateSchema = z.object({
   title: z.string().min(1).max(120),
-  url: z.string().url(),
+  url: z
+    .string()
+    .min(1, "URL is required")
+    .refine((value) => {
+      try {
+        new URL(value)
+        return true
+      } catch {
+        return false
+      }
+    }, "Enter a valid URL (e.g. https://open.spotify.com)"),
   icon: z.string().max(40).optional().nullable(),
 })
 

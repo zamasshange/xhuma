@@ -334,7 +334,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       return true
     }
 
-    patchState((s) => ({ ...s, links: s.links.filter((l) => l.id !== tempId) }))
+    // Keep link in editor preview even if save failed — user can edit URL and retry
     return false
   }, [patchState])
 

@@ -6,7 +6,7 @@ import type { ProfileTheme } from "@/lib/database.types"
 import {
   linkCardClasses,
   linkCardInlineStyle,
-  resolveButtonTheme,
+  PROFILE_LINK_BUTTON_TEXT,
   resolveLinkCardStyle,
 } from "@/lib/link-card-styles"
 import { cn } from "@/lib/utils"
@@ -27,8 +27,6 @@ export function ProfileLinkButton({
   staticPreview?: boolean
 }) {
   const styleId = resolveLinkCardStyle(theme)
-  const resolvedTheme = resolveButtonTheme(theme)
-  const buttonText = resolvedTheme.button_text ?? resolvedTheme.text
   const displayIcon = resolveLinkIcon(icon, title)
 
   const className = cn(
@@ -37,11 +35,12 @@ export function ProfileLinkButton({
     linkCardClasses(styleId),
   )
 
-  const style = linkCardInlineStyle(styleId, resolvedTheme)
+  const style = linkCardInlineStyle(styleId, theme)
+  const iconColor = PROFILE_LINK_BUTTON_TEXT
 
   const content = (
     <>
-      <SocialIcon name={displayIcon} size={18} color={style.color ?? buttonText} />
+      <SocialIcon name={displayIcon} size={18} color={iconColor} />
       <span>{title}</span>
     </>
   )

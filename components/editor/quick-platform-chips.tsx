@@ -7,7 +7,7 @@ const QUICK_PLATFORMS: { icon: SocialIconName; label: string; title: string; url
   { icon: "instagram", label: "Instagram", title: "Instagram", url: "https://instagram.com/" },
   { icon: "tiktok", label: "TikTok", title: "TikTok", url: "https://tiktok.com/@" },
   { icon: "youtube", label: "YouTube", title: "YouTube", url: "https://youtube.com/@" },
-  { icon: "spotify", label: "Spotify", title: "Spotify", url: "https://open.spotify.com/" },
+  { icon: "spotify", label: "Spotify", title: "Spotify", url: "https://open.spotify.com" },
   { icon: "x", label: "X", title: "X", url: "https://x.com/" },
   { icon: "linkedin", label: "LinkedIn", title: "LinkedIn", url: "https://linkedin.com/in/" },
 ]
