@@ -50,7 +50,8 @@ export type ProfileDraft = {
 export const DEFAULT_THEME: ProfileTheme = {
   bg: "#0f0f0f",
   text: "#ffffff",
-  button: "#7c3aed",
+  button: "#0d0c22",
+  button_text: "#ffffff",
   radius: "14px",
 }
 

@@ -36,6 +36,20 @@ export function resolveLinkCardStyle(theme: ProfileTheme): LinkCardStyle {
   return "rounded"
 }
 
+/** Map legacy translucent/grey button colors to solid black */
+export function resolveButtonTheme(theme: ProfileTheme): ProfileTheme {
+  const btn = theme.button ?? ""
+  const needsBlack =
+    btn.includes("rgba") ||
+    btn === "#262626" ||
+    btn === "#e8e8ec" ||
+    btn === "rgba(255,255,255,0.9)"
+  if (needsBlack) {
+    return { ...theme, button: "#0d0c22", button_text: theme.button_text ?? "#ffffff" }
+  }
+  return theme
+}
+
 export function linkCardClasses(style: LinkCardStyle): string {
   switch (style) {
     case "square":
@@ -43,7 +57,7 @@ export function linkCardClasses(style: LinkCardStyle): string {
     case "pill":
       return "rounded-full font-medium shadow-sm"
     case "glass":
-      return "profile-link-glass font-medium"
+      return "rounded-2xl font-medium shadow-sm"
     case "comic":
       return "profile-link-comic font-bold"
     case "outline":
@@ -63,21 +77,22 @@ export function linkCardInlineStyle(
   style: LinkCardStyle,
   theme: ProfileTheme,
 ): CSSProperties {
-  const buttonText = theme.button_text ?? theme.text
+  const resolved = resolveButtonTheme(theme)
+  const buttonText = resolved.button_text ?? resolved.text
   const base: CSSProperties = { color: buttonText }
 
   switch (style) {
     case "glass":
       return {
         ...base,
-        backgroundColor: "rgba(255,255,255,0.12)",
-        border: "1px solid rgba(255,255,255,0.28)",
-        backdropFilter: "blur(12px)",
+        backgroundColor: resolved.button || "#0d0c22",
+        color: resolved.button_text ?? "#ffffff",
+        border: "1px solid rgba(255,255,255,0.1)",
       }
     case "comic":
       return {
         ...base,
-        backgroundColor: theme.button,
+        backgroundColor: resolved.button,
         border: "2.5px solid #0d0c22",
         boxShadow: "4px 4px 0 #0d0c22",
       }
@@ -85,32 +100,32 @@ export function linkCardInlineStyle(
       return {
         ...base,
         backgroundColor: "transparent",
-        border: `2px solid ${theme.button}`,
-        color: theme.button_text ?? theme.button,
+        border: `2px solid ${resolved.button}`,
+        color: resolved.button_text ?? resolved.button,
       }
     case "soft":
       return {
         ...base,
-        backgroundColor: theme.button,
+        backgroundColor: resolved.button,
         boxShadow: "0 8px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.2)",
       }
     case "neon":
       return {
         ...base,
-        backgroundColor: theme.button,
-        boxShadow: `0 0 20px ${theme.button}88, inset 0 0 0 1px rgba(255,255,255,0.15)`,
+        backgroundColor: resolved.button,
+        boxShadow: `0 0 20px ${resolved.button}88, inset 0 0 0 1px rgba(255,255,255,0.15)`,
       }
     case "wavy":
-      return { ...base, backgroundColor: theme.button }
+      return { ...base, backgroundColor: resolved.button }
     case "pill":
-      return { ...base, backgroundColor: theme.button, borderRadius: "999px" }
+      return { ...base, backgroundColor: resolved.button, borderRadius: "999px" }
     case "square":
-      return { ...base, backgroundColor: theme.button, borderRadius: "6px" }
+      return { ...base, backgroundColor: resolved.button, borderRadius: "6px" }
     default:
       return {
         ...base,
-        backgroundColor: theme.button,
-        borderRadius: theme.radius ?? "14px",
+        backgroundColor: resolved.button,
+        borderRadius: resolved.radius ?? "14px",
       }
   }
 }

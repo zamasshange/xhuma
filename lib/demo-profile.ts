@@ -37,7 +37,8 @@ export const DEMO_DARK_PROFILE: DbProfile = {
   theme_json: {
     bg: "#0f0f0f",
     text: "#ffffff",
-    button: "#7c3aed",
+    button: "#0d0c22",
+    button_text: "#ffffff",
     radius: "14px",
     button_style: "rounded",
   },

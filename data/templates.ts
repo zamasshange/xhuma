@@ -102,8 +102,8 @@ export const STATIC_TEMPLATES: Template[] = [
       theme: tplTheme("rainy", {
         bg: "#f4f4f4",
         text: "#0d0c22",
-        button: "rgba(255,255,255,0.9)",
-        button_text: "#0d0c22",
+        button: "#0d0c22",
+        button_text: "#ffffff",
         radius: "999px",
         button_style: "pill",
       }),

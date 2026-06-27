@@ -69,10 +69,11 @@ export function DbPublicProfileView({
 
       <div className="flex flex-col items-center text-center">
         <Avatar
-          src={profile.avatar_url ?? undefined}
+          src={profile.avatar_url || undefined}
           alt={profile.display_name}
+          fallback={(profile.display_name || "You").slice(0, 2).toUpperCase()}
           className={cn(
-            "rounded-full border-4 border-white/25 shadow-xl",
+            "rounded-full border-4 border-white/25 bg-black/20 shadow-xl",
             compact ? "size-24" : "size-28",
           )}
         />

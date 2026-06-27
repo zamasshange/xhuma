@@ -12,7 +12,7 @@ export type ThemePreset = {
 }
 
 const COLOR_MAP: Record<string, Omit<ProfileTheme, "bg_image" | "preset_id">> = {
-  basic: { bg: "#ffffff", text: "#0d0c22", button: "#e8e8ec", button_text: "#0d0c22", radius: "14px" },
+  basic: { bg: "#ffffff", text: "#0d0c22", button: "#0d0c22", button_text: "#ffffff", radius: "14px" },
   summer: {
     bg: "#38bdf8",
     text: "#ffffff",
@@ -24,7 +24,7 @@ const COLOR_MAP: Record<string, Omit<ProfileTheme, "bg_image" | "preset_id">> = 
   retro: { bg: "#f5f0e8", text: "#1a1a1a", button: "#1a1a1a", radius: "8px" },
   xmas: { bg: "#14532d", text: "#ffffff", button: "#166534", button_text: "#ffffff", radius: "999px", button_style: "pill" },
   pride: { bg: "#1a0a2e", text: "#ffffff", button: "#ffffff", button_text: "#0d0c22", radius: "999px", button_style: "pill" },
-  rainy: { bg: "#0f172a", text: "#e2e8f0", button: "rgba(255,255,255,0.15)", button_text: "#ffffff", radius: "999px", button_style: "pill" },
+  rainy: { bg: "#0f172a", text: "#e2e8f0", button: "#0d0c22", button_text: "#ffffff", radius: "999px", button_style: "pill" },
   strawberry: {
     bg: "#fce7f3",
     text: "#831843",
@@ -44,7 +44,7 @@ const EXTRA_PRESET_META: { id: string; name: string }[] = [
 ]
 
 const EXTRA_THEME_COLORS: Record<string, Omit<ProfileTheme, "bg_image" | "preset_id">> = {
-  carbon: { bg: "#0a0a0a", text: "#ffffff", button: "#262626", radius: "14px" },
+  carbon: { bg: "#0a0a0a", text: "#ffffff", button: "#0d0c22", button_text: "#ffffff", radius: "14px" },
   neon: { bg: "#1e0a3c", text: "#ffffff", button: "#a855f7", radius: "14px" },
   minimal: { bg: "#fafafa", text: "#171717", button: "#ffffff", button_text: "#171717", radius: "4px" },
 }

@@ -23,6 +23,16 @@ const SIZES = {
     maxH: "max-h-[540px]",
     sideBtn: { left: "top-[100px] h-8", leftLow: "top-[148px] h-14", right: "top-[124px] h-[72px]" },
   },
+  editor: {
+    width: "w-[220px]",
+    bezel: "p-[6px] rounded-[2.35rem]",
+    screen: "rounded-[1.9rem]",
+    island: "top-[8px] h-[18px] w-[72px]",
+    islandCam: "size-[5px]",
+    indicator: "h-[3px] w-[76px]",
+    maxH: "max-h-[min(400px,calc(100vh-12rem))]",
+    sideBtn: { left: "top-[86px] h-7", leftLow: "top-[128px] h-11", right: "top-[106px] h-14" },
+  },
   lg: {
     width: "w-[300px] sm:w-[318px]",
     bezel: "p-[8px] rounded-[2.85rem]",

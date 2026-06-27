@@ -92,7 +92,7 @@ export function PageEditor() {
         username: profile?.username ?? "preview",
         display_name: state.profile.display_name || "Your Name",
         bio: state.profile.bio || null,
-        avatar_url: state.profile.avatar_url,
+        avatar_url: state.profile.avatar_url || null,
         theme_json: resolveThemeBackground(state.profile.theme),
         template_id: state.template_id,
         created_at: profile?.created_at ?? new Date().toISOString(),
@@ -227,7 +227,7 @@ export function PageEditor() {
           )}
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_260px]">
           <div className="flex flex-col gap-5">
             {!canEdit ? (
               <EditorPanel className="text-center">
@@ -263,6 +263,7 @@ export function PageEditor() {
                   <AvatarUpload
                     avatarUrl={state?.profile.avatar_url ?? null}
                     displayName={state?.profile.display_name ?? ""}
+                    onPreviewChange={(url) => updateProfile({ avatar_url: url })}
                     onUploaded={(url) => updateProfile({ avatar_url: url })}
                   />
                   <div className="mt-5 flex flex-col gap-3 border-t border-bio-dark/6 pt-5">
@@ -356,29 +357,27 @@ export function PageEditor() {
             )}
           </div>
 
-          <div className="lg:sticky lg:top-[140px] lg:self-start">
-            <EditorPanel className="hidden !overflow-visible lg:block !bg-transparent !p-2 !shadow-none !ring-0">
+          <div className="lg:sticky lg:top-[112px] lg:max-h-[calc(100vh-6.5rem)] lg:self-start">
+            <div className="hidden lg:block">
               <EditorPreviewFrame>
                 {previewProfile ? (
                   <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
                 ) : (
-                  <div className="flex min-h-[480px] items-center justify-center p-6 text-center text-sm text-bio-grey">
+                  <div className="flex min-h-[280px] items-center justify-center p-4 text-center text-xs text-bio-grey">
                     Pick a template to preview.
                   </div>
                 )}
               </EditorPreviewFrame>
-            </EditorPanel>
+            </div>
           </div>
         </div>
       )}
 
       {tab === "page" && previewProfile && (
-        <div className="mt-6 lg:hidden">
-          <EditorPanel className="!overflow-visible !bg-transparent !p-2 !shadow-none !ring-0">
-            <EditorPreviewFrame>
-              <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
-            </EditorPreviewFrame>
-          </EditorPanel>
+        <div className="mt-6 flex justify-center lg:hidden">
+          <EditorPreviewFrame>
+            <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
+          </EditorPreviewFrame>
         </div>
       )}
     </EditorShell>

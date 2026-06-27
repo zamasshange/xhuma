@@ -11,10 +11,13 @@ export function AvatarUpload({
   avatarUrl,
   displayName,
   onUploaded,
+  onPreviewChange,
 }: {
   avatarUrl: string | null
   displayName: string
   onUploaded: (url: string) => void
+  /** Fires immediately when the user picks a file (blob URL) and after a successful upload */
+  onPreviewChange?: (url: string | null) => void
 }) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
@@ -34,7 +37,9 @@ export function AvatarUpload({
       return
     }
 
-    setPreview(URL.createObjectURL(file))
+    const blobUrl = URL.createObjectURL(file)
+    setPreview(blobUrl)
+    onPreviewChange?.(blobUrl)
     setUploading(true)
 
     const form = new FormData()
@@ -49,11 +54,13 @@ export function AvatarUpload({
 
     if (!res.success || !res.data?.url) {
       setPreview(null)
+      onPreviewChange?.(avatarUrl)
       toast.error(res.error ?? "Upload failed — try again")
       return
     }
 
     onUploaded(res.data.url)
+    onPreviewChange?.(res.data.url)
     toast.success("Photo updated!")
   }
 
