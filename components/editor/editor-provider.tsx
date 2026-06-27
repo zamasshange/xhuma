@@ -23,6 +23,9 @@ import {
   type EditorLink,
   type EditorState,
 } from "@/lib/editor-state"
+import { inferLinkIcon } from "@/lib/infer-link-icon"
+import { consumePendingDraft } from "@/lib/client-draft"
+import { getStaticTemplate } from "@/data/templates"
 
 export type EditorMode = "empty" | "draft" | "live"
 
@@ -36,13 +39,13 @@ type EditorContextValue = {
   setProfile: (p: DbProfile) => void
   updateProfile: (patch: Partial<EditorState["profile"]>) => void
   setTheme: (theme: ProfileTheme) => void
-  addLink: (title?: string, url?: string) => void
+  addLink: (title?: string, url?: string, icon?: string | null) => void
   updateLink: (id: string, patch: Partial<EditorLink>) => void
   removeLink: (id: string) => void
   moveLink: (index: number, dir: -1 | 1) => void
   syncLiveLink: (id: string) => Promise<void>
   deleteLiveLink: (id: string) => Promise<void>
-  persistLiveLink: (title: string, url: string) => Promise<void>
+  persistLiveLink: (title: string, url: string, icon?: string | null) => Promise<void>
   refresh: () => Promise<void>
 }
 
@@ -87,9 +90,18 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setMode("draft")
         lastSavedJson.current = JSON.stringify(doc)
       } else {
-        setState(null)
-        setMode("empty")
-        lastSavedJson.current = ""
+        const pendingTemplateId = consumePendingDraft()
+        const pendingTemplate = pendingTemplateId ? getStaticTemplate(pendingTemplateId) : null
+        if (pendingTemplate) {
+          const draftState = editorStateFromDocument(pendingTemplate.id, pendingTemplate.default_data)
+          setState(draftState)
+          setMode("draft")
+          lastSavedJson.current = JSON.stringify(pendingTemplate.default_data)
+        } else {
+          setState(null)
+          setMode("empty")
+          lastSavedJson.current = ""
+        }
       }
     } finally {
       setLoading(false)
@@ -120,10 +132,11 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   )
 
   const addLink = useCallback(
-    (title = "", url = "") => {
+    (title = "", url = "", icon?: string | null) => {
       patchState((s) => {
         const link = newLink(s.links.length)
-        return { ...s, links: [...s.links, { ...link, title, url }] }
+        const resolvedIcon = icon ?? inferLinkIcon(title, url)
+        return { ...s, links: [...s.links, { ...link, title, url, icon: resolvedIcon }] }
       })
     },
     [patchState],
@@ -221,6 +234,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
           id,
           title: link.title,
           url: link.url || "https://example.com",
+          icon: link.icon ?? inferLinkIcon(link.title, link.url),
           is_active: link.is_active,
         }),
       })
@@ -236,10 +250,11 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [removeLink],
   )
 
-  const persistLiveLink = useCallback(async (title: string, url: string) => {
+  const persistLiveLink = useCallback(async (title: string, url: string, icon?: string | null) => {
+    const resolvedIcon = icon ?? inferLinkIcon(title, url)
     const res = await apiFetch<DbLink>("/api/links", {
       method: "POST",
-      body: JSON.stringify({ title, url }),
+      body: JSON.stringify({ title, url, icon: resolvedIcon }),
     })
     if (res.success && res.data) {
       patchState((s) => ({

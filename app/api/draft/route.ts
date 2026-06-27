@@ -2,7 +2,7 @@ import { createAdminClient, getUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 import { isTemplateId } from "@/data/templates"
 import {
-  draftFromTemplate,
+  ensureTemplateInDb,
   getTemplate,
   mergeDocument,
   normalizeDraftData,
@@ -78,6 +78,8 @@ export async function PUT(request: Request) {
       return apiError("template_id required for new draft", 400)
     }
 
+    await ensureTemplateInDb(nextTemplateId)
+
     const row = {
       session_id: sessionId,
       template_id: nextTemplateId,
@@ -85,13 +87,18 @@ export async function PUT(request: Request) {
       updated_at: new Date().toISOString(),
     }
 
-    const { data, error } = await supabase
-      .from("profile_drafts")
-      .upsert(row, { onConflict: "session_id" })
-      .select()
-      .single()
+    // Delete-then-insert avoids ON CONFLICT / missing-PK issues on older live DBs
+    await supabase.from("profile_drafts").delete().eq("session_id", sessionId)
 
-    if (error) return apiError(error.message, 500)
+    const { data, error } = await supabase.from("profile_drafts").insert(row).select().single()
+
+    if (error) {
+      const hint =
+        /relation.*profile_drafts|does not exist/i.test(error.message)
+          ? "Run supabase/migrations/006_xhuma_live_fix.sql in Supabase SQL Editor."
+          : undefined
+      return apiError(hint ? `${error.message} — ${hint}` : error.message, 500)
+    }
     return apiSuccess(mapDraft(data))
   } catch (e) {
     return apiError(e instanceof Error ? e.message : "Draft save failed", 500)

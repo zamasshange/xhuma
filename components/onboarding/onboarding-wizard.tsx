@@ -28,6 +28,8 @@ import { displayNameFromUsername, isValidUsername, sanitizeUsername } from "@/li
 import type { DbProfile, ProfileTheme } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
+import { inferLinkIcon } from "@/lib/infer-link-icon"
+import { SocialIconBadge, resolveLinkIcon } from "@/components/icons/social-icon"
 
 type LinkDraft = { title: string; url: string }
 
@@ -158,20 +160,29 @@ export function OnboardingWizard() {
       }),
     })
 
-    const linkItems: LinkDraft[] = []
+    const linkItems: { title: string; url: string; icon?: string }[] = []
     for (const l of links) {
-      if (l.title.trim() && l.url.trim()) linkItems.push({ title: l.title.trim(), url: l.url.trim() })
+      if (l.title.trim() && l.url.trim()) {
+        linkItems.push({
+          title: l.title.trim(),
+          url: l.url.trim(),
+          icon: inferLinkIcon(l.title, l.url) ?? undefined,
+        })
+      }
     }
     for (const id of platforms) {
       const url = socialUrls[id]?.trim()
       const p = platformById(id)
-      if (url && p?.linkTitle) linkItems.push({ title: p.linkTitle, url })
+      if (url && p?.linkTitle) linkItems.push({ title: p.linkTitle, url, icon: p.icon })
     }
 
     for (const link of linkItems) {
       await apiFetch("/api/links", {
         method: "POST",
-        body: JSON.stringify(link),
+        body: JSON.stringify({
+          ...link,
+          icon: "icon" in link ? link.icon : inferLinkIcon(link.title, link.url),
+        }),
       })
     }
 
@@ -199,14 +210,21 @@ export function OnboardingWizard() {
   }
 
   const previewLinks = [
-    ...links.filter((l) => l.title && l.url),
+    ...links
+      .filter((l) => l.title && l.url)
+      .map((l, i) => ({
+        id: `draft-${i}`,
+        title: l.title,
+        url: l.url,
+        icon: inferLinkIcon(l.title, l.url),
+      })),
     ...platforms
       .map((id) => {
         const p = platformById(id)
         const url = socialUrls[id]
-        return p && url ? { id, title: p.linkTitle ?? p.label, url } : null
+        return p && url ? { id, title: p.linkTitle ?? p.label, url, icon: p.icon } : null
       })
-      .filter(Boolean) as { id: string; title: string; url: string }[],
+      .filter(Boolean) as { id: string; title: string; url: string; icon?: string }[],
   ]
 
   return (
@@ -339,23 +357,30 @@ export function OnboardingWizard() {
           </OnboardingTitle>
           <div className="rounded-3xl bg-white p-4 shadow-sm">
             {links.map((link, i) => (
-              <div key={i} className="mb-3 flex flex-col gap-2 last:mb-0">
-                <input
-                  className="h-12 w-full rounded-xl bg-bio-grey-f4 px-4 text-bio-dark outline-none placeholder:text-bio-grey"
-                  placeholder="Link name"
-                  value={link.title}
-                  onChange={(e) =>
-                    setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, title: e.target.value } : l)))
-                  }
+              <div key={i} className="mb-3 flex gap-3 last:mb-0">
+                <SocialIconBadge
+                  icon={resolveLinkIcon(null, link.title, link.url)}
+                  size={44}
+                  className="mt-1 shrink-0"
                 />
-                <input
-                  className="h-12 w-full rounded-xl bg-bio-grey-f4 px-4 text-bio-dark outline-none placeholder:text-bio-grey"
-                  placeholder="URL"
-                  value={link.url}
-                  onChange={(e) =>
-                    setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, url: e.target.value } : l)))
-                  }
-                />
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <input
+                    className="h-12 w-full rounded-xl bg-bio-grey-f4 px-4 text-bio-dark outline-none placeholder:text-bio-grey"
+                    placeholder="Link name"
+                    value={link.title}
+                    onChange={(e) =>
+                      setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, title: e.target.value } : l)))
+                    }
+                  />
+                  <input
+                    className="h-12 w-full rounded-xl bg-bio-grey-f4 px-4 text-bio-dark outline-none placeholder:text-bio-grey"
+                    placeholder="URL"
+                    value={link.url}
+                    onChange={(e) =>
+                      setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, url: e.target.value } : l)))
+                    }
+                  />
+                </div>
               </div>
             ))}
             <button
@@ -376,8 +401,8 @@ export function OnboardingWizard() {
                   const p = platformById(id)
                   if (!p) return null
                   return (
-                    <div key={id} className="flex items-center gap-3 rounded-2xl border-2 border-bio-dark/10 bg-white px-4 py-3">
-                      <PlatformIcon name={p.icon} />
+                    <div key={id} className="flex items-center gap-3 rounded-2xl border-2 border-bio-dark/10 bg-white px-4 py-3 shadow-sm">
+                      <SocialIconBadge icon={p.icon} size={40} />
                       <input
                         className="min-w-0 flex-1 bg-transparent text-base text-bio-dark outline-none placeholder:text-bio-grey"
                         placeholder={p.urlPlaceholder ?? "URL"}

@@ -125,8 +125,8 @@ export function PlatformOption({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-4 rounded-2xl bg-bio-grey-f4 px-5 py-4 text-left text-base font-medium text-bio-dark transition-all",
-        selected && "ring-2 ring-bio-dark ring-offset-2",
+        "flex w-full items-center gap-4 rounded-2xl bg-bio-grey-f4 px-5 py-4 text-left text-base font-medium text-bio-dark transition-all hover:bg-white",
+        selected && "bg-white ring-2 ring-bio-dark ring-offset-2 shadow-md",
       )}
     >
       <span className="flex size-8 shrink-0 items-center justify-center">{icon}</span>

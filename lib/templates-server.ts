@@ -66,3 +66,28 @@ export function mergeDocument(
     sections: patch.sections ?? base.sections,
   })
 }
+
+/** Ensure template row exists so profile_drafts FK does not fail on live DBs. */
+export async function ensureTemplateInDb(templateId: string): Promise<boolean> {
+  const staticTemplate = getStaticTemplate(templateId)
+  if (!staticTemplate) return false
+
+  try {
+    const supabase = createAdminClient()
+    const { data } = await supabase.from("templates").select("id").eq("id", templateId).maybeSingle()
+    if (data) return true
+
+    const { error } = await supabase.from("templates").insert({
+      id: staticTemplate.id,
+      name: staticTemplate.name,
+      description: staticTemplate.description,
+      preview_image: staticTemplate.preview_image,
+      default_data: staticTemplate.default_data,
+    })
+
+    if (error && !/duplicate|unique/i.test(error.message)) return false
+    return true
+  } catch {
+    return false
+  }
+}

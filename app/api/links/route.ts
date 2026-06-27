@@ -1,6 +1,7 @@
 import { createAdminClient, getUserId, requireUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 import { linkCreateSchema, linkUpdateSchema, linksReorderSchema } from "@/lib/validations"
+import { inferLinkIcon } from "@/lib/infer-link-icon"
 
 export async function GET(request: Request) {
   const userId = getUserId(request)
@@ -37,6 +38,7 @@ export async function POST(request: Request) {
       user_id: userId,
       title: parsed.data.title,
       url: parsed.data.url,
+      icon: parsed.data.icon ?? inferLinkIcon(parsed.data.title, parsed.data.url),
       position: count ?? 0,
     })
     .select()

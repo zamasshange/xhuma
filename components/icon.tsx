@@ -1,59 +1,16 @@
-import {
-  Music,
-  Music2,
-  Calendar,
-  ShoppingBag,
-  Video,
-  BookOpen,
-  GraduationCap,
-  Code,
-  Mail,
-  Palette,
-  Camera,
-  Globe,
-  Image as ImageIcon,
-  Briefcase,
-  AtSign,
-  Link as LinkIcon,
-  Sparkles,
-  BarChart3,
-  Smartphone,
-  Zap,
-  ShieldCheck,
-  PenLine,
-  Type,
-  ScanLine,
-  Gem,
-  Eye,
-  MousePointerClick,
-  Users,
-  TrendingUp,
-  UserPlus,
-  Share2,
-  Play,
-  type LucideIcon,
-} from "lucide-react"
+import { SocialIcon, resolveSocialIconName } from "@/components/icons/social-icon"
+import { Globe, Sparkles, BarChart3, Smartphone, Zap, ShieldCheck, PenLine, Type, ScanLine, Gem, Eye, MousePointerClick, Users, TrendingUp, UserPlus, Share2, Link as LinkIcon, Music, Calendar, ShoppingBag, BookOpen, GraduationCap, Mail, Palette, Image as ImageIcon, Briefcase, Play, type LucideIcon } from "lucide-react"
 
-const map: Record<string, LucideIcon> = {
+const lucideMap: Record<string, LucideIcon> = {
   music: Music,
-  spotify: Music,
-  "apple-music": Music2,
-  tiktok: Video,
   calendar: Calendar,
   "shopping-bag": ShoppingBag,
-  youtube: Play,
   "book-open": BookOpen,
   "graduation-cap": GraduationCap,
-  github: Code,
   mail: Mail,
   palette: Palette,
-  instagram: Camera,
-  globe: Globe,
-  video: Video,
-  camera: Camera,
+  video: Play,
   image: ImageIcon,
-  linkedin: Briefcase,
-  twitter: AtSign,
   link: LinkIcon,
   sparkles: Sparkles,
   "bar-chart-3": BarChart3,
@@ -75,10 +32,16 @@ const map: Record<string, LucideIcon> = {
 export function Icon({
   name,
   className,
+  size = 20,
 }: {
   name: string
   className?: string
+  size?: number
 }) {
-  const Cmp = map[name] ?? Globe
-  return <Cmp className={className} aria-hidden="true" />
+  if (resolveSocialIconName(name)) {
+    return <SocialIcon name={name} size={size} className={className} />
+  }
+
+  const Cmp = lucideMap[name] ?? Globe
+  return <Cmp className={className} size={size} aria-hidden="true" />
 }

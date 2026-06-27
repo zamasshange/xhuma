@@ -5,7 +5,19 @@ import { useParams, useRouter } from "next/navigation"
 import { getUserId } from "@/lib/temp-user"
 import { apiFetch } from "@/lib/api-fetch"
 import { isTemplateId } from "@/data/templates"
+import { stashPendingDraft } from "@/lib/client-draft"
 import type { ProfileDraft } from "@/lib/database.types"
+
+function isDraftDbError(msg: string) {
+  return (
+    msg.includes("profile_drafts") ||
+    msg.includes("templates") ||
+    msg.includes("constraint") ||
+    msg.includes("ON CONFLICT") ||
+    msg.includes("relation") ||
+    msg.includes("does not exist")
+  )
+}
 
 export default function CreateTemplatePage() {
   const params = useParams()
@@ -31,7 +43,14 @@ export default function CreateTemplatePage() {
       if (cancelled) return
 
       if (!res.success) {
-        setError(res.error ?? "Could not start editor")
+        const msg = res.error ?? "Could not start editor"
+        if (isDraftDbError(msg)) {
+          // Still open editor from static template while DB is being fixed
+          stashPendingDraft(templateId)
+          router.replace("/editor")
+          return
+        }
+        setError(msg)
         return
       }
 

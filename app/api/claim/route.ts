@@ -3,6 +3,7 @@ import { apiSuccess, apiError } from "@/lib/api-response"
 import { usernameSchema } from "@/lib/validations"
 import { mapProfile } from "@/lib/database.types"
 import { normalizeDraftData } from "@/lib/templates-server"
+import { inferLinkIcon } from "@/lib/infer-link-icon"
 import type { TemplateDocument } from "@/lib/editor-state"
 
 export async function POST(request: Request) {
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
         user_id: sessionId,
         title: l.title,
         url: l.url,
-        icon: l.icon ?? null,
+        icon: l.icon ?? inferLinkIcon(l.title, l.url),
         position: i,
         is_active: true,
       })),

@@ -6,6 +6,8 @@ import { Loader2, Sparkles } from "lucide-react"
 import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioCard, BioInput, BioMuted, BioSectionTitle, BioTextarea } from "@/components/ui/bio-form"
 import { Badge } from "@/components/ui/badge"
+import { SocialIconBadge, resolveLinkIcon } from "@/components/icons/social-icon"
+import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { apiFetch } from "@/lib/api-fetch"
 import { cn } from "@/lib/utils"
 
@@ -80,7 +82,11 @@ export function AiPanel() {
   }
 
   const addSuggestedLink = async (link: { title: string; url: string }) => {
-    const res = await apiFetch("/api/links", { method: "POST", body: JSON.stringify(link) })
+    const icon = inferLinkIcon(link.title, link.url)
+    const res = await apiFetch("/api/links", {
+      method: "POST",
+      body: JSON.stringify({ ...link, icon }),
+    })
     if (!res.success) {
       toast.error(res.error ?? "Could not add link")
       return
@@ -159,8 +165,11 @@ export function AiPanel() {
           {suggestedLinks.length > 0 && (
             <div className="grid gap-2">
               {suggestedLinks.map((link) => (
-                <div key={link.title} className="flex items-center justify-between rounded-2xl border-2 border-bio-dark/10 bg-white p-4">
-                  <span className="font-medium text-bio-dark">{link.title}</span>
+                <div key={link.title} className="flex items-center justify-between gap-3 rounded-2xl border-2 border-bio-dark/10 bg-white p-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <SocialIconBadge icon={resolveLinkIcon(null, link.title, link.url)} size={40} />
+                    <span className="truncate font-medium text-bio-dark">{link.title}</span>
+                  </div>
                   <BioButton variant="secondary" className="h-10 px-4 text-xs" onClick={() => addSuggestedLink(link)} disabled={!profile}>
                     Add
                   </BioButton>
@@ -179,6 +188,12 @@ export function AiPanel() {
             onChange={(e) => setButtonPlatform(e.target.value)}
             placeholder="Platform (e.g. Instagram)"
           />
+          {buttonPlatform.trim() && (
+            <div className="flex items-center gap-3 rounded-2xl border-2 border-bio-dark/10 bg-white p-4">
+              <SocialIconBadge icon={resolveLinkIcon(null, buttonPlatform)} size={40} />
+              <span className="text-sm text-bio-grey">Preview icon for {buttonPlatform}</span>
+            </div>
+          )}
           <BioButton onClick={generateButton} disabled={loading || !buttonPlatform.trim()} className="h-11">
             {loading ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
             Generate Copy

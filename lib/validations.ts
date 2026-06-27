@@ -30,12 +30,14 @@ export const profileCreateSchema = z.object({
 export const linkCreateSchema = z.object({
   title: z.string().min(1).max(120),
   url: z.string().url(),
+  icon: z.string().max(40).optional().nullable(),
 })
 
 export const linkUpdateSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(120).optional(),
   url: z.string().url().optional(),
+  icon: z.string().max(40).optional().nullable(),
   is_active: z.boolean().optional(),
   position: z.number().int().min(0).optional(),
 })

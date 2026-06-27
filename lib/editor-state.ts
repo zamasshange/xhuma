@@ -1,4 +1,4 @@
-import type { ProfileTheme } from "@/lib/database.types"
+import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import type { DbLink, DbProfile } from "@/lib/database.types"
 
@@ -62,7 +62,7 @@ export function normalizeTemplateDocument(
     id: String(l.id ?? `link-${i}`),
     title: String(l.title ?? "Link"),
     url: String(l.url ?? ""),
-    icon: l.icon ?? null,
+    icon: l.icon ?? inferLinkIcon(l.title, l.url),
     position: typeof l.position === "number" ? l.position : i,
     is_active: l.is_active !== false,
   }))
@@ -101,7 +101,7 @@ export function editorStateFromDocument(templateId: string, doc: TemplateDocumen
       id: l.id ?? `link-${i}`,
       title: l.title,
       url: l.url,
-      icon: l.icon ?? null,
+      icon: l.icon ?? inferLinkIcon(l.title, l.url),
       position: l.position ?? i,
       is_active: l.is_active !== false,
     })),
@@ -149,7 +149,7 @@ export function editorStateFromProfile(
       id: l.id,
       title: l.title,
       url: l.url,
-      icon: l.icon ?? null,
+      icon: l.icon ?? inferLinkIcon(l.title, l.url),
       position: l.position,
       is_active: l.is_active,
     })),

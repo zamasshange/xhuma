@@ -4,17 +4,20 @@ import { Share2, BadgeCheck } from "lucide-react"
 import { motion } from "framer-motion"
 import { Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { SocialIcon, SocialIconRow, resolveLinkIcon } from "@/components/icons/social-icon"
 import type { DbLink, DbProfile } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
 
 function ProfileLinkButton({
   title,
+  icon,
   theme,
   onClick,
   delay,
 }: {
   title: string
+  icon?: string | null
   theme: typeof DEFAULT_THEME
   onClick: () => void
   delay: number
@@ -22,6 +25,7 @@ function ProfileLinkButton({
   const buttonText = theme.button_text ?? theme.text
   const isWavy = theme.button_style === "wavy"
   const isPill = theme.button_style === "pill" || theme.radius === "999px"
+  const displayIcon = resolveLinkIcon(icon, title)
 
   return (
     <motion.button
@@ -31,7 +35,7 @@ function ProfileLinkButton({
       transition={{ delay }}
       onClick={onClick}
       className={cn(
-        "flex w-full min-h-[48px] items-center justify-center px-4 py-3 text-[15px] shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99]",
+        "flex w-full min-h-[48px] items-center justify-center gap-2.5 px-4 py-3 text-[15px] shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99]",
         isWavy && "profile-link-wavy font-bold italic",
         isPill && "rounded-full",
         !isWavy && !isPill && "font-medium",
@@ -42,7 +46,8 @@ function ProfileLinkButton({
         borderRadius: isWavy ? undefined : isPill ? "999px" : theme.radius,
       }}
     >
-      {title}
+      <SocialIcon name={displayIcon} size={18} color={buttonText} />
+      <span>{title}</span>
     </motion.button>
   )
 }
@@ -56,7 +61,7 @@ export function DbPublicProfileView({
   verified = false,
 }: {
   profile: DbProfile
-  links: Pick<DbLink, "id" | "title" | "url">[]
+  links: Pick<DbLink, "id" | "title" | "url" | "icon">[]
   onShare?: () => void
   trackClicks?: boolean
   /** Tighter layout inside device frame */
@@ -126,6 +131,11 @@ export function DbPublicProfileView({
               {profile.bio}
             </p>
           )}
+          <SocialIconRow
+            icons={links.map((l) => resolveLinkIcon(l.icon, l.title, l.url))}
+            className={cn("opacity-90", compact ? "mt-3" : "mt-4")}
+            size={compact ? 18 : 20}
+          />
         </motion.div>
 
         <div className={cn("flex flex-col", compact ? "mt-6 gap-2.5" : "mt-8 gap-3")}>
@@ -133,6 +143,7 @@ export function DbPublicProfileView({
             <ProfileLinkButton
               key={link.id}
               title={link.title}
+              icon={resolveLinkIcon(link.icon, link.title, link.url)}
               theme={theme}
               delay={0.05 * i}
               onClick={() => handleClick(link.id, link.url)}

@@ -29,7 +29,7 @@ export function EditorShell({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-[#f7f7f8] text-bio-dark">
+    <div className="flex min-h-dvh flex-col bg-[linear-gradient(165deg,#f7f7f8_0%,#eef2ff_40%,#fdf2f8_100%)] text-bio-dark">
       <div className="sticky top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-4">
         <div className="mx-auto max-w-[1300px]">
           {/* Floating pill — matches marketing navbar */}
@@ -74,19 +74,58 @@ export function EditorShell({
   )
 }
 
-export function EditorPanel({ children, className }: { children: React.ReactNode; className?: string }) {
+export function EditorPanel({
+  children,
+  className,
+  accent,
+}: {
+  children: React.ReactNode
+  className?: string
+  accent?: "purple" | "pink" | "sky" | "amber" | "mint"
+}) {
+  const accentStyles = {
+    purple:
+      "border border-violet-200/60 bg-gradient-to-br from-violet-50/90 via-white to-fuchsia-50/50 shadow-[0_8px_32px_rgba(124,58,237,0.1)]",
+    pink: "border border-pink-200/60 bg-gradient-to-br from-pink-50/90 via-white to-rose-50/50 shadow-[0_8px_32px_rgba(236,72,153,0.1)]",
+    sky: "border border-sky-200/60 bg-gradient-to-br from-sky-50/90 via-white to-cyan-50/50 shadow-[0_8px_32px_rgba(14,165,233,0.1)]",
+    amber:
+      "border border-amber-200/60 bg-gradient-to-br from-amber-50/90 via-white to-orange-50/50 shadow-[0_8px_32px_rgba(245,158,11,0.1)]",
+    mint: "border border-emerald-200/60 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/50 shadow-[0_8px_32px_rgba(16,185,129,0.1)]",
+  }
+
   return (
-    <div className={cn("rounded-3xl bg-white p-5 shadow-[0_2px_16px_rgba(13,12,34,0.06)] sm:p-6", className)}>
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-3xl p-5 sm:p-6",
+        accent ? accentStyles[accent] : "bg-white shadow-[0_4px_24px_rgba(13,12,34,0.07)]",
+        className,
+      )}
+    >
       {children}
     </div>
   )
 }
 
-export function EditorSectionTitle({ children, subtitle }: { children: React.ReactNode; subtitle?: string }) {
+export function EditorSectionTitle({
+  children,
+  subtitle,
+  icon,
+}: {
+  children: React.ReactNode
+  subtitle?: string
+  icon?: React.ReactNode
+}) {
   return (
-    <div className="mb-4">
-      <h2 className="text-lg font-semibold tracking-tight text-bio-dark sm:text-xl">{children}</h2>
-      {subtitle && <p className="mt-1 text-sm text-bio-grey">{subtitle}</p>}
+    <div className="mb-5">
+      <div className="flex items-center gap-2.5">
+        {icon && (
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-md">
+            {icon}
+          </span>
+        )}
+        <h2 className="text-lg font-semibold tracking-tight text-bio-dark sm:text-xl">{children}</h2>
+      </div>
+      {subtitle && <p className={cn("mt-1.5 text-sm text-bio-grey", icon && "ml-[46px]")}>{subtitle}</p>}
     </div>
   )
 }
@@ -94,14 +133,19 @@ export function EditorSectionTitle({ children, subtitle }: { children: React.Rea
 export function EditorPreviewFrame({
   children,
   className,
+  label = "Live preview",
 }: {
   children: React.ReactNode
   className?: string
+  label?: string
 }) {
   return (
-    <PhoneDeviceFrame size="lg" className={className}>
-      {children}
-    </PhoneDeviceFrame>
+    <div className={className}>
+      <p className="mb-3 text-center text-[11px] font-bold uppercase tracking-[0.2em] text-violet-500/80">
+        {label}
+      </p>
+      <PhoneDeviceFrame size="lg">{children}</PhoneDeviceFrame>
+    </div>
   )
 }
 

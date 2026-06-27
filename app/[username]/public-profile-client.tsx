@@ -10,7 +10,7 @@ export function PublicProfilePageClient({
   links,
 }: {
   profile: DbProfile
-  links: Pick<DbLink, "id" | "title" | "url">[]
+  links: Pick<DbLink, "id" | "title" | "url" | "icon">[]
 }) {
   useEffect(() => {
     fetch("/api/analytics/view", {

@@ -16,14 +16,14 @@ async function fetchPublicProfile(username: string) {
 
   const { data: links } = await supabase
     .from("links")
-    .select("id, title, url, position")
+    .select("id, title, url, icon, position")
     .eq("user_id", profile.id)
     .eq("is_active", true)
     .order("position", { ascending: true })
 
   return {
     profile: mapProfile(profile),
-    links: (links ?? []) as Pick<DbLink, "id" | "title" | "url">[],
+    links: (links ?? []) as Pick<DbLink, "id" | "title" | "url" | "icon">[],
   }
 }
 
