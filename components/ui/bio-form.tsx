@@ -1,3 +1,4 @@
+import { forwardRef } from "react"
 import { cn } from "@/lib/utils"
 
 export function BioCard({
@@ -8,7 +9,7 @@ export function BioCard({
   children: React.ReactNode
 }) {
   return (
-    <div className={cn("rounded-2xl border border-bio-dark/6 bg-bio-grey-f4 p-5 sm:p-6", className)}>
+    <div className={cn("rounded-xl border border-bio-dark/6 bg-bio-grey-f4 p-5 sm:p-6", className)}>
       {children}
     </div>
   )
@@ -19,14 +20,14 @@ export function BioLabel({ className, children }: { className?: string; children
 }
 
 const fieldClass =
-  "w-full rounded-xl border border-bio-dark/10 bg-white px-4 text-base text-bio-dark outline-none transition-colors placeholder:text-bio-grey/70 focus:border-bio-dark/25 focus:ring-2 focus:ring-bio-dark/5"
+  "w-full rounded-lg border border-bio-dark/10 bg-white px-4 text-base text-bio-dark outline-none transition-colors placeholder:text-bio-grey/70 focus:border-bio-dark/25 focus:ring-2 focus:ring-bio-dark/5"
 
-export function BioInput({
-  className,
-  ...props
-}: React.ComponentProps<"input">) {
-  return <input className={cn(fieldClass, "h-11", className)} {...props} />
-}
+export const BioInput = forwardRef<HTMLInputElement, React.ComponentProps<"input">>(function BioInput(
+  { className, ...props },
+  ref,
+) {
+  return <input ref={ref} className={cn(fieldClass, "h-11", className)} {...props} />
+})
 
 export function BioTextarea({
   className,

@@ -3,6 +3,16 @@
 import { cn } from "@/lib/utils"
 
 const SIZES = {
+  thumb: {
+    width: "w-full max-w-[118px]",
+    bezel: "p-[3px] rounded-[1.2rem]",
+    screen: "rounded-[0.95rem]",
+    island: "top-[4px] h-[9px] w-[38px]",
+    islandCam: "size-[3px]",
+    indicator: "h-[2px] w-[36px]",
+    maxH: "h-[192px]",
+    sideBtn: { left: "top-[34px] h-4", leftLow: "top-[52px] h-5", right: "top-[42px] h-7" },
+  },
   sm: {
     width: "w-[200px]",
     bezel: "p-[5px] rounded-[1.85rem]",

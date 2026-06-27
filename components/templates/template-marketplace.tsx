@@ -166,7 +166,7 @@ export function TemplateMarketplace({
           ))}
         </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:mt-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:mt-6 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
           <CreateFromScratchCard onSelect={startBlank} />
 
           {templates.map((t) => (
@@ -193,13 +193,13 @@ export function TemplateMarketplace({
 
 function CreateFromScratchCard({ onSelect }: { onSelect: () => void }) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border-2 border-dashed border-bio-dark/20 bg-gradient-to-br from-bio-grey-f4 to-white p-5 shadow-sm">
-      <div className="flex flex-1 flex-col items-center justify-center py-8 text-center">
-        <PlusIcon className="size-10 text-bio-dark" />
-        <h3 className="mt-3 text-lg font-semibold">Create from scratch</h3>
-        <p className="mt-1 text-xs text-bio-grey">Blank profile + links — add sections with AI</p>
+    <div className="flex flex-col overflow-hidden rounded-xl border-2 border-dashed border-bio-dark/20 bg-gradient-to-br from-bio-grey-f4 to-white p-3 shadow-sm sm:rounded-2xl sm:p-5">
+      <div className="flex flex-1 flex-col items-center justify-center py-4 text-center sm:py-8">
+        <PlusIcon className="size-8 text-bio-dark sm:size-10" />
+        <h3 className="mt-2 text-sm font-semibold sm:mt-3 sm:text-lg">Create from scratch</h3>
+        <p className="mt-1 hidden text-xs text-bio-grey sm:block">Blank profile + links — add sections with AI</p>
       </div>
-      <BioButton className="w-full" onClick={onSelect}>
+      <BioButton className="min-h-10 w-full text-xs sm:min-h-11 sm:text-sm" onClick={onSelect}>
         <PlusIcon className="size-4" />
         Start blank
       </BioButton>
@@ -223,44 +223,48 @@ function TemplateCard({
   onDuplicate: () => void
 }) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-bio-dark/8 bg-white shadow-sm transition hover:shadow-md">
+    <article className="group flex flex-col overflow-hidden rounded-xl border border-bio-dark/8 bg-white shadow-sm transition hover:shadow-md sm:rounded-2xl">
       <div className="relative bg-bio-grey-f4">
         <div className="relative z-0">
           <TemplateCardPreview template={template} />
         </div>
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-start justify-between gap-2 p-2.5">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-start justify-between gap-1 p-1.5 sm:gap-2 sm:p-2.5">
           {template.aiReady && (
-            <span className="rounded-full bg-bio-dark px-2.5 py-1 text-[10px] font-semibold text-white shadow-md ring-1 ring-black/10">
+            <span className="rounded-md bg-bio-dark px-1.5 py-0.5 text-[8px] font-semibold text-white shadow-md ring-1 ring-black/10 sm:rounded-full sm:px-2.5 sm:py-1 sm:text-[10px]">
               AI Ready
             </span>
           )}
           <button
             type="button"
             onClick={onFavorite}
-            className="pointer-events-auto ml-auto flex min-h-11 min-w-11 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/5 transition hover:bg-white"
+            className="pointer-events-auto ml-auto flex min-h-8 min-w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/5 transition hover:bg-white sm:min-h-11 sm:min-w-11"
             aria-label="Favourite"
           >
-            <Heart className={cn("size-4", favorited ? "fill-red-500 text-red-500" : "text-bio-grey")} />
+            <Heart className={cn("size-3.5 sm:size-4", favorited ? "fill-red-500 text-red-500" : "text-bio-grey")} />
           </button>
         </div>
       </div>
-      <div className="flex flex-1 flex-col p-3">
-        <p className="text-[10px] font-medium uppercase tracking-wide text-bio-grey">{template.category}</p>
-        <h3 className="font-semibold text-bio-dark">{template.name}</h3>
-        <p className="mt-1 line-clamp-2 text-xs text-bio-grey">{template.description}</p>
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <BioButton variant="secondary" className="min-h-11 flex-1 px-3 text-xs sm:text-sm" onClick={onPreview}>
-            <Eye className="size-4" />
+      <div className="flex flex-1 flex-col p-2 sm:p-3">
+        <p className="truncate text-[9px] font-medium uppercase tracking-wide text-bio-grey sm:text-[10px]">
+          {template.category}
+        </p>
+        <h3 className="truncate text-sm font-semibold text-bio-dark sm:text-base">{template.name}</h3>
+        <p className="mt-0.5 line-clamp-1 text-[10px] text-bio-grey sm:mt-1 sm:line-clamp-2 sm:text-xs">
+          {template.description}
+        </p>
+        <div className="mt-2 flex flex-col gap-1.5 sm:mt-3 sm:gap-2">
+          <BioButton variant="secondary" className="min-h-9 px-2 text-[11px] sm:min-h-11 sm:px-3 sm:text-sm" onClick={onPreview}>
+            <Eye className="size-3.5 sm:size-4" />
             Preview
           </BioButton>
-          <BioButton className="min-h-11 flex-1 px-3 text-xs sm:text-sm" onClick={onUse}>
+          <BioButton className="min-h-9 px-2 text-[11px] sm:min-h-11 sm:px-3 sm:text-sm" onClick={onUse}>
             Use template
           </BioButton>
         </div>
         <button
           type="button"
           onClick={onDuplicate}
-          className="mt-2 min-h-10 text-center text-xs text-bio-grey hover:text-bio-dark"
+          className="mt-1.5 hidden min-h-8 text-center text-xs text-bio-grey hover:text-bio-dark sm:mt-2 sm:block"
         >
           Duplicate to edit
         </button>

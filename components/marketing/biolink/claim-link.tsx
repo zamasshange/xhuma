@@ -73,7 +73,7 @@ export function ClaimLinkInput({
     <form onSubmit={handleSubmit} className={cn("relative z-20", className)}>
       <div
         className={cn(
-          "flex flex-col gap-2 overflow-hidden rounded-full sm:flex-row sm:items-center",
+          "flex flex-col gap-2 overflow-hidden rounded-2xl sm:flex-row sm:items-center sm:rounded-full",
           variant === "muted"
             ? "bg-bio-grey-f4"
             : "border-2 border-bio-dark bg-white shadow-sm",
@@ -95,7 +95,7 @@ export function ClaimLinkInput({
         </div>
         <button
           type="submit"
-          className="m-1.5 min-h-11 shrink-0 rounded-full bg-bio-dark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 sm:px-6"
+          className="m-1.5 min-h-11 shrink-0 rounded-xl bg-bio-dark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 sm:rounded-full sm:px-6"
         >
           {buttonLabel}
         </button>

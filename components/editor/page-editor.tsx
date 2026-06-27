@@ -264,24 +264,6 @@ export function PageEditor() {
         </div>
       ) : (
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)] lg:gap-8">
-          {tab === "page" && previewProfile && canEdit && (
-            <div className="lg:hidden">
-              <EditorPanel className="p-4 sm:p-5">
-                <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-bio-grey">
-                  Live preview
-                </p>
-                <EditorPreviewFrame>
-                  <DbPublicProfileView
-                    profile={previewProfile}
-                    links={previewLinks}
-                    pageSections={state?.page_sections}
-                    density="device"
-                  />
-                </EditorPreviewFrame>
-              </EditorPanel>
-            </div>
-          )}
-
           <div className="flex min-w-0 flex-col gap-5">
             {!canEdit ? (
               <EditorPanel className="text-center">

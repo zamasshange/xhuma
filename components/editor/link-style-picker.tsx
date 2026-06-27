@@ -22,7 +22,7 @@ function StylePreview({ style, active }: { style: LinkCardStyle; active: boolean
       className={cn(
         "flex h-9 w-full items-center justify-center text-[10px] font-semibold",
         previewClass[style],
-        active ? "ring-2 ring-bio-dark ring-offset-1" : "",
+        active ? "ring-1 ring-bio-dark" : "",
       )}
     >
       Aa
@@ -45,7 +45,7 @@ export function LinkStylePicker({
           type="button"
           onClick={() => onChange(s.id)}
           className={cn(
-            "rounded-xl border p-2 text-left transition-all",
+            "rounded-lg border p-2 text-left transition-all",
             value === s.id
               ? "border-bio-dark bg-white shadow-sm"
               : "border-bio-dark/8 bg-bio-grey-f4 hover:border-bio-dark/20 hover:bg-white",

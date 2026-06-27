@@ -1,23 +1,58 @@
 import type { TemplateDocument } from "@/lib/editor-state"
 import type { PageSection } from "@/lib/editor-sections"
+import type { LinkCardStyle } from "@/lib/link-card-styles"
+import { getThemePreset } from "@/lib/theme-presets"
+import { BIO_ASSETS } from "@/data/bio-link"
 
-/** Unsplash portraits — stable crop URLs for template thumbnails */
+/** Reliable CDN portraits for template thumbnails */
 const AVATARS = {
-  woman1: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&h=240&fit=crop&crop=face",
-  woman2: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=240&h=240&fit=crop&crop=face",
-  woman3: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=240&h=240&fit=crop&crop=face",
-  man1: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=240&h=240&fit=crop&crop=face",
-  man2: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=240&h=240&fit=crop&crop=face",
-  man3: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&h=240&fit=crop&crop=face",
-  dj: "https://images.unsplash.com/photo-1571266028247-e4733b0f0bb0?w=240&h=240&fit=crop&crop=face",
-  chef: "https://images.unsplash.com/photo-1566554273541-37a9ca77b91f?w=240&h=240&fit=crop&crop=face",
-  barber: "https://images.unsplash.com/photo-1622286342621-4bd7861f8d7e?w=240&h=240&fit=crop&crop=face",
-  artist: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=240&h=240&fit=crop&crop=face",
-  fitness: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=240&h=240&fit=crop&crop=face",
-  pastor: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=240&h=240&fit=crop&crop=face",
-  student: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=240&h=240&fit=crop&crop=face",
-  luxury: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=240&h=240&fit=crop&crop=face",
+  woman1: `${BIO_ASSETS}/user1.Ba8DzGMp.png`,
+  woman2: `${BIO_ASSETS}/user3.w1PRNQjx.png`,
+  woman3: `${BIO_ASSETS}/user7.BJbxwnbs.png`,
+  man1: `${BIO_ASSETS}/user6.BtYp0XeA.png`,
+  man2: `${BIO_ASSETS}/user2.CiMA-Ti0.png`,
+  man3: `${BIO_ASSETS}/user12.ZeT4kErD.png`,
+  dj: `${BIO_ASSETS}/user2.CiMA-Ti0.png`,
+  chef: `${BIO_ASSETS}/user11.R_TCStqE.png`,
+  barber: `${BIO_ASSETS}/user4.Bo0FbbWl.png`,
+  artist: `${BIO_ASSETS}/user9.BTGRzHLW.png`,
+  fitness: `${BIO_ASSETS}/user13.CkAwBvvN.png`,
+  pastor: `${BIO_ASSETS}/user10.Dzm4B_2D.png`,
+  student: `${BIO_ASSETS}/user8.C6dud4fg.png`,
+  luxury: `${BIO_ASSETS}/user5.CwX5k9hm.png`,
 } as const
+
+/** Unique theme + link style per marketplace variant */
+const VARIANT_THEMES: Record<string, { presetId: string; link_style?: LinkCardStyle }> = {
+  creator: { presetId: "summer", link_style: "wavy" },
+  influencer: { presetId: "strawberry", link_style: "pill" },
+  musician: { presetId: "retro", link_style: "pill" },
+  artist: { presetId: "chameleon", link_style: "soft" },
+  photographer: { presetId: "desert", link_style: "rounded" },
+  videographer: { presetId: "carbon", link_style: "neon" },
+  developer: { presetId: "minimal", link_style: "square" },
+  designer: { presetId: "pride", link_style: "glass" },
+  portfolio: { presetId: "neon", link_style: "outline" },
+  business: { presetId: "basic", link_style: "rounded" },
+  restaurant: { presetId: "desert", link_style: "soft" },
+  "beauty-salon": { presetId: "strawberry", link_style: "pill" },
+  barber: { presetId: "carbon", link_style: "comic" },
+  "makeup-artist": { presetId: "summer", link_style: "glass" },
+  "real-estate": { presetId: "basic", link_style: "outline" },
+  church: { presetId: "rainy", link_style: "pill" },
+  podcast: { presetId: "xmas", link_style: "rounded" },
+  streamer: { presetId: "neon", link_style: "neon" },
+  student: { presetId: "minimal", link_style: "outline" },
+  freelancer: { presetId: "retro", link_style: "rounded" },
+  agency: { presetId: "carbon", link_style: "glass" },
+  "online-store": { presetId: "pride", link_style: "pill" },
+  "fitness-coach": { presetId: "summer", link_style: "comic" },
+  "personal-brand": { presetId: "chameleon", link_style: "rounded" },
+  minimal: { presetId: "rainy", link_style: "pill" },
+  luxury: { presetId: "carbon", link_style: "outline" },
+  dark: { presetId: "rainy", link_style: "neon" },
+  colorful: { presetId: "strawberry", link_style: "wavy" },
+}
 
 type MockLink = { title: string; url: string; icon: string }
 
@@ -411,5 +446,13 @@ export function applyVariantMockToDocument(
       is_active: true,
     })),
     ...(mock.page_sections ? { page_sections: mock.page_sections } : {}),
+    ...(VARIANT_THEMES[variantId]
+      ? {
+          theme: {
+            ...(getThemePreset(VARIANT_THEMES[variantId].presetId)?.theme ?? base.theme),
+            link_style: VARIANT_THEMES[variantId].link_style,
+          },
+        }
+      : {}),
   }
 }

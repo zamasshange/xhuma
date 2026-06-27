@@ -7,7 +7,7 @@ import type { MarketplaceTemplate } from "@/lib/templates/catalog"
 import type { DbProfile } from "@/lib/database.types"
 import { resolveThemeBackground } from "@/lib/theme-presets"
 
-/** Live thumbnail — sized to fill the card without heavy downscaling */
+/** Compact live thumbnail for 2-column mobile grid */
 export function TemplateCardPreview({ template }: { template: MarketplaceTemplate }) {
   const state = editorStateFromDocument(template.id, template.default_data)
   const previewProfile: DbProfile = {
@@ -25,8 +25,8 @@ export function TemplateCardPreview({ template }: { template: MarketplaceTemplat
     .map((l) => ({ id: l.id, title: l.title || "Link", url: l.url || "#", icon: l.icon }))
 
   return (
-    <div className="flex aspect-[9/14] items-start justify-center overflow-hidden bg-bio-grey-f4 px-1 pt-2 sm:px-2 sm:pt-3">
-      <PhoneDeviceFrame size="card" showLabel={false} glow={false} className="w-full max-w-full shrink">
+    <div className="flex items-center justify-center overflow-hidden bg-bio-grey-f4 px-1 py-2">
+      <PhoneDeviceFrame size="thumb" showLabel={false} glow={false} className="mx-auto w-full">
         <DbPublicProfileView
           profile={previewProfile}
           links={previewLinks}

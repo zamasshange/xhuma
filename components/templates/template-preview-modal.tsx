@@ -47,7 +47,7 @@ export function TemplatePreviewModal({
 
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center bg-bio-dark/50 p-0 sm:items-center sm:p-4">
-      <div className="flex max-h-[96dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:max-h-[94vh] sm:rounded-2xl">
+      <div className="flex max-h-[96dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-xl bg-white shadow-2xl sm:max-h-[94vh] sm:rounded-xl">
         <div className="flex items-center justify-between border-b border-bio-dark/8 px-4 py-3">
           <div className="min-w-0 pr-2">
             <p className="truncate font-semibold text-bio-dark">{template.name}</p>
@@ -62,7 +62,7 @@ export function TemplatePreviewModal({
           </button>
         </div>
 
-        <div className="flex justify-center gap-1.5 overflow-x-auto border-b border-bio-dark/8 px-3 py-2 no-scrollbar sm:gap-2 sm:px-4">
+        <div className="hidden justify-center gap-1.5 overflow-x-auto border-b border-bio-dark/8 px-3 py-2 no-scrollbar sm:flex sm:gap-2 sm:px-4">
           {(
             [
               { id: "mobile" as const, icon: Smartphone, label: "Mobile" },

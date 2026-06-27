@@ -81,7 +81,7 @@ export function EditorPanel({ children, className }: { children: React.ReactNode
   return (
     <div
       className={cn(
-        "rounded-2xl border border-bio-dark/6 bg-white p-5 shadow-[0_2px_16px_rgba(13,12,34,0.04)] sm:p-6",
+        "rounded-xl border border-bio-dark/6 bg-white p-4 shadow-[0_2px_16px_rgba(13,12,34,0.04)] sm:p-6",
         className,
       )}
     >
