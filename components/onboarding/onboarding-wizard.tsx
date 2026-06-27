@@ -25,7 +25,8 @@ import {
 import { apiFetch } from "@/lib/api-fetch"
 import { displayNameFromUsername, isValidUsername, sanitizeUsername } from "@/lib/username"
 import type { DbProfile, ProfileTheme } from "@/lib/database.types"
-import { DEFAULT_THEME, themeForRender } from "@/lib/database.types"
+import { DEFAULT_THEME } from "@/lib/database.types"
+import { resolveThemeBackground } from "@/lib/theme-presets"
 import { cn } from "@/lib/utils"
 import { SITE_DOMAIN } from "@/lib/brand"
 import { LinkDraftRow } from "@/components/onboarding/link-draft-row"
@@ -44,7 +45,7 @@ export function OnboardingWizard() {
   const [platforms, setPlatforms] = useState<string[]>([])
   const [themeId, setThemeId] = useState(onboardingThemePresets[0]?.id ?? "basic")
   const [theme, setTheme] = useState<ProfileTheme>(() =>
-    themeForRender(onboardingThemePresets[0]?.theme ?? DEFAULT_THEME),
+    resolveThemeBackground(onboardingThemePresets[0]?.theme ?? DEFAULT_THEME),
   )
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -85,7 +86,7 @@ export function OnboardingWizard() {
     const preset = onboardingThemePresets.find((t) => t.id === id)
     if (!preset) return
     setThemeId(id)
-    setTheme(themeForRender(preset.theme))
+    setTheme(resolveThemeBackground(preset.theme))
   }
 
   const handleAvatar = (file: File | null) => {
@@ -154,7 +155,7 @@ export function OnboardingWizard() {
     await apiFetch("/api/profile", {
       method: "PATCH",
       body: JSON.stringify({
-        theme: themeForRender(theme),
+        theme: resolveThemeBackground(theme),
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
         display_name: displayName.trim(),
         bio: bio.trim(),
@@ -206,7 +207,7 @@ export function OnboardingWizard() {
     display_name: displayName || "Your Name",
     bio: bio || null,
     avatar_url: avatarPreview,
-    theme_json: themeForRender(theme),
+    theme_json: resolveThemeBackground(theme),
     created_at: new Date().toISOString(),
   }
 

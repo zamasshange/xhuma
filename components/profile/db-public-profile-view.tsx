@@ -9,6 +9,7 @@ import type { DbLink, DbProfile } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
 import { themeForRender } from "@/lib/database.types"
+import { resolveThemeBackground } from "@/lib/theme-presets"
 
 function ProfileLinkButton({
   title,
@@ -90,7 +91,7 @@ export function DbPublicProfileView({
   compact?: boolean
   verified?: boolean
 }) {
-  const theme = themeForRender({ ...DEFAULT_THEME, ...profile.theme_json })
+  const theme = resolveThemeBackground({ ...DEFAULT_THEME, ...profile.theme_json })
   const staticPreview = compact
 
   const handleClick = async (linkId: string, url: string) => {
@@ -152,15 +153,24 @@ export function DbPublicProfileView({
 
   return (
     <div
-      className={cn("relative isolate w-full", compact ? "min-h-full" : "min-h-dvh")}
+      className={cn("relative isolate w-full overflow-hidden", compact ? "min-h-full" : "min-h-dvh")}
       style={{
         backgroundColor: theme.bg,
         color: theme.text,
       }}
     >
+      {theme.bg_image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={theme.bg_image}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute inset-0 size-full scale-[1.12] object-cover object-[center_20%]"
+        />
+      )}
       <div
         className={cn(
-          "relative mx-auto max-w-md px-4 pb-12",
+          "relative z-10 mx-auto max-w-md px-4 pb-12",
           compact ? "pt-12" : "pb-10 pt-8",
         )}
       >

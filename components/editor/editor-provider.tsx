@@ -14,7 +14,6 @@ import { useAuth } from "@clerk/nextjs"
 import { apiFetch } from "@/lib/api-fetch"
 import { getUserId } from "@/lib/temp-user"
 import type { DbLink, DbProfile, ProfileDraft, ProfileTheme } from "@/lib/database.types"
-import { themeForRender } from "@/lib/database.types"
 import {
   editorStateFromDocument,
   editorStateFromProfile,
@@ -27,7 +26,7 @@ import {
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { consumePendingDraft } from "@/lib/client-draft"
 import { getStaticTemplate } from "@/data/templates"
-import { getThemePreset } from "@/lib/theme-presets"
+import { getThemePreset, resolveThemeBackground } from "@/lib/theme-presets"
 
 export type EditorMode = "empty" | "draft" | "live"
 
@@ -47,7 +46,7 @@ type EditorContextValue = {
   moveLink: (index: number, dir: -1 | 1) => void
   syncLiveLink: (id: string) => Promise<void>
   deleteLiveLink: (id: string) => Promise<void>
-  persistLiveLink: (title: string, url: string, icon?: string | null) => Promise<void>
+  persistLiveLink: (title: string, url: string, icon?: string | null) => Promise<boolean>
   refresh: () => Promise<void>
 }
 
@@ -64,6 +63,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<EditorState | null>(null)
   const [mode, setMode] = useState<EditorMode>("empty")
   const lastSavedJson = useRef("")
+  const lastSavedLiveProfile = useRef("")
   const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const liveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -87,6 +87,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setState(liveState)
         setMode("live")
         lastSavedJson.current = JSON.stringify(editorStateToDocument(liveState))
+        lastSavedLiveProfile.current = JSON.stringify(liveState.profile)
       } else if (draft) {
         const doc = normalizeTemplateDocument(draft.data_json as Record<string, unknown>)
         const draftState = editorStateFromDocument(draft.template_id, doc)
@@ -103,7 +104,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
             if (preset) {
               draftState = {
                 ...draftState,
-                profile: { ...draftState.profile, theme: themeForRender(preset.theme) },
+                profile: { ...draftState.profile, theme: resolveThemeBackground(preset.theme) },
               }
             }
           }
@@ -146,7 +147,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const setTheme = useCallback(
     (theme: ProfileTheme) => {
-      patchState((s) => ({ ...s, profile: { ...s.profile, theme: themeForRender(theme) } }))
+      patchState((s) => ({
+        ...s,
+        profile: { ...s.profile, theme: resolveThemeBackground(theme) },
+      }))
     },
     [patchState],
   )
@@ -205,12 +209,15 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     if (draftTimer.current) clearTimeout(draftTimer.current)
     draftTimer.current = setTimeout(async () => {
       setSaving(true)
-      const res = await apiFetch<ProfileDraft>("/api/draft", {
-        method: "PUT",
-        body: JSON.stringify({ data: doc }),
-      })
-      setSaving(false)
-      if (res.success) lastSavedJson.current = json
+      try {
+        const res = await apiFetch<ProfileDraft>("/api/draft", {
+          method: "PUT",
+          body: JSON.stringify({ data: doc }),
+        })
+        if (res.success) lastSavedJson.current = json
+      } finally {
+        setSaving(false)
+      }
     }, AUTOSAVE_MS)
 
     return () => {
@@ -220,28 +227,34 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   // Live autosave: profile fields → profiles table
   useEffect(() => {
-    if (mode !== "live" || !state || !profile) return
+    if (mode !== "live" || !state) return
+
+    const json = JSON.stringify(state.profile)
+    if (json === lastSavedLiveProfile.current) return
 
     if (liveTimer.current) clearTimeout(liveTimer.current)
     liveTimer.current = setTimeout(async () => {
       setSaving(true)
-      const res = await apiFetch<DbProfile>("/api/profile", {
-        method: "PATCH",
-        body: JSON.stringify({
-          display_name: state.profile.display_name,
-          bio: state.profile.bio,
-          theme: state.profile.theme,
-          avatar_url: state.profile.avatar_url,
-        }),
-      })
-      setSaving(false)
-      if (res.success && res.data) setProfile(res.data)
+      try {
+        const res = await apiFetch<DbProfile>("/api/profile", {
+          method: "PATCH",
+          body: JSON.stringify({
+            display_name: state.profile.display_name,
+            bio: state.profile.bio,
+            theme: resolveThemeBackground(state.profile.theme),
+            avatar_url: state.profile.avatar_url,
+          }),
+        })
+        if (res.success) lastSavedLiveProfile.current = json
+      } finally {
+        setSaving(false)
+      }
     }, AUTOSAVE_MS)
 
     return () => {
       if (liveTimer.current) clearTimeout(liveTimer.current)
     }
-  }, [state?.profile, mode, profile])
+  }, [state?.profile, mode])
 
   const syncLiveLink = useCallback(
     async (id: string) => {
@@ -272,16 +285,48 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const persistLiveLink = useCallback(async (title: string, url: string, icon?: string | null) => {
     const resolvedIcon = icon ?? inferLinkIcon(title, url)
+    const tempId = `temp-${crypto.randomUUID()}`
+    patchState((s) => ({
+      ...s,
+      links: [
+        ...s.links,
+        {
+          id: tempId,
+          title,
+          url,
+          icon: resolvedIcon,
+          position: s.links.length,
+          is_active: true,
+        },
+      ],
+    }))
+
     const res = await apiFetch<DbLink>("/api/links", {
       method: "POST",
       body: JSON.stringify({ title, url, icon: resolvedIcon }),
     })
+
     if (res.success && res.data) {
       patchState((s) => ({
         ...s,
-        links: [...s.links, { ...res.data!, position: s.links.length }],
+        links: s.links.map((l) =>
+          l.id === tempId
+            ? {
+                id: res.data!.id,
+                title: res.data!.title,
+                url: res.data!.url,
+                icon: res.data!.icon ?? resolvedIcon,
+                position: l.position,
+                is_active: res.data!.is_active !== false,
+              }
+            : l,
+        ),
       }))
+      return true
     }
+
+    patchState((s) => ({ ...s, links: s.links.filter((l) => l.id !== tempId) }))
+    return false
   }, [patchState])
 
   const value = useMemo<EditorContextValue>(

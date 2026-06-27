@@ -25,7 +25,7 @@ import { BioButton, BioGradientButton, BioInput, BioMuted, BioTextarea } from "@
 import { apiFetch } from "@/lib/api-fetch"
 import type { DbProfile } from "@/lib/database.types"
 import { onboardingThemePresets } from "@/data/onboarding"
-import { getThemePreset } from "@/lib/theme-presets"
+import { getThemePreset, resolveThemeBackground } from "@/lib/theme-presets"
 import { AnalyticsPanel } from "@/components/editor/analytics-panel"
 import { AiPanel } from "@/components/editor/ai-panel"
 import { SettingsPanel } from "@/components/editor/settings-panel"
@@ -92,24 +92,25 @@ export function PageEditor() {
         display_name: state.profile.display_name || "Your Name",
         bio: state.profile.bio || null,
         avatar_url: state.profile.avatar_url,
-        theme_json: state.profile.theme,
+        theme_json: resolveThemeBackground(state.profile.theme),
         template_id: state.template_id,
         created_at: profile?.created_at ?? new Date().toISOString(),
       }
     : null
 
   const previewLinks = (state?.links ?? [])
-    .filter((l) => l.is_active)
-    .map((l) => ({ id: l.id, title: l.title, url: l.url, icon: l.icon }))
+    .filter((l) => l.is_active !== false && l.title.trim())
+    .map((l) => ({ id: l.id, title: l.title, url: l.url || "#", icon: l.icon }))
 
-  const handleQuickAdd = (title: string, url: string, icon: SocialIconName) => {
+  const handleQuickAdd = async (title: string, url: string, icon: SocialIconName) => {
     if (isDraft) {
       addLink(title, url, icon)
       toast.success(`${title} added!`)
       return
     }
-    void persistLiveLink(title, url, icon)
-    toast.success(`${title} added!`)
+    const ok = await persistLiveLink(title, url, icon)
+    if (ok) toast.success(`${title} added!`)
+    else toast.error(`Could not add ${title}`)
   }
 
   const handleAddLink = async () => {
@@ -124,8 +125,12 @@ export function PageEditor() {
       return
     }
     setAddingLink(true)
-    await persistLiveLink(newLink.title.trim(), newLink.url.trim())
+    const ok = await persistLiveLink(newLink.title.trim(), newLink.url.trim())
     setAddingLink(false)
+    if (!ok) {
+      toast.error("Could not add link")
+      return
+    }
     setNewLink({ title: "", url: "" })
     toast.success("Link added!")
   }

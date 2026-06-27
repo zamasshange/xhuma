@@ -151,7 +151,7 @@ export function editorStateFromProfile(
       url: l.url,
       icon: l.icon ?? inferLinkIcon(l.title, l.url),
       position: l.position,
-      is_active: l.is_active,
+      is_active: l.is_active !== false,
     })),
   }
 }
