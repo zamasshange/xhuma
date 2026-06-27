@@ -56,7 +56,9 @@ export function buildMetadata({
     ? image.startsWith("http")
       ? image
       : absoluteUrl(image)
-    : absoluteUrl("/opengraph-image")
+    : type === "profile" && path && path !== "/"
+      ? absoluteUrl(`${path}/opengraph-image`)
+      : absoluteUrl("/opengraph-image")
 
   const fullTitle =
     absoluteTitle || path === "/" || title.includes("Xhuma")

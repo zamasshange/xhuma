@@ -1,6 +1,8 @@
 import { BiolinkFaq } from "@/components/marketing/biolink/faq-section"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
+import { FaqJsonLd } from "@/components/seo/faq-json-ld"
+import { SeoBreadcrumbs } from "@/components/seo/breadcrumb-json-ld"
 import { pageMetadata } from "@/lib/seo"
 
 export const metadata = pageMetadata("faq")
@@ -8,6 +10,13 @@ export const metadata = pageMetadata("faq")
 export default function FaqPage() {
   return (
     <>
+      <SeoBreadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "FAQ", href: "/faq" },
+        ]}
+      />
+      <FaqJsonLd />
       <section className="mx-auto w-[min(700px,92%)] pt-32 text-center text-bio-dark max-lg:pt-24">
         <SectionBadge>Support</SectionBadge>
         <h1 className="mt-6 text-6xl font-semibold tracking-tighter max-lg:text-5xl max-sm:text-4xl">

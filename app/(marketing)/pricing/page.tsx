@@ -3,6 +3,7 @@ import { CompareSection } from "@/components/marketing/biolink/compare-section"
 import { BiolinkFaq } from "@/components/marketing/biolink/faq-section"
 import { SectionHeading } from "@/components/section-heading"
 import { PricingCards } from "@/components/marketing/pricing-cards"
+import { SeoBreadcrumbs } from "@/components/seo/breadcrumb-json-ld"
 import { comparisonRows } from "@/data/marketing"
 import { Check, X } from "lucide-react"
 import { pageMetadata } from "@/lib/seo"
@@ -12,6 +13,12 @@ export const metadata = pageMetadata("pricing")
 export default function PricingPage() {
   return (
     <div className="text-bio-dark">
+      <SeoBreadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Pricing", href: "/pricing" },
+        ]}
+      />
       <BiolinkPricing />
       <CompareSection />
 

@@ -3,6 +3,7 @@ import { Reveal } from "@/components/motion/reveal"
 import { Avatar } from "@/components/ui/avatar"
 import { Card } from "@/components/ui/card"
 import { aboutStats, team, timeline } from "@/data/about"
+import { SeoBreadcrumbs } from "@/components/seo/breadcrumb-json-ld"
 import { pageMetadata } from "@/lib/seo"
 
 export const metadata = pageMetadata("about")
@@ -10,6 +11,12 @@ export const metadata = pageMetadata("about")
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+      <SeoBreadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "About", href: "/about" },
+        ]}
+      />
       <Reveal>
         <SectionHeading
           eyebrow="About"

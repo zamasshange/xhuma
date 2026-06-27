@@ -5,6 +5,7 @@ import { PublicProfileCard } from "@/components/cards/public-profile-card"
 import { SectionHeading } from "@/components/section-heading"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
 import { pageMetadata } from "@/lib/seo"
+import { SeoBreadcrumbs } from "@/components/seo/breadcrumb-json-ld"
 
 export const metadata = pageMetadata("explore")
 
@@ -27,6 +28,13 @@ export default async function ExplorePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 text-bio-dark sm:px-6 sm:py-16">
+      <SeoBreadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Explore", href: "/explore" },
+        ]}
+      />
+      <h1 className="sr-only">Explore Link in Bio Pages on Xhuma</h1>
       <SectionHeading
         eyebrow="Explore"
         title="Live pages on Xhuma"

@@ -102,6 +102,22 @@ export function getBlogPost(slug: string) {
   return blogPosts.find((p) => p.slug === slug)
 }
 
+/** Blog taxonomy for future content architecture */
+export const BLOG_CATEGORIES = [
+  "Creator Tips",
+  "Instagram Growth",
+  "TikTok Growth",
+  "Personal Branding",
+  "AI Productivity",
+  "South African Creator Economy",
+  "Business Marketing",
+  "Link in Bio Guides",
+  "SEO Tips",
+  "Social Media Tips",
+] as const
+
+export type BlogCategory = (typeof BLOG_CATEGORIES)[number]
+
 export const features = [
   { icon: "sparkles", title: "AI Studio", description: "Generate bios, themes, and link ideas tuned to your niche in one click." },
   { icon: "palette", title: "Stunning Themes", description: "Premium, customizable designs with gradients, glass, and motion built in." },

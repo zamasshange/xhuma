@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { JsonLd } from "@/components/seo/json-ld"
+import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld"
 import { absoluteUrl, buildMetadata } from "@/lib/seo"
 import { SITE_NAME } from "@/lib/brand"
 
@@ -60,6 +61,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
       <JsonLd data={articleJsonLd} />
+      <BreadcrumbJsonLd
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Blog", href: "/blog" },
+          { label: post.title, href: `/blog/${post.slug}` },
+        ]}
+      />
       <Button render={<Link href="/blog" />} variant="ghost" className="mb-6 -ml-2">
         <ArrowLeft className="size-4" />
         Back to blog

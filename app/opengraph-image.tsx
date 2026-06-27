@@ -26,15 +26,15 @@ export default function OgImage() {
         <div
           style={{
             marginTop: 16,
-            fontSize: 32,
+            fontSize: 28,
             fontWeight: 400,
-            color: "rgba(255,255,255,0.85)",
+            color: "rgba(255,255,255,0.9)",
             textAlign: "center",
-            maxWidth: 800,
-            lineHeight: 1.3,
+            maxWidth: 900,
+            lineHeight: 1.35,
           }}
         >
-          Your entire online presence, powered by AI
+          AI Link in Bio Platform for Creators in South Africa &amp; Beyond
         </div>
         <div
           style={{

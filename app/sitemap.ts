@@ -15,6 +15,8 @@ const STATIC_PATHS = [
   marketingPages.faq.path,
   marketingPages.privacy.path,
   marketingPages.terms.path,
+  "/sign-in",
+  "/sign-up",
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
