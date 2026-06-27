@@ -13,8 +13,8 @@ import {
 import { useAuth } from "@clerk/nextjs"
 import { apiFetch } from "@/lib/api-fetch"
 import { getUserId } from "@/lib/temp-user"
-import type { DbLink, DbProfile, ProfileDraft } from "@/lib/database.types"
-import type { ProfileTheme } from "@/lib/database.types"
+import type { DbLink, DbProfile, ProfileDraft, ProfileTheme } from "@/lib/database.types"
+import { themeForRender } from "@/lib/database.types"
 import {
   editorStateFromDocument,
   editorStateFromProfile,
@@ -103,7 +103,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
             if (preset) {
               draftState = {
                 ...draftState,
-                profile: { ...draftState.profile, theme: preset.theme },
+                profile: { ...draftState.profile, theme: themeForRender(preset.theme) },
               }
             }
           }
@@ -146,7 +146,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const setTheme = useCallback(
     (theme: ProfileTheme) => {
-      patchState((s) => ({ ...s, profile: { ...s.profile, theme } }))
+      patchState((s) => ({ ...s, profile: { ...s.profile, theme: themeForRender(theme) } }))
     },
     [patchState],
   )

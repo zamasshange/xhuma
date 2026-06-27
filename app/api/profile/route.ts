@@ -1,7 +1,7 @@
 import { createAdminClient, getUserId, requireUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 import { profileCreateSchema, profileUpdateSchema } from "@/lib/validations"
-import { DEFAULT_THEME, mapProfile } from "@/lib/database.types"
+import { DEFAULT_THEME, themeForRender, mapProfile } from "@/lib/database.types"
 
 export async function GET(request: Request) {
   const userId = await getUserId(request)
@@ -61,7 +61,7 @@ export async function PATCH(request: Request) {
   if (parsed.data.display_name) updates.display_name = parsed.data.display_name
   if (parsed.data.bio !== undefined) updates.bio = parsed.data.bio
   if (parsed.data.avatar_url !== undefined) updates.avatar_url = parsed.data.avatar_url
-  if (parsed.data.theme) updates.theme_json = parsed.data.theme
+  if (parsed.data.theme) updates.theme_json = themeForRender(parsed.data.theme)
 
   const supabase = createAdminClient()
   const { data, error } = await supabase

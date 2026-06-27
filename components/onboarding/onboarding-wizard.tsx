@@ -25,7 +25,7 @@ import {
 import { apiFetch } from "@/lib/api-fetch"
 import { displayNameFromUsername, isValidUsername, sanitizeUsername } from "@/lib/username"
 import type { DbProfile, ProfileTheme } from "@/lib/database.types"
-import { DEFAULT_THEME } from "@/lib/database.types"
+import { DEFAULT_THEME, themeForRender } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
 import { SITE_DOMAIN } from "@/lib/brand"
 import { LinkDraftRow } from "@/components/onboarding/link-draft-row"
@@ -43,7 +43,9 @@ export function OnboardingWizard() {
   const [username, setUsername] = useState("")
   const [platforms, setPlatforms] = useState<string[]>([])
   const [themeId, setThemeId] = useState(onboardingThemePresets[0]?.id ?? "basic")
-  const [theme, setTheme] = useState<ProfileTheme>(onboardingThemePresets[0]?.theme ?? DEFAULT_THEME)
+  const [theme, setTheme] = useState<ProfileTheme>(() =>
+    themeForRender(onboardingThemePresets[0]?.theme ?? DEFAULT_THEME),
+  )
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [displayName, setDisplayName] = useState("")
@@ -83,7 +85,7 @@ export function OnboardingWizard() {
     const preset = onboardingThemePresets.find((t) => t.id === id)
     if (!preset) return
     setThemeId(id)
-    setTheme(preset.theme)
+    setTheme(themeForRender(preset.theme))
   }
 
   const handleAvatar = (file: File | null) => {
@@ -152,7 +154,7 @@ export function OnboardingWizard() {
     await apiFetch("/api/profile", {
       method: "PATCH",
       body: JSON.stringify({
-        theme,
+        theme: themeForRender(theme),
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
         display_name: displayName.trim(),
         bio: bio.trim(),
@@ -204,7 +206,7 @@ export function OnboardingWizard() {
     display_name: displayName || "Your Name",
     bio: bio || null,
     avatar_url: avatarPreview,
-    theme_json: theme,
+    theme_json: themeForRender(theme),
     created_at: new Date().toISOString(),
   }
 
@@ -230,7 +232,16 @@ export function OnboardingWizard() {
   )
 
   return (
-    <OnboardingShell step={stepIndex + 1} totalSteps={totalSteps} onBack={stepIndex > 0 ? goBack : undefined}>
+    <OnboardingShell
+      step={stepIndex + 1}
+      totalSteps={totalSteps}
+      onBack={stepIndex > 0 ? goBack : undefined}
+      footer={
+        <ContinueButton disabled={!canContinue || saving} onClick={handleContinue}>
+          {saving ? "Launching…" : "Continue"}
+        </ContinueButton>
+      }
+    >
       {step === "platforms" && (
         <>
           <OnboardingTitle>Which platforms are you on?</OnboardingTitle>
@@ -267,24 +278,25 @@ export function OnboardingWizard() {
 
       {step === "theme" && (
         <>
-          <OnboardingTitle>Select a theme</OnboardingTitle>
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
+          <OnboardingTitle subtitle="Tap a style — you can change it anytime in the editor.">
+            Select a theme
+          </OnboardingTitle>
+          <div className="grid grid-cols-3 gap-2.5 pb-2 sm:gap-3">
             {onboardingThemePresets.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => selectTheme(t.id)}
                 className={cn(
-                  "text-left transition-transform hover:scale-[1.02]",
-                  themeId === t.id && "rounded-2xl ring-2 ring-bio-dark ring-offset-2",
+                  "rounded-2xl p-1 text-left transition-all",
+                  themeId === t.id
+                    ? "bg-white ring-2 ring-bio-dark shadow-md"
+                    : "hover:bg-white/80",
                 )}
               >
-                <div className="rounded-2xl shadow-[0_4px_20px_rgba(13,12,34,0.06)]">
-                  <ThemePreviewImage src={t.image} alt={t.name} />
-                </div>
-                <p className="mt-2 text-center text-xs font-medium text-bio-dark sm:text-sm">
+                <ThemePreviewImage src={t.image} alt={t.name} compact />
+                <p className="mt-1.5 truncate px-0.5 text-center text-[11px] font-medium text-bio-dark sm:text-xs">
                   {t.name}
-                  {t.live && <span className="text-bio-grey"> · Live</span>}
                 </p>
               </button>
             ))}
@@ -416,10 +428,6 @@ export function OnboardingWizard() {
           </div>
         </>
       )}
-
-      <ContinueButton disabled={!canContinue || saving} onClick={handleContinue}>
-        {saving ? "Launching…" : step === "preview" ? "Continue" : "Continue"}
-      </ContinueButton>
     </OnboardingShell>
   )
 }

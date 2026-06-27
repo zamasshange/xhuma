@@ -53,25 +53,37 @@ export function OnboardingShell({
   totalSteps,
   onBack,
   children,
+  footer,
   className,
 }: {
   step: number
   totalSteps: number
   onBack?: () => void
   children: React.ReactNode
+  footer?: React.ReactNode
   className?: string
 }) {
   return (
     <div className="xhuma-site flex min-h-dvh flex-col bg-[#f7f7f8] text-bio-dark">
-      <header className="border-b border-bio-dark/8 bg-white px-4 py-4 sm:px-6">
+      <header className="shrink-0 border-b border-bio-dark/8 bg-white px-4 py-4 sm:px-6">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
           <LogoMark height={28} />
         </div>
       </header>
 
-      <main className={cn("mx-auto flex w-full max-w-lg flex-1 flex-col px-4 py-8 sm:px-6", className)}>
+      <main
+        className={cn(
+          "mx-auto flex w-full max-w-lg min-h-0 flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8",
+          className,
+        )}
+      >
         <OnboardingProgress step={step} total={totalSteps} onBack={onBack} />
-        <div className="mt-8 flex flex-1 flex-col">{children}</div>
+        <div className="mt-6 min-h-0 flex-1 overflow-y-auto">{children}</div>
+        {footer ? (
+          <div className="sticky bottom-0 -mx-4 shrink-0 border-t border-bio-dark/8 bg-[#f7f7f8]/95 px-4 py-4 backdrop-blur-sm sm:-mx-6 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            {footer}
+          </div>
+        ) : null}
       </main>
     </div>
   )
@@ -102,7 +114,7 @@ export function ContinueButton({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className="bio-continue-btn mt-auto w-full rounded-2xl py-4 text-base font-semibold text-white transition-opacity disabled:opacity-50"
+      className="bio-continue-btn w-full rounded-2xl py-4 text-base font-semibold text-white transition-opacity disabled:opacity-50"
     >
       {children}
     </button>

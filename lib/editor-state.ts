@@ -1,5 +1,5 @@
 import { inferLinkIcon } from "@/lib/infer-link-icon"
-import { DEFAULT_THEME } from "@/lib/database.types"
+import { DEFAULT_THEME, themeForRender } from "@/lib/database.types"
 import type { DbLink, DbProfile } from "@/lib/database.types"
 
 /** Single source of truth for the editor */
@@ -95,7 +95,7 @@ export function editorStateFromDocument(templateId: string, doc: TemplateDocumen
       display_name: doc.profile.display_name,
       bio: doc.profile.bio,
       avatar_url: doc.profile.avatar_url,
-      theme: { ...DEFAULT_THEME, ...doc.theme },
+      theme: themeForRender({ ...DEFAULT_THEME, ...doc.theme }),
     },
     links: doc.links.map((l, i) => ({
       id: l.id ?? `link-${i}`,
@@ -143,7 +143,7 @@ export function editorStateFromProfile(
       display_name: profile.display_name,
       bio: profile.bio ?? "",
       avatar_url: profile.avatar_url,
-      theme: { ...DEFAULT_THEME, ...profile.theme_json },
+      theme: themeForRender({ ...DEFAULT_THEME, ...profile.theme_json }),
     },
     links: sorted.map((l) => ({
       id: l.id,

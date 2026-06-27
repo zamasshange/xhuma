@@ -1,9 +1,11 @@
 import { bioThemes } from "@/data/bio-link"
 import type { ProfileTheme } from "@/lib/database.types"
+import { themeForRender } from "@/lib/database.types"
 
 export type ThemePreset = {
   id: string
   name: string
+  /** Gallery thumbnail only — full mockup PNG, not used as live page background */
   image: string
   theme: ProfileTheme
 }
@@ -61,21 +63,22 @@ function buildPreset(id: string, name: string, image: string): ThemePreset {
     id,
     name,
     image,
-    theme: { ...colors, bg_image: image, preset_id: id },
+    theme: { ...colors, preset_id: id },
   }
 }
 
 export const THEME_PRESETS: ThemePreset[] = [
   ...bioThemes.map((t) => buildPreset(t.id, t.name, t.image)),
-  ...EXTRA_PRESETS.map((p) => ({ ...p, theme: { ...p.theme, bg_image: p.image } })),
+  ...EXTRA_PRESETS,
 ]
 
 export function getThemePreset(id: string): ThemePreset | undefined {
   return THEME_PRESETS.find((p) => p.id === id)
 }
 
-export function themeWithBackground(theme: ProfileTheme, image?: string | null): ProfileTheme {
-  if (theme.bg_image) return theme
-  if (!image) return theme
-  return { ...theme, bg_image: image }
+/** Strip mockup screenshot backgrounds — gallery images must not render behind user content */
+export { themeForRender } from "@/lib/database.types"
+
+export function themeWithBackground(theme: ProfileTheme, _image?: string | null): ProfileTheme {
+  return themeForRender(theme)
 }

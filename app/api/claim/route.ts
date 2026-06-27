@@ -1,7 +1,7 @@
 import { createAdminClient, requireUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 import { usernameSchema } from "@/lib/validations"
-import { mapProfile } from "@/lib/database.types"
+import { mapProfile, themeForRender } from "@/lib/database.types"
 import { normalizeDraftData } from "@/lib/templates-server"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import type { TemplateDocument } from "@/lib/editor-state"
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       display_name: data.profile.display_name || username,
       bio: data.profile.bio ?? "",
       avatar_url: data.profile.avatar_url,
-      theme_json: data.theme,
+      theme_json: themeForRender(data.theme),
       template_id: draft.template_id,
     })
     .select()

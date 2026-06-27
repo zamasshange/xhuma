@@ -3,6 +3,7 @@
 import { THEME_PRESETS } from "@/lib/theme-presets"
 import { ThemePreviewImage } from "@/components/themes/theme-preview-image"
 import type { ProfileTheme } from "@/lib/database.types"
+import { themeForRender } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
 
 export function ThemePicker({
@@ -18,7 +19,7 @@ export function ThemePicker({
         <button
           key={t.id}
           type="button"
-          onClick={() => onSelect(t.id, t.theme)}
+          onClick={() => onSelect(t.id, themeForRender(t.theme))}
           className={cn(
             "text-left transition-transform hover:scale-[1.02]",
             selectedId === t.id && "rounded-2xl ring-2 ring-bio-dark ring-offset-2",
