@@ -50,10 +50,15 @@ export const DEFAULT_THEME: ProfileTheme = {
   radius: "14px",
 }
 
-/** Normalize theme for live pages — mockup PNGs are gallery-only, never backgrounds */
+/** Normalize theme — strip third-party mockup screenshots, keep Xhuma backgrounds */
 export function themeForRender(theme: ProfileTheme): ProfileTheme {
-  const { bg_image: _bg, ...rest } = { ...DEFAULT_THEME, ...theme }
-  return rest
+  const merged = { ...DEFAULT_THEME, ...theme }
+  const bg = merged.bg_image
+  if (bg && bg.includes("bio.link/_nuxt")) {
+    const { bg_image: _removed, ...rest } = merged
+    return rest
+  }
+  return merged
 }
 
 export function mapProfile(row: Record<string, unknown>): DbProfile {

@@ -288,7 +288,75 @@
   background: linear-gradient(90deg, #ff5858 0%, #c058ff 100%);
   box-shadow: 0 8px 24px rgba(192, 88, 255, 0.25);
 }
+.bio-continue-btn:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+/* Premium 3D phone mockup */
+.phone-device-stage {
+  isolation: isolate;
+}
+
+.phone-device-aura {
+  pointer-events: none;
+  position: absolute;
+  inset: -8% -12%;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 55% 50% at 30% 45%, rgba(255, 88, 120, 0.42), transparent 68%),
+    radial-gradient(ellipse 55% 50% at 72% 55%, rgba(168, 85, 247, 0.38), transparent 68%),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255, 120, 160, 0.12), transparent 75%);
+  filter: blur(36px);
+  animation: phone-aura-pulse 6s ease-in-out infinite;
+}
+
+@keyframes phone-aura-pulse {
+  0%,
+  100% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+.phone-device-bezel {
+  background: linear-gradient(
+    165deg,
+    #5c5c5e 0%,
+    #3a3a3c 12%,
+    #1c1c1e 45%,
+    #111113 78%,
+    #08080a 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.14) inset,
+    0 0 0 0.5px rgba(0, 0, 0, 0.9),
+    0 2px 4px rgba(255, 255, 255, 0.06) inset,
+    0 32px 64px -16px rgba(13, 12, 34, 0.55),
+    0 48px 96px -24px rgba(168, 85, 247, 0.18),
+    0 16px 32px -8px rgba(255, 88, 120, 0.12);
+}
+
+.phone-device-btn {
+  background: linear-gradient(90deg, #2a2a2c, #3d3d3f 50%, #2a2a2c);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.phone-device-island {
+  background: #000;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
 .phone-device-screen {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.phone-device-screen-inner {
   -webkit-overflow-scrolling: touch;
   transform: translateZ(0);
   isolation: isolate;
@@ -302,10 +370,6 @@
     0 2px 8px rgba(0, 0, 0, 0.12);
   transform: translateZ(0);
   backface-visibility: hidden;
-}
-
-.bio-continue-btn:hover:not(:disabled) {
-  opacity: 0.92;
 }
 
 /* Preset theme decor — CSS only (no mockup PNGs behind user content) */

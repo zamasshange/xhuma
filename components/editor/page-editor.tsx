@@ -339,7 +339,7 @@ export function PageEditor() {
           </div>
 
           <div className="lg:sticky lg:top-[140px] lg:self-start">
-            <EditorPanel className="hidden lg:block !p-4">
+            <EditorPanel className="hidden !overflow-visible lg:block !bg-transparent !p-2 !shadow-none !ring-0">
               <EditorPreviewFrame>
                 {previewProfile ? (
                   <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
@@ -356,7 +356,7 @@ export function PageEditor() {
 
       {tab === "page" && previewProfile && (
         <div className="mt-6 lg:hidden">
-          <EditorPanel className="!p-4">
+          <EditorPanel className="!overflow-visible !bg-transparent !p-2 !shadow-none !ring-0">
             <EditorPreviewFrame>
               <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
             </EditorPreviewFrame>

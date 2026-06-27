@@ -7,17 +7,17 @@ import { ClaimLinkInput } from "@/components/marketing/biolink/claim-link"
 import { PhoneDeviceFrame } from "@/components/device/phone-device-frame"
 import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
 import {
-  DEMO_DARK_LINKS,
-  DEMO_DARK_PROFILE,
+  DEMO_PREMIUM_LINKS,
+  DEMO_PREMIUM_PROFILE,
   DEMO_SUMMER_LINKS,
   DEMO_SUMMER_PROFILE,
 } from "@/lib/demo-profile"
 
 export function BiolinkHero() {
-  const [showSummer, setShowSummer] = useState(true)
+  const [showPremium, setShowPremium] = useState(true)
 
   useEffect(() => {
-    const interval = setInterval(() => setShowSummer((s) => !s), 4000)
+    const interval = setInterval(() => setShowPremium((s) => !s), 5000)
     return () => clearInterval(interval)
   }, [])
 
@@ -35,21 +35,21 @@ export function BiolinkHero() {
         </div>
 
         <div className="flex w-2/5 items-center justify-center max-md:mt-10 max-md:w-full max-sm:mt-7">
-          <div className="relative inline-block min-h-[520px] w-[260px] sm:w-[280px]">
+          <div className="relative min-h-[580px] w-[268px] sm:w-[290px]">
             <AnimatePresence mode="wait">
-              {showSummer ? (
+              {showPremium ? (
                 <motion.div
-                  key="summer"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+                  key="premium"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.55, ease: "easeOut" }}
                   className="absolute inset-0"
                 >
-                  <PhoneDeviceFrame size="md" showLabel={false}>
+                  <PhoneDeviceFrame size="md" showLabel={false} glow>
                     <DbPublicProfileView
-                      profile={DEMO_SUMMER_PROFILE}
-                      links={DEMO_SUMMER_LINKS}
+                      profile={DEMO_PREMIUM_PROFILE}
+                      links={DEMO_PREMIUM_LINKS}
                       compact
                       verified
                     />
@@ -57,18 +57,19 @@ export function BiolinkHero() {
                 </motion.div>
               ) : (
                 <motion.div
-                  key="dark"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+                  key="summer"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.55, ease: "easeOut" }}
                   className="absolute inset-0"
                 >
-                  <PhoneDeviceFrame size="md" showLabel={false}>
+                  <PhoneDeviceFrame size="md" showLabel={false} glow>
                     <DbPublicProfileView
-                      profile={DEMO_DARK_PROFILE}
-                      links={DEMO_DARK_LINKS}
+                      profile={DEMO_SUMMER_PROFILE}
+                      links={DEMO_SUMMER_LINKS}
                       compact
+                      verified
                     />
                   </PhoneDeviceFrame>
                 </motion.div>

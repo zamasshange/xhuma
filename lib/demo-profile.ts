@@ -49,3 +49,29 @@ export const DEMO_DARK_LINKS: Pick<DbLink, "id" | "title" | "url">[] = [
   { id: "2", title: "YouTube", url: "#" },
   { id: "3", title: "My Website", url: "#" },
 ]
+
+export const PREMIUM_THEME: ProfileTheme = {
+  bg: "#000000",
+  text: "#ffffff",
+  button: "#2a2a2a",
+  button_text: "#ffffff",
+  radius: "16px",
+  preset_id: "carbon",
+}
+
+/** Hero / marketing showcase — matches premium dark link-in-bio aesthetic */
+export const DEMO_PREMIUM_PROFILE: DbProfile = {
+  id: "demo-premium",
+  username: "jordanpaul",
+  display_name: "Jordan Paul",
+  bio: "Curated bits from life and work.",
+  avatar_url: "https://bio.link/_nuxt/user3.w1PRNQjx.png",
+  theme_json: PREMIUM_THEME,
+  created_at: new Date().toISOString(),
+}
+
+export const DEMO_PREMIUM_LINKS: Pick<DbLink, "id" | "title" | "url" | "icon">[] = [
+  { id: "1", title: "Follow me on Instagram", url: "#", icon: "instagram" },
+  { id: "2", title: "Subscribe on Youtube", url: "#", icon: "youtube" },
+  { id: "3", title: "Shop My Merch", url: "#", icon: "link" },
+]

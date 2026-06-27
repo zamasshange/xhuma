@@ -1,11 +1,12 @@
 import { bioThemes } from "@/data/bio-link"
 import type { ProfileTheme } from "@/lib/database.types"
 import { themeForRender } from "@/lib/database.types"
+import { themeBackgroundForPreset } from "@/lib/theme-backgrounds"
 
 export type ThemePreset = {
   id: string
   name: string
-  /** Gallery thumbnail only — full mockup PNG, not used as live page background */
+  /** Gallery thumbnail */
   image: string
   theme: ProfileTheme
 }
@@ -36,51 +37,55 @@ const COLOR_MAP: Record<string, Omit<ProfileTheme, "bg_image" | "preset_id">> = 
   desert: { bg: "#d6c6a5", text: "#3d2914", button: "#92400e", button_text: "#ffffff", radius: "12px" },
 }
 
-const EXTRA_PRESETS: ThemePreset[] = [
-  {
-    id: "carbon",
-    name: "Carbon",
-    image: bioThemes.find((t) => t.id === "basic")!.image,
-    theme: { bg: "#0a0a0a", text: "#ffffff", button: "#262626", radius: "14px", preset_id: "carbon" },
-  },
-  {
-    id: "neon",
-    name: "Neon",
-    image: bioThemes.find((t) => t.id === "rainy")!.image,
-    theme: { bg: "#1e0a3c", text: "#ffffff", button: "#a855f7", radius: "14px", preset_id: "neon" },
-  },
-  {
-    id: "minimal",
-    name: "Minimal",
-    image: bioThemes.find((t) => t.id === "basic")!.image,
-    theme: { bg: "#fafafa", text: "#171717", button: "#ffffff", button_text: "#171717", radius: "4px", preset_id: "minimal" },
-  },
+const EXTRA_PRESET_META: { id: string; name: string }[] = [
+  { id: "carbon", name: "Carbon" },
+  { id: "neon", name: "Neon" },
+  { id: "minimal", name: "Minimal" },
 ]
 
-function buildPreset(id: string, name: string, image: string): ThemePreset {
-  const colors = COLOR_MAP[id] ?? COLOR_MAP.basic
+const EXTRA_THEME_COLORS: Record<string, Omit<ProfileTheme, "bg_image" | "preset_id">> = {
+  carbon: { bg: "#0a0a0a", text: "#ffffff", button: "#262626", radius: "14px" },
+  neon: { bg: "#1e0a3c", text: "#ffffff", button: "#a855f7", radius: "14px" },
+  minimal: { bg: "#fafafa", text: "#171717", button: "#ffffff", button_text: "#171717", radius: "4px" },
+}
+
+function buildPreset(id: string, name: string): ThemePreset {
+  const colors = COLOR_MAP[id] ?? EXTRA_THEME_COLORS[id] ?? COLOR_MAP.basic
+  const bgImage = themeBackgroundForPreset(id)
   return {
     id,
     name,
-    image,
-    theme: { ...colors, preset_id: id },
+    image: bgImage ?? bioThemes.find((t) => t.id === id)?.image ?? "",
+    theme: {
+      ...colors,
+      preset_id: id,
+      ...(bgImage ? { bg_image: bgImage } : {}),
+    },
   }
 }
 
 export const THEME_PRESETS: ThemePreset[] = [
-  ...bioThemes.map((t) => buildPreset(t.id, t.name, t.image)),
-  ...EXTRA_PRESETS,
+  ...bioThemes.map((t) => buildPreset(t.id, t.name)),
+  ...EXTRA_PRESET_META.map((t) => buildPreset(t.id, t.name)),
 ]
 
 export function getThemePreset(id: string): ThemePreset | undefined {
   return THEME_PRESETS.find((p) => p.id === id)
 }
 
-/** @deprecated use themeForRender — strips mockup screenshot URLs */
+/** Attach Xhuma background art for live preview / storage */
 export function resolveThemeBackground(theme: ProfileTheme): ProfileTheme {
-  return themeForRender(theme)
+  const merged = themeForRender(theme)
+  if (merged.bg_image) return merged
+  if (merged.preset_id) {
+    const bg = themeBackgroundForPreset(merged.preset_id)
+    if (bg) return { ...merged, bg_image: bg }
+  }
+  return merged
 }
 
-export function themeWithBackground(theme: ProfileTheme, _image?: string | null): ProfileTheme {
-  return themeForRender(theme)
+export function themeWithBackground(theme: ProfileTheme, image?: string | null): ProfileTheme {
+  const base = resolveThemeBackground(theme)
+  if (base.bg_image || !image) return base
+  return { ...base, bg_image: image }
 }

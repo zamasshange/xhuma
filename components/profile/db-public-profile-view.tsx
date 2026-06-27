@@ -8,7 +8,7 @@ import { SocialIcon, SocialIconRow, resolveLinkIcon } from "@/components/icons/s
 import type { DbLink, DbProfile } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
-import { themeForRender } from "@/lib/database.types"
+import { resolveThemeBackground } from "@/lib/theme-presets"
 
 const PRESET_DECOR_CLASS: Record<string, string> = {
   summer: "profile-theme-summer",
@@ -100,8 +100,9 @@ export function DbPublicProfileView({
   compact?: boolean
   verified?: boolean
 }) {
-  const theme = themeForRender({ ...DEFAULT_THEME, ...profile.theme_json })
-  const decorClass = theme.preset_id ? PRESET_DECOR_CLASS[theme.preset_id] : undefined
+  const theme = resolveThemeBackground({ ...DEFAULT_THEME, ...profile.theme_json })
+  const decorClass =
+    !theme.bg_image && theme.preset_id ? PRESET_DECOR_CLASS[theme.preset_id] : undefined
   const staticPreview = compact
 
   const handleClick = async (linkId: string, url: string) => {
@@ -173,6 +174,15 @@ export function DbPublicProfileView({
         color: theme.text,
       }}
     >
+      {theme.bg_image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={theme.bg_image}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute inset-0 size-full object-cover"
+        />
+      )}
       <div
         className={cn(
           "relative z-10 mx-auto max-w-md px-4 pb-12",

@@ -1,9 +1,9 @@
 import Link from "next/link"
-import { bioThemes } from "@/data/bio-link"
 import { BioContainer } from "@/components/marketing/biolink/bio-container"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
 import { ThemePreviewImage } from "@/components/themes/theme-preview-image"
+import { THEME_PRESETS } from "@/lib/theme-presets"
 
 export function ThemesSection() {
   return (
@@ -32,7 +32,7 @@ export function ThemesSection() {
       <div className="mt-14 max-md:mt-10">
         <div className="overflow-x-auto pb-4 no-scrollbar scroll-pl-5 sm:scroll-pl-6 md:scroll-pl-8 lg:scroll-pl-10">
           <div className="flex w-max gap-4 px-5 sm:px-6 md:px-8 lg:px-10">
-            {bioThemes.map((theme) => (
+            {THEME_PRESETS.map((theme) => (
               <Link
                 key={theme.id}
                 href={`/create/creator?theme=${theme.id}`}
@@ -41,6 +41,7 @@ export function ThemesSection() {
                 <ThemePreviewImage
                   src={theme.image}
                   alt={theme.name}
+                  card
                   className="drop-shadow-[0_8px_30px_rgba(13,12,34,0.08)]"
                 />
                 <p className="mt-3 text-center text-sm font-medium">{theme.name}</p>

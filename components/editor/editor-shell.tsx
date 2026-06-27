@@ -103,11 +103,11 @@ export function EditorSectionTitle({
 
 export function EditorPreviewFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div>
+    <div className="rounded-3xl bg-gradient-to-br from-[#fff5f7] via-[#faf8ff] to-[#f5f0ff] px-3 py-5 sm:px-4 sm:py-6">
       <p className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-bio-grey">
         Live preview
       </p>
-      <PhoneDeviceFrame size="lg" showLabel={false}>
+      <PhoneDeviceFrame size="lg" showLabel={false} glow>
         {children}
       </PhoneDeviceFrame>
     </div>

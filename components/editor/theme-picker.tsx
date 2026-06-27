@@ -25,7 +25,7 @@ export function ThemePicker({
           )}
         >
           <div className="overflow-hidden rounded-2xl shadow-[0_4px_20px_rgba(13,12,34,0.06)] ring-1 ring-black/5">
-            <ThemePreviewImage src={t.image} alt={t.name} />
+            <ThemePreviewImage src={t.image} alt={t.name} compact />
           </div>
           <p className="mt-1.5 truncate text-center text-[11px] font-medium text-bio-dark sm:text-xs">
             {t.name}

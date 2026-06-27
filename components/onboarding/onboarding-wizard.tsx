@@ -422,8 +422,8 @@ export function OnboardingWizard() {
       {step === "preview" && (
         <>
           <OnboardingTitle>Looking Good!</OnboardingTitle>
-          <div className="flex flex-1 items-center justify-center py-4">
-            <PhoneDeviceFrame size="md" showLabel={false}>
+          <div className="flex flex-1 items-center justify-center py-2">
+            <PhoneDeviceFrame size="md" showLabel={false} glow>
               <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
             </PhoneDeviceFrame>
           </div>
