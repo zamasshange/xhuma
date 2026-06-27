@@ -5,6 +5,10 @@ export type ProfileTheme = {
   radius: string
   button_text?: string
   button_style?: "rounded" | "wavy" | "pill"
+  /** Full-bleed background image (bio.link theme art) */
+  bg_image?: string
+  /** Editor / picker reference */
+  preset_id?: string
 }
 
 export type DbLink = {

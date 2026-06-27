@@ -26,6 +26,7 @@ import {
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { consumePendingDraft } from "@/lib/client-draft"
 import { getStaticTemplate } from "@/data/templates"
+import { getThemePreset } from "@/lib/theme-presets"
 
 export type EditorMode = "empty" | "draft" | "live"
 
@@ -90,13 +91,29 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setMode("draft")
         lastSavedJson.current = JSON.stringify(doc)
       } else {
-        const pendingTemplateId = consumePendingDraft()
-        const pendingTemplate = pendingTemplateId ? getStaticTemplate(pendingTemplateId) : null
+        const pending = consumePendingDraft()
+        const pendingTemplate = pending ? getStaticTemplate(pending.template_id) : null
         if (pendingTemplate) {
-          const draftState = editorStateFromDocument(pendingTemplate.id, pendingTemplate.default_data)
+          let draftState = editorStateFromDocument(pendingTemplate.id, pendingTemplate.default_data)
+          if (pending.theme_id) {
+            const preset = getThemePreset(pending.theme_id)
+            if (preset) {
+              draftState = {
+                ...draftState,
+                profile: { ...draftState.profile, theme: preset.theme },
+              }
+            }
+          }
           setState(draftState)
           setMode("draft")
-          lastSavedJson.current = JSON.stringify(pendingTemplate.default_data)
+          lastSavedJson.current = JSON.stringify(editorStateToDocument(draftState))
+          void apiFetch("/api/draft", {
+            method: "PUT",
+            body: JSON.stringify({
+              template_id: pendingTemplate.id,
+              data: editorStateToDocument(draftState),
+            }),
+          })
         } else {
           setState(null)
           setMode("empty")

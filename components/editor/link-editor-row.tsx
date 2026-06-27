@@ -36,7 +36,7 @@ export function LinkEditorRow({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-sky-100/80 bg-white/90 p-4 shadow-sm transition hover:shadow-md",
+        "rounded-2xl bg-bio-grey-f4 p-4",
         !link.is_active && "opacity-50",
       )}
     >
@@ -66,14 +66,14 @@ export function LinkEditorRow({
 
         <div className="min-w-0 flex-1 space-y-2">
           <input
-            className="h-11 w-full rounded-xl border border-sky-50 bg-white px-4 text-sm font-medium text-bio-dark shadow-sm outline-none transition focus:border-violet-300 focus:ring-2 focus:ring-violet-100 placeholder:font-normal placeholder:text-bio-grey"
+            className="h-11 w-full rounded-xl bg-white px-4 text-sm font-medium text-bio-dark outline-none placeholder:font-normal placeholder:text-bio-grey"
             value={link.title}
             placeholder="Button text"
             onChange={(e) => patchWithIcon({ title: e.target.value })}
             onBlur={onBlur}
           />
           <input
-            className="h-11 w-full rounded-xl border border-sky-50 bg-white px-4 text-sm text-bio-dark shadow-sm outline-none transition focus:border-violet-300 focus:ring-2 focus:ring-violet-100 placeholder:text-bio-grey"
+            className="h-11 w-full rounded-xl bg-white px-4 text-sm text-bio-dark outline-none placeholder:text-bio-grey"
             value={link.url}
             placeholder="https://..."
             onChange={(e) => patchWithIcon({ url: e.target.value })}

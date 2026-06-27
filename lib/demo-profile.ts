@@ -7,6 +7,8 @@ export const SUMMER_THEME: ProfileTheme = {
   button_text: "#0d0c22",
   radius: "0",
   button_style: "wavy",
+  bg_image: "https://bio.link/_nuxt/summer._wbdH2hK.png",
+  preset_id: "summer",
 }
 
 export const DEMO_SUMMER_PROFILE: DbProfile = {

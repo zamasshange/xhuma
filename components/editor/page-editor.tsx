@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import {
@@ -8,9 +8,6 @@ import {
   ExternalLink,
   Share2,
   Rocket,
-  User,
-  Link2,
-  Palette,
 } from "lucide-react"
 import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
 import { useEditor } from "@/components/editor/editor-provider"
@@ -23,10 +20,11 @@ import {
   type EditorTabId,
 } from "@/components/editor/editor-shell"
 import { ThemePicker } from "@/components/editor/theme-picker"
-import { BioButton, BioGradientButton, BioMuted } from "@/components/ui/bio-form"
+import { BioButton, BioGradientButton, BioInput, BioMuted, BioTextarea } from "@/components/ui/bio-form"
 import { apiFetch } from "@/lib/api-fetch"
 import type { DbProfile } from "@/lib/database.types"
 import { onboardingThemePresets } from "@/data/onboarding"
+import { getThemePreset } from "@/lib/theme-presets"
 import { AnalyticsPanel } from "@/components/editor/analytics-panel"
 import { AiPanel } from "@/components/editor/ai-panel"
 import { SettingsPanel } from "@/components/editor/settings-panel"
@@ -66,6 +64,7 @@ export function PageEditor() {
   const isDraft = mode === "draft"
 
   const themeId =
+    state?.profile.theme.preset_id ??
     onboardingThemePresets.find(
       (p) =>
         state &&
@@ -74,6 +73,16 @@ export function PageEditor() {
     )?.id ??
     state?.template_id ??
     "creator"
+
+  const themeParam = searchParams.get("theme")
+
+  useEffect(() => {
+    if (!themeParam || mode !== "draft" || !state) return
+    const preset = getThemePreset(themeParam)
+    if (preset && state.profile.theme.preset_id !== themeParam) {
+      setTheme(preset.theme)
+    }
+  }, [themeParam, mode, state, setTheme])
 
   const previewProfile: DbProfile | null = state
     ? {
@@ -222,28 +231,22 @@ export function PageEditor() {
             ) : (
               <>
                 {isDraft && (
-                  <EditorPanel accent="purple" className="relative">
-                    <div className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-gradient-to-br from-violet-400/25 to-pink-400/25 blur-3xl" />
-                    <div className="relative">
-                      <p className="text-sm text-bio-grey">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-violet-700">
-                          {state?.template_id}
-                        </span>
-                        <span className="ml-2">template · autosaves every second</span>
-                      </p>
-                      <BioGradientButton className="mt-4 max-w-xs shadow-lg shadow-violet-500/25" href="/claim">
-                        <Rocket className="size-4" />
-                        Claim username & go live
-                      </BioGradientButton>
-                    </div>
+                  <EditorPanel>
+                    <p className="text-sm text-bio-grey">
+                      <span className="rounded-full bg-bio-grey-f4 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-bio-dark">
+                        {state?.template_id}
+                      </span>
+                      <span className="ml-2">template · autosaves every second</span>
+                    </p>
+                    <BioGradientButton className="mt-4 max-w-xs" href="/claim">
+                      <Rocket className="size-4" />
+                      Claim username & go live
+                    </BioGradientButton>
                   </EditorPanel>
                 )}
 
-                <EditorPanel accent="pink">
-                  <EditorSectionTitle
-                    icon={<User className="size-4" />}
-                    subtitle="Photo, name and bio — this is your first impression."
-                  >
+                <EditorPanel>
+                  <EditorSectionTitle subtitle="Photo, name and bio at the top of your page.">
                     Profile
                   </EditorSectionTitle>
                   <AvatarUpload
@@ -251,19 +254,18 @@ export function PageEditor() {
                     displayName={state?.profile.display_name ?? ""}
                     onUploaded={(url) => updateProfile({ avatar_url: url })}
                   />
-                  <div className="mt-6 flex flex-col gap-3 border-t border-pink-100/80 pt-6">
-                    <input
-                      className="h-14 w-full rounded-2xl border border-pink-100 bg-white/80 px-5 text-base text-bio-dark shadow-sm outline-none transition focus:border-violet-300 focus:ring-2 focus:ring-violet-200/50 placeholder:text-bio-grey"
+                  <div className="mt-5 flex flex-col gap-3 border-t border-bio-dark/6 pt-5">
+                    <BioInput
                       value={state?.profile.display_name ?? ""}
                       onChange={(e) => updateProfile({ display_name: e.target.value })}
                       placeholder="Your name"
                     />
                     <div className="relative">
-                      <textarea
-                        className="min-h-[100px] w-full resize-none rounded-2xl border border-pink-100 bg-white/80 px-5 py-4 text-base text-bio-dark shadow-sm outline-none transition focus:border-violet-300 focus:ring-2 focus:ring-violet-200/50 placeholder:text-bio-grey"
+                      <BioTextarea
+                        className="min-h-[100px]"
                         value={state?.profile.bio ?? ""}
                         onChange={(e) => updateProfile({ bio: e.target.value })}
-                        placeholder="Tell the world who you are…"
+                        placeholder="Bio"
                         maxLength={255}
                       />
                       <span className="absolute bottom-3 right-4 text-xs text-bio-grey">
@@ -273,15 +275,10 @@ export function PageEditor() {
                   </div>
                 </EditorPanel>
 
-                <EditorPanel accent="sky">
-                  <EditorSectionTitle
-                    icon={<Link2 className="size-4" />}
-                    subtitle="Buttons visitors tap on your page."
-                  >
-                    Links
-                  </EditorSectionTitle>
+                <EditorPanel>
+                  <EditorSectionTitle subtitle="Buttons visitors tap on your page.">Links</EditorSectionTitle>
                   <QuickPlatformChips onAdd={handleQuickAdd} />
-                  <div className="mt-4 rounded-2xl border border-sky-100 bg-white/70 p-4 shadow-inner">
+                  <div className="mt-4 rounded-2xl bg-bio-grey-f4 p-4">
                     <div className="flex flex-col gap-2">
                       <input
                         className="h-12 w-full rounded-xl bg-white px-4 text-bio-dark outline-none placeholder:text-bio-grey"
@@ -318,11 +315,8 @@ export function PageEditor() {
                   </div>
                 </EditorPanel>
 
-                <EditorPanel accent="amber">
-                  <EditorSectionTitle
-                    icon={<Palette className="size-4" />}
-                    subtitle="Pick a vibe — updates your live preview instantly."
-                  >
+                <EditorPanel>
+                  <EditorSectionTitle subtitle="Same themes as the homepage gallery — background updates live.">
                     Theme
                   </EditorSectionTitle>
                   <ThemePicker
@@ -335,8 +329,8 @@ export function PageEditor() {
           </div>
 
           <div className="lg:sticky lg:top-[140px] lg:self-start">
-            <EditorPanel accent="mint" className="hidden lg:block !p-4">
-              <EditorPreviewFrame label="Live preview">
+            <EditorPanel className="hidden lg:block !p-4">
+              <EditorPreviewFrame>
                 {previewProfile ? (
                   <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
                 ) : (
@@ -352,8 +346,8 @@ export function PageEditor() {
 
       {tab === "page" && previewProfile && (
         <div className="mt-6 lg:hidden">
-          <EditorPanel accent="mint" className="!p-4">
-            <EditorPreviewFrame label="Live preview">
+          <EditorPanel className="!p-4">
+            <EditorPreviewFrame>
               <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
             </EditorPreviewFrame>
           </EditorPanel>

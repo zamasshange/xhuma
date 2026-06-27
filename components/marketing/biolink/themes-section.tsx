@@ -35,7 +35,7 @@ export function ThemesSection() {
             {bioThemes.map((theme) => (
               <Link
                 key={theme.id}
-                href="/editor"
+                href={`/create/creator?theme=${theme.id}`}
                 className="w-[200px] shrink-0 transition-transform hover:scale-[1.02] max-sm:w-[180px]"
               >
                 <ThemePreviewImage

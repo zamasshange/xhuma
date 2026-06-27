@@ -1,9 +1,10 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { Camera, Loader2, Sparkles } from "lucide-react"
+import { Camera, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { apiFetch } from "@/lib/api-fetch"
+import { BioButton } from "@/components/ui/bio-form"
 import { cn } from "@/lib/utils"
 
 export function AvatarUpload({
@@ -33,8 +34,7 @@ export function AvatarUpload({
       return
     }
 
-    const localUrl = URL.createObjectURL(file)
-    setPreview(localUrl)
+    setPreview(URL.createObjectURL(file))
     setUploading(true)
 
     const form = new FormData()
@@ -64,11 +64,8 @@ export function AvatarUpload({
         disabled={uploading}
         onClick={() => fileRef.current?.click()}
         className={cn(
-          "group relative size-28 shrink-0 overflow-hidden rounded-full",
-          "ring-4 ring-offset-4 ring-offset-white",
-          "bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500",
-          "shadow-[0_8px_32px_rgba(124,58,237,0.35)] transition-transform hover:scale-[1.03] active:scale-[0.98]",
-          uploading && "pointer-events-none opacity-80",
+          "group relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-bio-grey-d9 bg-bio-grey-f4 transition-colors hover:border-bio-dark/25",
+          uploading && "pointer-events-none opacity-70",
         )}
         aria-label="Upload profile photo"
       >
@@ -76,38 +73,29 @@ export function AvatarUpload({
           // eslint-disable-next-line @next/next/no-img-element
           <img src={shown} alt="" className="size-full object-cover" />
         ) : (
-          <span className="flex size-full items-center justify-center text-2xl font-bold text-white">
-            {initials}
-          </span>
+          <span className="text-xl font-semibold text-bio-grey">{initials}</span>
         )}
-        <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+        <span className="absolute inset-0 flex items-center justify-center bg-bio-dark/40 opacity-0 transition-opacity group-hover:opacity-100">
           {uploading ? (
             <Loader2 className="size-6 animate-spin text-white" />
           ) : (
-            <>
-              <Camera className="size-6 text-white" />
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-white">Change</span>
-            </>
+            <Camera className="size-6 text-white" />
           )}
         </span>
       </button>
 
       <div className="text-center sm:text-left">
-        <p className="flex items-center justify-center gap-1.5 text-base font-semibold text-bio-dark sm:justify-start">
-          <Sparkles className="size-4 text-violet-500" />
-          Profile photo
-        </p>
-        <p className="mt-1 max-w-[220px] text-sm leading-relaxed text-bio-grey">
-          This is the first thing visitors see. Tap the circle or use the button below.
-        </p>
-        <button
+        <p className="text-sm font-semibold text-bio-dark">Profile photo</p>
+        <p className="mt-1 text-sm text-bio-grey">JPG or PNG, up to 2MB</p>
+        <BioButton
           type="button"
+          variant="secondary"
           disabled={uploading}
+          className="mt-3 h-10 px-4 text-xs"
           onClick={() => fileRef.current?.click()}
-          className="bio-continue-btn mt-3 rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-90 disabled:opacity-60"
         >
           {uploading ? "Uploading…" : shown ? "Change photo" : "Upload photo"}
-        </button>
+        </BioButton>
       </div>
 
       <input

@@ -1,5 +1,11 @@
 import type { ProfileTheme } from "@/lib/database.types"
 import type { TemplateDocument } from "@/lib/editor-state"
+import { getThemePreset, themeWithBackground } from "@/lib/theme-presets"
+
+function tplTheme(presetId: string, fallback: ProfileTheme): ProfileTheme {
+  const preset = getThemePreset(presetId)
+  return preset?.theme ?? themeWithBackground(fallback, preset?.image)
+}
 
 export type Template = {
   id: string
@@ -25,7 +31,7 @@ export const STATIC_TEMPLATES: Template[] = [
     default_data: {
       layout: "creator",
       sections: ["profile", "links", "socials"],
-      theme: { bg: "#0f0f0f", text: "#ffffff", button: "#7c3aed", radius: "14px" },
+      theme: tplTheme("summer", { bg: "#38bdf8", text: "#ffffff", button: "#facc15", button_text: "#0d0c22", radius: "0", button_style: "wavy" }),
       profile: { display_name: "", bio: "", avatar_url: null },
       links: [
         { title: "Instagram", url: "", icon: "instagram" },
@@ -42,7 +48,7 @@ export const STATIC_TEMPLATES: Template[] = [
     default_data: {
       layout: "business",
       sections: ["profile", "services", "links", "contact"],
-      theme: { bg: "#ffffff", text: "#111111", button: "#000000", radius: "14px" },
+      theme: tplTheme("basic", { bg: "#ffffff", text: "#111111", button: "#000000", button_text: "#ffffff", radius: "14px" }),
       profile: { display_name: "", bio: "", avatar_url: null },
       links: [
         { title: "Book a consultation", url: "", icon: "link" },
@@ -59,7 +65,7 @@ export const STATIC_TEMPLATES: Template[] = [
     default_data: {
       layout: "music",
       sections: ["profile", "spotify_embed", "links"],
-      theme: { bg: "#050505", text: "#ffffff", button: "#ff0055", radius: "999px", button_style: "pill" },
+      theme: tplTheme("retro", { bg: "#050505", text: "#ffffff", button: "#ff0055", button_text: "#ffffff", radius: "999px", button_style: "pill" }),
       profile: { display_name: "", bio: "", avatar_url: null },
       links: [
         { title: "Listen on Spotify", url: "https://open.spotify.com", icon: "spotify" },
@@ -76,7 +82,7 @@ export const STATIC_TEMPLATES: Template[] = [
     default_data: {
       layout: "portfolio",
       sections: ["profile", "projects", "links"],
-      theme: { bg: "#faf5ff", text: "#4c1d95", button: "#7c3aed", radius: "12px" },
+      theme: tplTheme("chameleon", { bg: "#faf5ff", text: "#4c1d95", button: "#7c3aed", button_text: "#ffffff", radius: "12px" }),
       profile: { display_name: "", bio: "", avatar_url: null },
       links: [
         { title: "View projects", url: "", icon: "website" },
@@ -93,14 +99,14 @@ export const STATIC_TEMPLATES: Template[] = [
     default_data: {
       layout: "minimal",
       sections: ["profile", "links"],
-      theme: {
+      theme: tplTheme("rainy", {
         bg: "#f4f4f4",
         text: "#0d0c22",
-        button: "#ffffff",
+        button: "rgba(255,255,255,0.9)",
         button_text: "#0d0c22",
         radius: "999px",
         button_style: "pill",
-      },
+      }),
       profile: { display_name: "", bio: "", avatar_url: null },
       links: [
         { title: "Website", url: "", icon: "website" },

@@ -1,22 +1,31 @@
 const PENDING_DRAFT_KEY = "xhuma_pending_draft"
 
-export function stashPendingDraft(templateId: string) {
-  if (typeof window === "undefined") return
-  sessionStorage.setItem(
-    PENDING_DRAFT_KEY,
-    JSON.stringify({ template_id: templateId, at: Date.now() }),
-  )
+export type PendingDraft = {
+  template_id: string
+  theme_id?: string
+  at: number
 }
 
-export function consumePendingDraft(): string | null {
+export function stashPendingDraft(templateId: string, themeId?: string) {
+  if (typeof window === "undefined") return
+  const payload: PendingDraft = { template_id: templateId, theme_id: themeId, at: Date.now() }
+  sessionStorage.setItem(PENDING_DRAFT_KEY, JSON.stringify(payload))
+}
+
+export function peekPendingDraft(): PendingDraft | null {
   if (typeof window === "undefined") return null
   const raw = sessionStorage.getItem(PENDING_DRAFT_KEY)
   if (!raw) return null
-  sessionStorage.removeItem(PENDING_DRAFT_KEY)
   try {
-    const parsed = JSON.parse(raw) as { template_id?: string }
-    return parsed.template_id ?? null
+    return JSON.parse(raw) as PendingDraft
   } catch {
     return null
   }
+}
+
+export function consumePendingDraft(): PendingDraft | null {
+  const pending = peekPendingDraft()
+  if (!pending) return null
+  sessionStorage.removeItem(PENDING_DRAFT_KEY)
+  return pending
 }

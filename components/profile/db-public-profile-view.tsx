@@ -35,10 +35,11 @@ function ProfileLinkButton({
       transition={{ delay }}
       onClick={onClick}
       className={cn(
-        "flex w-full min-h-[48px] items-center justify-center gap-2.5 px-4 py-3 text-[15px] shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99]",
-        isWavy && "profile-link-wavy font-bold italic",
+        "flex w-full min-h-[48px] items-center justify-center gap-2.5 px-4 py-3 text-[15px] transition-transform hover:scale-[1.01] active:scale-[0.99]",
+        isWavy && "profile-link-wavy font-bold italic shadow-sm",
         isPill && "rounded-full",
-        !isWavy && !isPill && "font-medium",
+        !isWavy && !isPill && "rounded-2xl font-medium shadow-sm",
+        theme.bg_image && "backdrop-blur-sm",
       )}
       style={{
         backgroundColor: theme.button,
@@ -82,9 +83,21 @@ export function DbPublicProfileView({
 
   return (
     <div
-      className={cn("min-h-full", compact ? "min-h-[480px]" : "min-h-dvh")}
-      style={{ backgroundColor: theme.bg, color: theme.text }}
+      className={cn("relative min-h-full", compact ? "min-h-[480px]" : "min-h-dvh")}
+      style={{
+        backgroundColor: theme.bg,
+        color: theme.text,
+      }}
     >
+      {theme.bg_image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={theme.bg_image}
+          alt=""
+          className="pointer-events-none absolute inset-0 size-full object-cover object-top"
+          aria-hidden
+        />
+      )}
       <div
         className={cn(
           "relative mx-auto max-w-md px-4 pb-12",
