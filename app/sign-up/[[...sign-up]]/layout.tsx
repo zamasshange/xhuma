@@ -3,10 +3,10 @@ import type { Metadata } from "next"
 import { NOINDEX_ROBOTS } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: "Onboarding",
+  title: "Sign up",
   robots: NOINDEX_ROBOTS,
 }
 
-export default function OnboardingLayout({ children }: { children: ReactNode }) {
+export default function SignUpLayout({ children }: { children: ReactNode }) {
   return children
 }

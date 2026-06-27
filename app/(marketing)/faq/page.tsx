@@ -1,6 +1,9 @@
 import { BiolinkFaq } from "@/components/marketing/biolink/faq-section"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("faq")
 
 export default function FaqPage() {
   return (

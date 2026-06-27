@@ -4,6 +4,9 @@ import { mapProfile } from "@/lib/database.types"
 import { PublicProfileCard } from "@/components/cards/public-profile-card"
 import { SectionHeading } from "@/components/section-heading"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("explore")
 
 async function getPublicProfiles() {
   try {

@@ -8,12 +8,12 @@ export function ClerkFailedScreen() {
       <div className="max-w-md rounded-3xl bg-white p-8 shadow-sm">
         <p className="text-lg font-semibold text-bio-dark">Sign-in service unavailable</p>
         <p className="mt-2 text-sm text-bio-grey">
-          Clerk could not load on this page. This usually means environment variables are missing on
-          the server, or the Clerk proxy is not configured for your domain.
+          Clerk could not load. Check that your production environment variables are set and
+          xhuma.cc is added in the Clerk dashboard.
         </p>
         <ul className="mt-4 space-y-1 text-left text-sm text-bio-grey">
-          <li>• Set Clerk keys in Vercel (Production)</li>
-          <li>• Set <code className="text-bio-dark">NEXT_PUBLIC_CLERK_PROXY_URL</code> to your site + <code className="text-bio-dark">/__clerk/</code></li>
+          <li>• <code className="text-bio-dark">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> on Vercel</li>
+          <li>• <code className="text-bio-dark">CLERK_SECRET_KEY</code> on Vercel</li>
           <li>• Redeploy after adding env vars</li>
         </ul>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">

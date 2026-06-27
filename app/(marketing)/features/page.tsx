@@ -4,6 +4,9 @@ import { ThemesSection } from "@/components/marketing/biolink/themes-section"
 import { CompareSection } from "@/components/marketing/biolink/compare-section"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("features")
 
 export default function FeaturesPage() {
   return (

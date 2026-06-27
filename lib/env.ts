@@ -18,7 +18,6 @@ export const env = {
   clerk: {
     publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "",
     secretKey: process.env.CLERK_SECRET_KEY ?? "",
-    proxyUrl: process.env.NEXT_PUBLIC_CLERK_PROXY_URL ?? "",
     signInUrl: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/sign-in",
     signUpUrl: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ?? "/sign-up",
     afterSignInUrl:

@@ -2,10 +2,11 @@ import { ClerkProvider, ClerkFailed, ClerkLoaded, ClerkLoading } from "@clerk/ne
 import { ClerkFailedScreen } from "@/components/auth/clerk-failed-screen"
 import { clerkProviderProps } from "@/lib/clerk-config"
 import { Analytics } from '@vercel/analytics/next'
-import type { Metadata, Viewport } from 'next'
+import type { Viewport } from 'next'
 import { Geist, Geist_Mono, Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from 'sonner'
+import { rootMetadata } from '@/lib/seo'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -15,16 +16,7 @@ const geistMono = Geist_Mono({
 })
 const inter = Inter({ variable: '--font-inter', subsets: ['latin'] })
 
-export const metadata: Metadata = {
-  title: 'Xhuma — Your Entire Online Presence, Powered by AI',
-  description:
-    'Xhuma is the AI-powered Link in Bio platform that helps creators build a beautiful, high-converting page in minutes.',
-  icons: {
-    icon: '/favicon.png',
-    apple: '/favicon.png',
-    shortcut: '/favicon.png',
-  },
-}
+export const metadata = rootMetadata
 
 export const viewport: Viewport = {
   colorScheme: 'light dark',

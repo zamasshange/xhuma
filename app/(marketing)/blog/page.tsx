@@ -2,6 +2,9 @@ import { SectionHeading } from "@/components/section-heading"
 import { Reveal } from "@/components/motion/reveal"
 import { BlogCard } from "@/components/cards/blog-card"
 import { blogPosts } from "@/data/marketing"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("blog")
 
 export default function BlogPage() {
   return (

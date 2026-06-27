@@ -5,6 +5,9 @@ import { SectionHeading } from "@/components/section-heading"
 import { PricingCards } from "@/components/marketing/pricing-cards"
 import { comparisonRows } from "@/data/marketing"
 import { Check, X } from "lucide-react"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("pricing")
 
 export default function PricingPage() {
   return (

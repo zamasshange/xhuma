@@ -1,13 +1,36 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import { ArrowLeft, Clock } from "lucide-react"
 import { getBlogPost, blogPosts } from "@/data/marketing"
 import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { JsonLd } from "@/components/seo/json-ld"
+import { absoluteUrl, buildMetadata } from "@/lib/seo"
+import { SITE_NAME } from "@/lib/brand"
 
 export function generateStaticParams() {
   return blogPosts.map((p) => ({ slug: p.slug }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const post = getBlogPost(slug)
+  if (!post) return { title: "Post not found" }
+
+  return buildMetadata({
+    title: post.title,
+    description: post.excerpt,
+    path: `/blog/${post.slug}`,
+    image: post.cover,
+    type: "article",
+    authors: [post.author.name],
+  })
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -15,8 +38,28 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = getBlogPost(slug)
   if (!post) notFound()
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    image: absoluteUrl(post.cover),
+    author: {
+      "@type": "Person",
+      name: post.author.name,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      logo: { "@type": "ImageObject", url: absoluteUrl("/favicon.png") },
+    },
+    datePublished: post.date,
+    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
+  }
+
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
+      <JsonLd data={articleJsonLd} />
       <Button render={<Link href="/blog" />} variant="ghost" className="mb-6 -ml-2">
         <ArrowLeft className="size-4" />
         Back to blog
@@ -24,7 +67,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={post.cover} alt="" className="size-full object-cover" />
+        <img src={post.cover} alt={post.title} className="size-full object-cover" />
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">

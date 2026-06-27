@@ -3,6 +3,9 @@ import { Reveal } from "@/components/motion/reveal"
 import { Avatar } from "@/components/ui/avatar"
 import { Card } from "@/components/ui/card"
 import { aboutStats, team, timeline } from "@/data/about"
+import { pageMetadata } from "@/lib/seo"
+
+export const metadata = pageMetadata("about")
 
 export default function AboutPage() {
   return (
