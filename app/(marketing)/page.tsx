@@ -1,6 +1,6 @@
 import { BiolinkHero } from "@/components/marketing/biolink/hero"
 import { CreatorMarquee } from "@/components/marketing/biolink/creator-marquee"
-import { ThemesSection } from "@/components/marketing/biolink/themes-section"
+import { TemplatesGallery } from "@/components/templates/templates-gallery"
 import { AiAssistantSection } from "@/components/marketing/biolink/ai-assistant-section"
 import { BiolinkFeaturesGrid } from "@/components/marketing/biolink/features-grid"
 import { BiolinkPricing } from "@/components/marketing/biolink/pricing-section"
@@ -13,7 +13,7 @@ export default function HomePage() {
     <>
       <BiolinkHero />
       <CreatorMarquee />
-      <ThemesSection />
+      <TemplatesGallery />
       <AiAssistantSection />
       <BiolinkFeaturesGrid />
       <BiolinkPricing />

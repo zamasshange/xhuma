@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { toast } from "sonner"
 import { Loader2, Sparkles } from "lucide-react"
-import { useDashboard } from "@/components/dashboard/dashboard-provider"
+import { useEditor } from "@/components/editor/editor-provider"
 import { BioButton, BioCard, BioInput, BioMuted, BioSectionTitle, BioTextarea } from "@/components/ui/bio-form"
 import { Badge } from "@/components/ui/badge"
 import { apiFetch } from "@/lib/api-fetch"
@@ -16,7 +16,7 @@ const TOOLS = [
 ] as const
 
 export function AiPanel() {
-  const { profile, refreshProfile, refreshLinks } = useDashboard()
+  const { profile, refresh, setProfile } = useEditor()
   const [activeTool, setActiveTool] = useState<(typeof TOOLS)[number]["id"]>("bio")
   const [loading, setLoading] = useState(false)
 
@@ -75,17 +75,17 @@ export function AiPanel() {
       toast.error(res.error ?? "Could not apply bio")
       return
     }
-    await refreshProfile()
+    await refresh()
     toast.success("Bio applied!")
   }
 
-  const addLink = async (link: { title: string; url: string }) => {
+  const addSuggestedLink = async (link: { title: string; url: string }) => {
     const res = await apiFetch("/api/links", { method: "POST", body: JSON.stringify(link) })
     if (!res.success) {
       toast.error(res.error ?? "Could not add link")
       return
     }
-    await refreshLinks()
+    await refresh()
     toast.success(`${link.title} added!`)
   }
 
@@ -161,7 +161,7 @@ export function AiPanel() {
               {suggestedLinks.map((link) => (
                 <div key={link.title} className="flex items-center justify-between rounded-2xl border-2 border-bio-dark/10 bg-white p-4">
                   <span className="font-medium text-bio-dark">{link.title}</span>
-                  <BioButton variant="secondary" className="h-10 px-4 text-xs" onClick={() => addLink(link)} disabled={!profile}>
+                  <BioButton variant="secondary" className="h-10 px-4 text-xs" onClick={() => addSuggestedLink(link)} disabled={!profile}>
                     Add
                   </BioButton>
                 </div>

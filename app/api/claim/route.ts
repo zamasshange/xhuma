@@ -1,0 +1,84 @@
+import { createAdminClient, requireUserId } from "@/lib/supabase/admin"
+import { apiSuccess, apiError } from "@/lib/api-response"
+import { usernameSchema } from "@/lib/validations"
+import { mapProfile } from "@/lib/database.types"
+import { normalizeDraftData } from "@/lib/templates-server"
+import type { TemplateDocument } from "@/lib/editor-state"
+
+export async function POST(request: Request) {
+  const sessionId = requireUserId(request)
+  if (typeof sessionId === "object") return apiError(sessionId.error, 401)
+
+  const body = await request.json()
+  const parsed = usernameSchema.safeParse(body.username)
+  if (!parsed.success) return apiError(parsed.error.issues[0]?.message ?? "Invalid username", 400)
+
+  const username = parsed.data.toLowerCase()
+  const supabase = createAdminClient()
+
+  const { data: existingProfile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", sessionId)
+    .maybeSingle()
+  if (existingProfile) return apiError("Profile already claimed", 409)
+
+  const { data: taken } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", username)
+    .maybeSingle()
+  if (taken) return apiError("Username already taken", 409)
+
+  const { data: draft, error: draftErr } = await supabase
+    .from("profile_drafts")
+    .select("*")
+    .eq("session_id", sessionId)
+    .maybeSingle()
+
+  if (draftErr) return apiError(draftErr.message, 500)
+  if (!draft) return apiError("No draft found — pick a template first", 404)
+
+  const data = normalizeDraftData(draft.data_json as Record<string, unknown>)
+
+  const { data: profile, error: profileErr } = await supabase
+    .from("profiles")
+    .insert({
+      id: sessionId,
+      username,
+      display_name: data.profile.display_name || username,
+      bio: data.profile.bio ?? "",
+      avatar_url: data.profile.avatar_url,
+      theme_json: data.theme,
+      template_id: draft.template_id,
+    })
+    .select()
+    .single()
+
+  if (profileErr) {
+    if (profileErr.code === "23505") return apiError("Username already taken", 409)
+    return apiError(profileErr.message, 500)
+  }
+
+  const activeLinks = data.links.filter((l) => l.is_active)
+  if (activeLinks.length > 0) {
+    const { error: linksErr } = await supabase.from("links").insert(
+      activeLinks.map((l, i) => ({
+        user_id: sessionId,
+        title: l.title,
+        url: l.url,
+        icon: l.icon ?? null,
+        position: i,
+        is_active: true,
+      })),
+    )
+    if (linksErr) {
+      await supabase.from("profiles").delete().eq("id", sessionId)
+      return apiError(linksErr.message, 500)
+    }
+  }
+
+  await supabase.from("profile_drafts").delete().eq("session_id", sessionId)
+
+  return apiSuccess(mapProfile(profile), 201)
+}

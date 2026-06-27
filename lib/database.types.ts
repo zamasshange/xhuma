@@ -7,6 +7,18 @@ export type ProfileTheme = {
   button_style?: "rounded" | "wavy" | "pill"
 }
 
+export type DbLink = {
+  id: string
+  user_id: string
+  title: string
+  url: string
+  icon?: string | null
+  position: number
+  clicks: number
+  is_active: boolean
+  created_at: string
+}
+
 export type DbProfile = {
   id: string
   username: string
@@ -14,18 +26,17 @@ export type DbProfile = {
   bio: string | null
   avatar_url: string | null
   theme_json: ProfileTheme
+  template_id?: string | null
   created_at: string
 }
 
-export type DbLink = {
-  id: string
-  user_id: string
-  title: string
-  url: string
-  position: number
-  clicks: number
-  is_active: boolean
-  created_at: string
+import type { TemplateDocument } from "@/lib/editor-state"
+
+export type ProfileDraft = {
+  session_id: string
+  template_id: string
+  data_json: TemplateDocument
+  updated_at: string
 }
 
 export const DEFAULT_THEME: ProfileTheme = {
@@ -44,6 +55,7 @@ export function mapProfile(row: Record<string, unknown>): DbProfile {
     bio: row.bio != null ? String(row.bio) : null,
     avatar_url: row.avatar_url != null ? String(row.avatar_url) : null,
     theme_json: { ...DEFAULT_THEME, ...theme },
+    template_id: row.template_id != null ? String(row.template_id) : null,
     created_at: String(row.created_at),
   }
 }

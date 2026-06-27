@@ -21,9 +21,8 @@ export function ClaimLinkInput({
 }: ClaimLinkInputProps) {
   const [username, setUsername] = useState("")
 
-  const goToOnboarding = (slug?: string) => {
-    const url = slug ? `/onboarding?username=${encodeURIComponent(slug)}` : "/onboarding"
-    window.location.assign(url)
+  const goToTemplates = () => {
+    window.location.assign("/#templates")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,13 +37,21 @@ export function ClaimLinkInput({
     getUserId()
     onSuccess?.()
 
-    const existing = await apiFetch<DbProfile | null>("/api/profile")
-    if (existing.success && existing.data) {
-      goToOnboarding()
+    // If they already have a draft/profile in editor, go to claim with username hint
+    const profileRes = await apiFetch<DbProfile | null>("/api/profile")
+    const draftRes = await apiFetch<unknown>("/api/draft")
+
+    if (profileRes.success && profileRes.data) {
+      window.location.assign(`/${profileRes.data.username}`)
       return
     }
 
-    goToOnboarding(slug)
+    if (draftRes.success && draftRes.data) {
+      window.location.assign(`/claim?username=${encodeURIComponent(slug)}`)
+      return
+    }
+
+    goToTemplates()
   }
 
   return (

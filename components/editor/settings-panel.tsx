@@ -1,11 +1,11 @@
 "use client"
 
-import { useDashboard } from "@/components/dashboard/dashboard-provider"
+import { useEditor } from "@/components/editor/editor-provider"
 import { BioCard, BioMuted, BioSectionTitle } from "@/components/ui/bio-form"
 import { SITE_DOMAIN } from "@/lib/brand"
 
 export function SettingsPanel() {
-  const { profile, userId } = useDashboard()
+  const { profile, userId } = useEditor()
 
   return (
     <div className="flex flex-col gap-4">
