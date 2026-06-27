@@ -33,7 +33,7 @@ export function EditorShell({
       <div className="sticky top-0 z-50 border-b border-bio-dark/6 bg-white/95 px-4 py-3 backdrop-blur-sm sm:px-6">
         <div className="mx-auto max-w-[1300px]">
           <div className="flex items-center justify-between gap-3">
-            <LogoMark height={30} className="shrink-0" />
+            <LogoMark height={38} className="shrink-0" />
 
             {username && (
               <div className="hidden min-w-0 flex-1 justify-center sm:flex">

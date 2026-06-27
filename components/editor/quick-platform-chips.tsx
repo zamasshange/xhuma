@@ -4,12 +4,12 @@ import { SocialIconBadge } from "@/components/icons/social-icon"
 import type { SocialIconName } from "@/lib/infer-link-icon"
 
 const QUICK_PLATFORMS: { icon: SocialIconName; label: string; title: string; url: string }[] = [
-  { icon: "instagram", label: "Instagram", title: "Instagram", url: "https://instagram.com/" },
-  { icon: "tiktok", label: "TikTok", title: "TikTok", url: "https://tiktok.com/@" },
-  { icon: "youtube", label: "YouTube", title: "YouTube", url: "https://youtube.com/@" },
-  { icon: "spotify", label: "Spotify", title: "Spotify", url: "https://open.spotify.com" },
+  { icon: "instagram", label: "Instagram", title: "Instagram", url: "https://www.instagram.com/" },
+  { icon: "tiktok", label: "TikTok", title: "TikTok", url: "https://www.tiktok.com/@" },
+  { icon: "youtube", label: "YouTube", title: "YouTube", url: "https://www.youtube.com/@" },
+  { icon: "spotify", label: "Spotify", title: "Spotify", url: "https://open.spotify.com/artist/00000000000000000000000" },
   { icon: "x", label: "X", title: "X", url: "https://x.com/" },
-  { icon: "linkedin", label: "LinkedIn", title: "LinkedIn", url: "https://linkedin.com/in/" },
+  { icon: "linkedin", label: "LinkedIn", title: "LinkedIn", url: "https://www.linkedin.com/in/yourprofile" },
 ]
 
 export function QuickPlatformChips({

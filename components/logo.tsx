@@ -7,7 +7,7 @@ export function Logo({
   className,
   href = "/",
   showText = false,
-  height = 36,
+  height = 40,
 }: {
   className?: string
   href?: string

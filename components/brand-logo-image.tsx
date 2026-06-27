@@ -2,8 +2,8 @@ import Image from "next/image"
 import { brandLogo } from "@/lib/brand-assets"
 
 export function BrandLogoImage({
-  height = 36,
-  alt = "",
+  height = 40,
+  alt = "Xhuma",
 }: {
   height?: number
   alt?: string
@@ -12,17 +12,19 @@ export function BrandLogoImage({
   /** @deprecated ignored — logo uses natural aspect ratio */
   widthRatio?: number
 }) {
-  const width = Math.round(height * (brandLogo.width / brandLogo.height))
+  const aspect = brandLogo.width / brandLogo.height
+  const width = Math.round(height * aspect)
 
   return (
-    <Image
-      src={brandLogo}
-      alt={alt}
-      width={width}
-      height={height}
-      className="h-auto w-auto shrink-0 object-contain"
-      style={{ height, width: "auto", maxHeight: height }}
-      priority
-    />
+    <span className="inline-flex shrink-0 items-center" style={{ height, width }}>
+      <Image
+        src={brandLogo}
+        alt={alt}
+        width={width}
+        height={height}
+        className="size-full object-contain object-left"
+        priority
+      />
+    </span>
   )
 }

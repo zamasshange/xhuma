@@ -41,7 +41,7 @@ export function BiolinkNavbar() {
     <div className="fixed left-0 right-0 top-0 z-[999] mt-2.5">
       <div className="px-4 sm:px-6 md:px-8">
         <div className="relative mx-auto flex h-14 w-full max-w-[1300px] items-center gap-4 rounded-[40px] bg-white px-5 shadow-[0_4px_24px_rgba(0,0,0,0.08)] sm:h-[60px] sm:px-6">
-          <LogoMark height={32} className="mr-1 flex shrink-0 items-center self-center sm:h-9" />
+          <LogoMark height={44} className="mr-1 flex shrink-0 items-center self-center" />
 
           <nav className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar md:flex lg:gap-0">
             {navLinks.map((link) => (
@@ -84,7 +84,7 @@ export function BiolinkNavbar() {
             className="fixed inset-0 z-50 bg-white md:hidden"
           >
             <div className="flex items-center justify-between px-6 py-6">
-              <LogoMark height={32} />
+              <LogoMark height={44} />
               <button type="button" aria-label="Close menu" onClick={() => setOpen(false)}>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M12.9875 1L1 12.9875" stroke="black" strokeWidth="2" strokeLinecap="round" />

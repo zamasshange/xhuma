@@ -143,7 +143,7 @@ export function PageEditor() {
     }
     const ok = await persistLiveLink(title, url, icon)
     if (ok) toast.success(`${title} added!`)
-    else toast.error(`Could not save ${title} — still visible in preview. Edit the URL and try again.`)
+    else toast.message(`${title} added to preview`, { description: "Update the URL with your profile link — it will save when you blur the field." })
   }
 
   const handleAddLink = async () => {
