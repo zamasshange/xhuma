@@ -63,7 +63,7 @@ export function CompareSection() {
           <p className="text-lg font-semibold text-bio-green max-sm:text-base">${bioPricing.yearly.toFixed(2)}/mo</p>
         </div>
 
-        <DarkButton href="/dashboard" className="mx-auto mt-8 w-4/5 max-sm:w-[90%]">
+        <DarkButton href="/editor" className="mx-auto mt-8 w-4/5 max-sm:w-[90%]">
           Start my free trial
           <ArrowIcon />
         </DarkButton>

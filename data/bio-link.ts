@@ -178,7 +178,7 @@ export const bioFooterLinks = [
   { label: "FAQ", href: "/faq" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "My page", href: "/editor" },
 ]
 
 export const bioSocialLinks = [

@@ -13,11 +13,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { Avatar } from "@/components/ui/avatar"
 import { apiFetch } from "@/lib/api-fetch"
-import { createClient } from "@/lib/supabase/client"
+import { getUserId } from "@/lib/temp-user"
 import type { DbProfile } from "@/lib/database.types"
 
 export default function ProfileEditorPage() {
-  const { profile, links, loading, setProfile } = useDashboard()
+  const { profile, links, loading, setProfile, userId } = useDashboard()
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -56,18 +56,16 @@ export default function ProfileEditorPage() {
       return
     }
     setUploading(true)
-    const supabase = createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
+    const supabase = (await import("@/lib/supabase/client")).createClient()
+    const uid = userId || getUserId()
+    if (!uid) {
       setUploading(false)
-      toast.error("Not authenticated")
+      toast.error("No user id")
       return
     }
 
     const ext = file.name.split(".").pop() ?? "jpg"
-    const path = `${user.id}/avatar.${ext}`
+    const path = `${uid}/avatar.${ext}`
     const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true })
     if (uploadError) {
       setUploading(false)

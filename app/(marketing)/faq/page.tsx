@@ -16,7 +16,7 @@ export default function FaqPage() {
       </section>
       <BiolinkFaq />
       <div className="pb-20 text-center">
-        <DarkButton href="/dashboard">Start for free</DarkButton>
+        <DarkButton href="/editor">Start for free</DarkButton>
       </div>
     </>
   )

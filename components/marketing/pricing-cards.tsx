@@ -55,7 +55,7 @@ export function PricingCards() {
                 <span className="mb-1 text-sm text-muted-foreground">/mo</span>
               </div>
               <Button
-                render={<Link href="/dashboard" />}
+                render={<Link href="/editor" />}
                 className={cn(
                   "mt-5 h-11 w-full text-base",
                   plan.highlighted

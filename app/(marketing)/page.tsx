@@ -6,6 +6,7 @@ import { BiolinkFeaturesGrid } from "@/components/marketing/biolink/features-gri
 import { BiolinkPricing } from "@/components/marketing/biolink/pricing-section"
 import { CompareSection } from "@/components/marketing/biolink/compare-section"
 import { BiolinkFaq } from "@/components/marketing/biolink/faq-section"
+import { ClaimFooterSection } from "@/components/marketing/biolink/claim-footer"
 
 export default function HomePage() {
   return (
@@ -18,6 +19,7 @@ export default function HomePage() {
       <BiolinkPricing />
       <CompareSection />
       <BiolinkFaq />
+      <ClaimFooterSection />
     </>
   )
 }

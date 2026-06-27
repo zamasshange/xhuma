@@ -19,7 +19,7 @@ export type NavItem = {
 }
 
 export const dashboardNav: NavItem[] = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/editor", label: "My page", icon: LayoutDashboard },
   { href: "/dashboard/profile", label: "Profile", icon: User },
   { href: "/dashboard/links", label: "Links", icon: Link2 },
   { href: "/dashboard/appearance", label: "Appearance", icon: Palette },
@@ -29,8 +29,8 @@ export const dashboardNav: NavItem[] = [
 ]
 
 export const mobileBottomNav: NavItem[] = [
-  { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/dashboard/links", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/editor", label: "Page", icon: Home },
+  { href: "/dashboard/links", label: "More", icon: LayoutDashboard },
   { href: "/dashboard/ai-studio", label: "AI Studio", icon: Sparkles },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },

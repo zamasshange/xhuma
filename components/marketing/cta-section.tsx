@@ -28,7 +28,7 @@ export function CtaSection() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button
-                render={<Link href="/dashboard" />}
+                render={<Link href="/editor" />}
                 className="h-12 w-full px-6 text-base sm:w-auto bg-brand-gradient text-brand-foreground"
               >
                 Claim your link

@@ -1,30 +1,16 @@
-import { createClient } from "@/lib/supabase/server"
+import { createAdminClient, requireUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 
-export async function GET() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return apiError("Unauthorized", 401)
+export async function GET(request: Request) {
+  const userId = requireUserId(request)
+  if (typeof userId === "object") return apiError(userId.error, 401)
 
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  const supabase = createAdminClient()
 
-  const [viewsRes, clicksRes, linksRes, recentViewsRes, recentClicksRes] = await Promise.all([
-    supabase.from("profile_views").select("*", { count: "exact", head: true }).eq("user_id", user.id),
-    supabase.from("link_clicks").select("*", { count: "exact", head: true }).eq("user_id", user.id),
-    supabase.from("links").select("id, title, clicks").eq("user_id", user.id).order("clicks", { ascending: false }),
-    supabase
-      .from("profile_views")
-      .select("created_at")
-      .eq("user_id", user.id)
-      .gte("created_at", sevenDaysAgo.toISOString()),
-    supabase
-      .from("link_clicks")
-      .select("created_at")
-      .eq("user_id", user.id)
-      .gte("created_at", sevenDaysAgo.toISOString()),
+  const [viewsRes, clicksRes, linksRes] = await Promise.all([
+    supabase.from("analytics").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("type", "view"),
+    supabase.from("analytics").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("type", "click"),
+    supabase.from("links").select("id, title, clicks").eq("user_id", userId).order("clicks", { ascending: false }),
   ])
 
   const topLinks = (linksRes.data ?? []).slice(0, 5)
@@ -35,7 +21,7 @@ export async function GET() {
     linkClicks: clicksRes.count ?? 0,
     totalLinkClicksCounter: totalClicks,
     topLinks,
-    recentViews: recentViewsRes.data?.length ?? 0,
-    recentClicks: recentClicksRes.data?.length ?? 0,
+    recentViews: viewsRes.count ?? 0,
+    recentClicks: clicksRes.count ?? 0,
   })
 }

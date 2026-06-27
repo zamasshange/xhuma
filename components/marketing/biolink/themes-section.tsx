@@ -21,7 +21,7 @@ export function ThemesSection() {
           add your links, and go live in seconds.
         </h5>
         <div className="mt-8 flex justify-center max-sm:mt-6">
-          <DarkButton href="/dashboard" className="w-[220px] max-sm:w-[200px]">
+          <DarkButton href="/editor" className="w-[220px] max-sm:w-[200px]">
             Get started for free
           </DarkButton>
         </div>

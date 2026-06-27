@@ -90,7 +90,7 @@ export function BiolinkPricing() {
               </li>
             ))}
           </ul>
-          <DarkButton href="/dashboard" className="mt-8 w-full">
+          <DarkButton href="/editor" className="mt-8 w-full">
             Try for free
             <ArrowIcon />
           </DarkButton>

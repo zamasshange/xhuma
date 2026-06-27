@@ -1,4 +1,5 @@
 import { apiSuccess, apiError } from "@/lib/api-response"
+import { openrouterChat } from "@/lib/openrouter"
 
 const MOCK_MAP: Record<string, string> = {
   instagram: "Follow on Instagram",
@@ -8,35 +9,17 @@ const MOCK_MAP: Record<string, string> = {
   github: "View GitHub",
 }
 
-async function generateWithOpenAI(platform: string): Promise<string | null> {
-  const key = process.env.OPENAI_API_KEY
-  if (!key) return null
-
-  try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
+async function generateButtonText(platform: string): Promise<string | null> {
+  return openrouterChat(
+    [
+      {
+        role: "system",
+        content: "Return a single short, catchy link-in-bio button label (max 40 chars). Plain text only.",
       },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: "Return a single short, catchy link-in-bio button label (max 40 chars). Plain text only.",
-          },
-          { role: "user", content: `Platform: ${platform}` },
-        ],
-        temperature: 0.7,
-      }),
-    })
-    if (!res.ok) return null
-    const json = await res.json()
-    return (json.choices?.[0]?.message?.content as string)?.trim() ?? null
-  } catch {
-    return null
-  }
+      { role: "user", content: `Platform: ${platform}` },
+    ],
+    { temperature: 0.7 },
+  )
 }
 
 export async function POST(request: Request) {
@@ -45,7 +28,7 @@ export async function POST(request: Request) {
   if (!platform.trim()) return apiError("Platform name is required")
 
   const key = platform.toLowerCase().trim()
-  const ai = await generateWithOpenAI(platform)
+  const ai = await generateButtonText(platform)
   const text = ai ?? MOCK_MAP[key] ?? `Visit my ${platform}`
 
   return apiSuccess({ text })

@@ -49,7 +49,7 @@ export function DashboardSidebar({ open, onClose }: { open?: boolean; onClose?: 
   const nav = (
     <nav className="flex flex-col gap-1 p-3">
       {dashboardNav.map((item) => {
-        const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
+        const active = pathname === item.href || (item.href !== "/editor" && pathname.startsWith(item.href))
         return (
           <Link
             key={item.href}
@@ -128,7 +128,7 @@ export function DashboardBottomNav() {
         {mobileBottomNav.map((item) => {
           const active =
             pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href))
+            (item.href !== "/editor" && pathname.startsWith(item.href))
           return (
             <Link
               key={item.href}

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 export function LogoMark({
   className,
   href = "/",
-  height = 32,
+  height = 36,
   label = "Xhuma home",
 }: {
   className?: string

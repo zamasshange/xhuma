@@ -48,10 +48,10 @@ export function MarketingNavbar() {
 
         <div className="hidden items-center gap-2 md:flex">
           <ThemeSwitch />
-          <Button render={<Link href="/dashboard" />} variant="ghost" className="h-9 px-3">
+          <Button render={<Link href="/editor" />} variant="ghost" className="h-9 px-3">
             Sign in
           </Button>
-          <Button render={<Link href="/dashboard" />} className="h-9 px-4 bg-brand-gradient text-brand-foreground">
+          <Button render={<Link href="/editor" />} className="h-9 px-4 bg-brand-gradient text-brand-foreground">
             Get Started
             <ArrowRight className="size-4" />
           </Button>
@@ -115,10 +115,10 @@ export function MarketingNavbar() {
                 ))}
               </nav>
               <div className="mt-auto flex flex-col gap-2">
-                <Button render={<Link href="/dashboard" />} variant="outline" className="h-11 w-full">
+                <Button render={<Link href="/editor" />} variant="outline" className="h-11 w-full">
                   Sign in
                 </Button>
-                <Button render={<Link href="/dashboard" />} className="h-11 w-full bg-brand-gradient text-brand-foreground">
+                <Button render={<Link href="/editor" />} className="h-11 w-full bg-brand-gradient text-brand-foreground">
                   Get Started
                   <ArrowRight className="size-4" />
                 </Button>

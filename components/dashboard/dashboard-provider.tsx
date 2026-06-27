@@ -1,11 +1,12 @@
 "use client"
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
-import { useRouter, usePathname } from "next/navigation"
 import { apiFetch } from "@/lib/api-fetch"
+import { getUserId } from "@/lib/temp-user"
 import type { DbLink, DbProfile } from "@/lib/database.types"
 
 type DashboardContextValue = {
+  userId: string
   profile: DbProfile | null
   links: DbLink[]
   loading: boolean
@@ -18,8 +19,7 @@ type DashboardContextValue = {
 const DashboardContext = createContext<DashboardContextValue | null>(null)
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const router = useRouter()
-  const pathname = usePathname()
+  const [userId] = useState(() => getUserId())
   const [profile, setProfile] = useState<DbProfile | null>(null)
   const [links, setLinks] = useState<DbLink[]>([])
   const [loading, setLoading] = useState(true)
@@ -38,28 +38,26 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     let cancelled = false
     ;(async () => {
       setLoading(true)
-      const [profileRes, linksRes] = await Promise.all([
-        apiFetch<DbProfile | null>("/api/profile"),
-        apiFetch<DbLink[]>("/api/links"),
-      ])
-      if (cancelled) return
-      const p = profileRes.success ? (profileRes.data ?? null) : null
-      setProfile(p)
-      setLinks(linksRes.success ? (linksRes.data ?? []) : [])
-      setLoading(false)
-
-      const isOnboarding = pathname === "/dashboard/onboarding"
-      if (!p && !isOnboarding) router.replace("/dashboard/onboarding")
-      if (p && isOnboarding) router.replace("/dashboard")
+      try {
+        const [profileRes, linksRes] = await Promise.all([
+          apiFetch<DbProfile | null>("/api/profile"),
+          apiFetch<DbLink[]>("/api/links"),
+        ])
+        if (cancelled) return
+        setProfile(profileRes.success ? (profileRes.data ?? null) : null)
+        setLinks(linksRes.success ? (linksRes.data ?? []) : [])
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     })()
     return () => {
       cancelled = true
     }
-  }, [pathname, router])
+  }, [])
 
   return (
     <DashboardContext.Provider
-      value={{ profile, links, loading, refreshProfile, refreshLinks, setProfile, setLinks }}
+      value={{ userId, profile, links, loading, refreshProfile, refreshLinks, setProfile, setLinks }}
     >
       {children}
     </DashboardContext.Provider>

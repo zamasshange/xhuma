@@ -49,7 +49,7 @@ export function Hero() {
             className="mt-7 flex w-full flex-col gap-3 sm:w-auto sm:flex-row"
           >
             <Button
-              render={<Link href="/dashboard" />}
+              render={<Link href="/editor" />}
               className="h-12 px-6 text-base bg-brand-gradient text-brand-foreground"
             >
               Get Started

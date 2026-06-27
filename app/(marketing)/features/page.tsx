@@ -16,7 +16,7 @@ export default function FeaturesPage() {
         <p className="mx-auto mt-4 max-w-xl text-lg text-bio-grey">
           A simple link-in-bio for your socials — designed for mobile, packed with features for a complete website.
         </p>
-        <DarkButton href="/dashboard" className="mx-auto mt-8">
+        <DarkButton href="/editor" className="mx-auto mt-8">
           Get started for free
         </DarkButton>
       </section>

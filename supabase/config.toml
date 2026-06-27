@@ -1,0 +1,10 @@
+# Supabase local config — linked project: izukawccpsswwljmrstk
+project_id = "izukawccpsswwljmrstk"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 15

@@ -4,15 +4,8 @@ import { Share2 } from "lucide-react"
 import { motion } from "framer-motion"
 import { Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import type { DbLink, DbProfile, ProfileTheme } from "@/lib/database.types"
+import type { DbLink, DbProfile } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
-import { cn } from "@/lib/utils"
-
-const styleRadius: Record<ProfileTheme["style"], string> = {
-  rounded: "rounded-xl",
-  pill: "rounded-full",
-  square: "rounded-md",
-}
 
 export function DbPublicProfileView({
   profile,
@@ -25,7 +18,7 @@ export function DbPublicProfileView({
   onShare?: () => void
   trackClicks?: boolean
 }) {
-  const theme = { ...DEFAULT_THEME, ...profile.theme }
+  const theme = { ...DEFAULT_THEME, ...profile.theme_json }
 
   const handleClick = async (linkId: string) => {
     if (!trackClicks) return
@@ -73,17 +66,15 @@ export function DbPublicProfileView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i }}
               onClick={() => {
-                if (trackClicks) {
-                  handleClick(link.id)
-                } else {
-                  window.open(link.url, "_blank", "noopener,noreferrer")
-                }
+                if (trackClicks) handleClick(link.id)
+                else window.open(link.url, "_blank", "noopener,noreferrer")
               }}
-              className={cn(
-                "flex w-full min-h-[52px] items-center justify-center px-4 py-3.5 text-base font-medium shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99]",
-                styleRadius[theme.style],
-              )}
-              style={{ backgroundColor: theme.button, color: theme.text }}
+              className="flex w-full min-h-[52px] items-center justify-center px-4 py-3.5 text-base font-medium shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99]"
+              style={{
+                backgroundColor: theme.button,
+                color: theme.text,
+                borderRadius: theme.radius,
+              }}
             >
               {link.title}
             </motion.button>

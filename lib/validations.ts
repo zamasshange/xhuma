@@ -16,7 +16,7 @@ export const profileUpdateSchema = z.object({
       bg: z.string(),
       text: z.string(),
       button: z.string(),
-      style: z.enum(["rounded", "pill", "square"]),
+      radius: z.string(),
     })
     .optional(),
 })
