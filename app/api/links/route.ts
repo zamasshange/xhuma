@@ -2,6 +2,7 @@ import { createAdminClient, getUserId, requireUserId } from "@/lib/supabase/admi
 import { apiSuccess, apiError } from "@/lib/api-response"
 import { linkCreateSchema, linkUpdateSchema, linksReorderSchema } from "@/lib/validations"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
+import { isMissingColumnError, omitColumn, withSchemaHint } from "@/lib/schema-hint"
 
 export async function GET(request: Request) {
   const userId = await getUserId(request)
@@ -32,19 +33,25 @@ export async function POST(request: Request) {
     .select("*", { count: "exact", head: true })
     .eq("user_id", userId)
 
-  const { data, error } = await supabase
-    .from("links")
-    .insert({
-      user_id: userId,
-      title: parsed.data.title,
-      url: parsed.data.url,
-      icon: parsed.data.icon ?? inferLinkIcon(parsed.data.title, parsed.data.url),
-      position: count ?? 0,
-    })
-    .select()
-    .single()
+  const row = {
+    user_id: userId,
+    title: parsed.data.title,
+    url: parsed.data.url,
+    icon: parsed.data.icon ?? inferLinkIcon(parsed.data.title, parsed.data.url),
+    position: count ?? 0,
+  }
 
-  if (error) return apiError(error.message, 500)
+  let { data, error } = await supabase.from("links").insert(row).select().single()
+
+  if (error && isMissingColumnError(error.message, "icon", "links")) {
+    ;({ data, error } = await supabase
+      .from("links")
+      .insert(omitColumn(row, "icon"))
+      .select()
+      .single())
+  }
+
+  if (error) return apiError(withSchemaHint(error.message), 500)
   return apiSuccess(data, 201)
 }
 
@@ -73,7 +80,7 @@ export async function PATCH(request: Request) {
   if (!parsed.success) return apiError(parsed.error.issues[0]?.message ?? "Invalid input")
 
   const { id, ...updates } = parsed.data
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("links")
     .update(updates)
     .eq("id", id)
@@ -81,7 +88,17 @@ export async function PATCH(request: Request) {
     .select()
     .single()
 
-  if (error) return apiError(error.message, 500)
+  if (error && updates.icon !== undefined && isMissingColumnError(error.message, "icon", "links")) {
+    ;({ data, error } = await supabase
+      .from("links")
+      .update(omitColumn(updates, "icon"))
+      .eq("id", id)
+      .eq("user_id", userId)
+      .select()
+      .single())
+  }
+
+  if (error) return apiError(withSchemaHint(error.message), 500)
   return apiSuccess(data)
 }
 

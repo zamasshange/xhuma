@@ -77,49 +77,65 @@ export default function ClaimPageClient() {
       </header>
 
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 pb-16">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Claim your link</h1>
-        <BioMuted className="mt-2">This is the final step — pick your username and go live.</BioMuted>
+        <div className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-black/5">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Claim your link</h1>
+          <BioMuted className="mt-2 text-sm leading-relaxed">
+            This is the final step — pick your username and go live.
+          </BioMuted>
 
-        <form onSubmit={handleClaim} className="mt-8 flex flex-col gap-4">
-          <div>
-            <BioLabel>Your link</BioLabel>
-            <div className="mt-2 flex items-center gap-2 rounded-2xl bg-white px-4 py-3 shadow-sm ring-1 ring-black/5">
-              <span className="text-sm text-bio-grey">{SITE_DOMAIN}/</span>
-              <input
-                className="min-w-0 flex-1 bg-transparent text-base outline-none"
-                value={username}
-                onChange={(e) => setUsername(sanitizeUsername(e.target.value))}
-                placeholder="yourname"
-                autoFocus
-                required
-              />
+          <form onSubmit={handleClaim} className="mt-6 flex flex-col gap-5">
+            <div>
+              <BioLabel>Your link</BioLabel>
+              <div className="mt-2 flex items-center gap-2 rounded-xl border border-black/8 bg-[#fafafa] px-4 py-3.5 focus-within:border-black/20 focus-within:ring-2 focus-within:ring-black/5">
+                <span className="shrink-0 text-sm font-medium text-bio-grey">{SITE_DOMAIN}/</span>
+                <input
+                  className="min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:font-normal placeholder:text-bio-grey/60"
+                  value={username}
+                  onChange={(e) => setUsername(sanitizeUsername(e.target.value))}
+                  placeholder="yourname"
+                  autoFocus
+                  required
+                />
+              </div>
+              {username && (
+                <p
+                  className={`mt-2 text-xs font-medium ${
+                    available === true
+                      ? "text-emerald-600"
+                      : available === false
+                        ? "text-red-600"
+                        : "text-bio-grey"
+                  }`}
+                >
+                  {checking
+                    ? "Checking…"
+                    : available === true
+                      ? "✓ Available"
+                      : available === false
+                        ? "Username taken"
+                        : isValidUsername(sanitizeUsername(username))
+                          ? ""
+                          : "3–20 chars, letters, numbers, _ or -"}
+                </p>
+              )}
             </div>
-            {username && (
-              <p className="mt-2 text-xs text-bio-grey">
-                {checking
-                  ? "Checking…"
-                  : available === true
-                    ? "✓ Available"
-                    : available === false
-                      ? "Username taken"
-                      : isValidUsername(sanitizeUsername(username))
-                        ? ""
-                        : "3–20 chars, letters, numbers, _ or -"}
-              </p>
-            )}
-          </div>
 
-          <BioGradientButton
-            type="submit"
-            disabled={claiming || available === false || !isValidUsername(sanitizeUsername(username))}
-          >
-            {claiming ? "Going live…" : "Go live"}
-          </BioGradientButton>
+            <BioGradientButton
+              type="submit"
+              className="w-full"
+              disabled={claiming || available === false || !isValidUsername(sanitizeUsername(username))}
+            >
+              {claiming ? "Going live…" : "Go live"}
+            </BioGradientButton>
+          </form>
+        </div>
 
-          <Link href="/editor" className="text-center text-sm font-semibold text-bio-grey hover:text-bio-dark">
-            ← Back to editor
-          </Link>
-        </form>
+        <Link
+          href="/editor"
+          className="mt-6 text-center text-sm font-semibold text-bio-grey transition-colors hover:text-bio-dark"
+        >
+          ← Back to editor
+        </Link>
       </main>
     </div>
   )

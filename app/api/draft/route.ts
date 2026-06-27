@@ -95,7 +95,7 @@ export async function PUT(request: Request) {
     if (error) {
       const hint =
         /relation.*profile_drafts|does not exist/i.test(error.message)
-          ? "Run supabase/migrations/006_xhuma_live_fix.sql in Supabase SQL Editor."
+          ? "Run supabase/migrations/007_schema_cache_fix.sql in Supabase SQL Editor (or `pnpm db:sync`)."
           : undefined
       return apiError(hint ? `${error.message} — ${hint}` : error.message, 500)
     }

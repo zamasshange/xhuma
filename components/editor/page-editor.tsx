@@ -370,7 +370,7 @@ export function PageEditor() {
                 <EditorPanel>
                   <EditorSectionTitle subtitle="Buttons visitors tap on your page.">Links</EditorSectionTitle>
                   <QuickPlatformChips onAdd={handleQuickAdd} />
-                  <div className="mt-4 rounded-xl border border-bio-dark/6 bg-bio-grey-f4 p-4">
+                  <div className="mt-4 rounded-lg border border-bio-dark/6 bg-bio-grey-f4/60 p-3 sm:rounded-xl sm:p-4">
                     <div className="flex flex-col gap-2">
                       <BioInput
                         placeholder="Button text"
@@ -389,7 +389,7 @@ export function PageEditor() {
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-col gap-2">
+                  <div className="mt-4 flex flex-col gap-1.5 sm:gap-2">
                     {(state?.links ?? []).map((link, index) => (
                       <LinkEditorRow
                         key={link.id}

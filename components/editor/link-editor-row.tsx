@@ -1,12 +1,22 @@
 "use client"
 
-import { ChevronDown, ChevronUp, Eye, EyeOff, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { ChevronDown, ChevronUp, Eye, EyeOff, GripVertical, Trash2 } from "lucide-react"
 import { SocialIconBadge, resolveLinkIcon } from "@/components/icons/social-icon"
 import { ImproveWithAi } from "@/components/ai/improve-with-ai"
-import { BioButton } from "@/components/ui/bio-form"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import type { EditorLink } from "@/lib/editor-state"
 import { cn } from "@/lib/utils"
+
+function hostLabel(url: string) {
+  if (!url.trim()) return "Add a URL"
+  try {
+    const host = new URL(url.startsWith("http") ? url : `https://${url}`).hostname
+    return host.replace(/^www\./, "")
+  } catch {
+    return url
+  }
+}
 
 export function LinkEditorRow({
   link,
@@ -25,6 +35,7 @@ export function LinkEditorRow({
   onRemove: () => void
   onBlur?: () => void
 }) {
+  const [open, setOpen] = useState(false)
   const displayIcon = resolveLinkIcon(link.icon, link.title, link.url)
 
   const patchWithIcon = (patch: Partial<EditorLink>) => {
@@ -34,41 +45,132 @@ export function LinkEditorRow({
     onUpdate({ ...patch, icon: inferred ?? link.icon })
   }
 
+  const inputClass =
+    "h-9 w-full rounded-md border border-bio-dark/8 bg-white px-2.5 text-sm text-bio-dark outline-none placeholder:text-bio-grey focus:border-bio-dark/20 sm:h-10 sm:rounded-lg sm:px-3"
+
   return (
     <div
       className={cn(
-        "rounded-xl border border-bio-dark/6 bg-bio-grey-f4 p-3 sm:p-4",
-        !link.is_active && "opacity-50",
+        "overflow-hidden border border-bio-dark/8 bg-white",
+        "rounded-lg sm:rounded-xl",
+        !link.is_active && "opacity-55",
       )}
     >
-      <div className="flex gap-3">
-        <div className="flex flex-col gap-0.5 pt-2">
+      {/* Mobile: compact summary — tap to expand */}
+      <div className="flex items-center gap-2 p-2 sm:hidden">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
+        >
+          <SocialIconBadge icon={displayIcon} size={34} className="shrink-0 rounded-md" />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold leading-tight text-bio-dark">
+              {link.title.trim() || "Untitled link"}
+            </p>
+            <p className="truncate text-[11px] text-bio-grey">{hostLabel(link.url)}</p>
+          </div>
+          <ChevronDown
+            className={cn("size-4 shrink-0 text-bio-grey transition-transform", open && "rotate-180")}
+          />
+        </button>
+        <button
+          type="button"
+          onClick={() => onUpdate({ is_active: !link.is_active })}
+          className="flex size-9 shrink-0 items-center justify-center rounded-md text-bio-grey hover:bg-bio-grey-f4"
+          aria-label={link.is_active ? "Hide link" : "Show link"}
+        >
+          {link.is_active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+        </button>
+      </div>
+
+      {/* Mobile: expanded editor */}
+      {open && (
+        <div className="space-y-2 border-t border-bio-dark/6 px-2.5 pb-2.5 pt-2 sm:hidden">
+          <input
+            className={inputClass}
+            value={link.title}
+            placeholder="Button text"
+            onChange={(e) => patchWithIcon({ title: e.target.value })}
+            onBlur={onBlur}
+          />
+          <input
+            className={inputClass}
+            value={link.url}
+            placeholder="https://..."
+            onChange={(e) => patchWithIcon({ url: e.target.value })}
+            onBlur={onBlur}
+          />
+          <div className="flex items-center justify-between gap-2">
+            <ImproveWithAi
+              field="link_title"
+              text={link.title}
+              context={link.url}
+              compact
+              onApply={(title) => patchWithIcon({ title })}
+            />
+            <div className="flex items-center gap-0.5">
+              <button
+                type="button"
+                disabled={index === 0}
+                onClick={() => onMove(-1)}
+                className="flex size-8 items-center justify-center rounded-md text-bio-grey hover:bg-bio-grey-f4 disabled:opacity-30"
+                aria-label="Move up"
+              >
+                <ChevronUp className="size-4" />
+              </button>
+              <button
+                type="button"
+                disabled={index >= total - 1}
+                onClick={() => onMove(1)}
+                className="flex size-8 items-center justify-center rounded-md text-bio-grey hover:bg-bio-grey-f4 disabled:opacity-30"
+                aria-label="Move down"
+              >
+                <ChevronDown className="size-4" />
+              </button>
+              <button
+                type="button"
+                onClick={onRemove}
+                className="flex size-8 items-center justify-center rounded-md text-bio-red hover:bg-red-50"
+                aria-label="Delete link"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop: full editor always visible */}
+      <div className="hidden gap-2.5 p-3 sm:flex">
+        <div className="flex flex-col justify-center gap-0.5">
           <button
             type="button"
             disabled={index === 0}
             onClick={() => onMove(-1)}
-            className="flex min-h-10 min-w-10 items-center justify-center rounded-md hover:bg-white disabled:opacity-30"
+            className="flex size-8 items-center justify-center rounded-md text-bio-grey hover:bg-bio-grey-f4 disabled:opacity-30"
             aria-label="Move up"
           >
             <ChevronUp className="size-4" />
           </button>
+          <GripVertical className="mx-auto size-3.5 text-bio-grey/40" aria-hidden />
           <button
             type="button"
             disabled={index >= total - 1}
             onClick={() => onMove(1)}
-            className="flex min-h-10 min-w-10 items-center justify-center rounded-md hover:bg-white disabled:opacity-30"
+            className="flex size-8 items-center justify-center rounded-md text-bio-grey hover:bg-bio-grey-f4 disabled:opacity-30"
             aria-label="Move down"
           >
             <ChevronDown className="size-4" />
           </button>
         </div>
 
-        <SocialIconBadge icon={displayIcon} size={44} className="mt-0.5 rounded-lg" />
+        <SocialIconBadge icon={displayIcon} size={40} className="mt-1 shrink-0 rounded-lg" />
 
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex items-center gap-2">
             <input
-              className="h-10 min-w-0 flex-1 rounded-lg border border-bio-dark/8 bg-white px-3 text-sm font-medium text-bio-dark outline-none placeholder:font-normal placeholder:text-bio-grey focus:border-bio-dark/20"
+              className={cn(inputClass, "font-medium")}
               value={link.title}
               placeholder="Button text"
               onChange={(e) => patchWithIcon({ title: e.target.value })}
@@ -83,23 +185,29 @@ export function LinkEditorRow({
             />
           </div>
           <input
-            className="h-10 w-full rounded-lg border border-bio-dark/8 bg-white px-3 text-sm text-bio-dark outline-none placeholder:text-bio-grey focus:border-bio-dark/20"
+            className={inputClass}
             value={link.url}
             placeholder="https://..."
             onChange={(e) => patchWithIcon({ url: e.target.value })}
             onBlur={onBlur}
           />
-          <div className="flex gap-2">
-            <BioButton
-              variant="secondary"
-              className="min-h-11 px-3"
+          <div className="flex gap-1.5">
+            <button
+              type="button"
               onClick={() => onUpdate({ is_active: !link.is_active })}
+              className="flex size-9 items-center justify-center rounded-md border border-bio-dark/8 text-bio-grey hover:bg-bio-grey-f4"
+              aria-label={link.is_active ? "Hide link" : "Show link"}
             >
               {link.is_active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-            </BioButton>
-            <BioButton variant="secondary" className="min-h-11 px-3 text-bio-red" onClick={onRemove}>
+            </button>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="flex size-9 items-center justify-center rounded-md border border-bio-dark/8 text-bio-red hover:bg-red-50"
+              aria-label="Delete link"
+            >
               <Trash2 className="size-4" />
-            </BioButton>
+            </button>
           </div>
         </div>
       </div>
