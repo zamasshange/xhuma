@@ -3,6 +3,17 @@
 import { cn } from "@/lib/utils"
 
 const SIZES = {
+  /** Real iPhone 14 logical size — used inside ScaledPhonePreview */
+  native: {
+    width: "w-[404px]",
+    bezel: "p-[7px] rounded-[2.65rem]",
+    screen: "rounded-[2.15rem]",
+    island: "top-[9px] h-[21px] w-[84px]",
+    islandCam: "size-[6px]",
+    indicator: "h-[4px] w-[92px]",
+    maxH: "h-[844px]",
+    sideBtn: { left: "top-[100px] h-8", leftLow: "top-[148px] h-14", right: "top-[124px] h-[72px]" },
+  },
   thumb: {
     width: "w-full max-w-[118px]",
     bezel: "p-[3px] rounded-[1.2rem]",
@@ -84,6 +95,7 @@ export function PhoneDeviceFrame({
   label,
   showLabel = true,
   glow = true,
+  clipContent = false,
 }: {
   children: React.ReactNode
   className?: string
@@ -92,6 +104,8 @@ export function PhoneDeviceFrame({
   /** Soft pink–purple halo behind the device */
   glow?: boolean
   showLabel?: boolean
+  /** Clip screen content (no scroll) — for scaled grid thumbnails */
+  clipContent?: boolean
 }) {
   const s = SIZES[size]
 
@@ -148,10 +162,11 @@ export function PhoneDeviceFrame({
               {/* Scrollable content */}
               <div
                 className={cn(
-                  "phone-device-screen-inner overflow-x-hidden overflow-y-auto overscroll-contain no-scrollbar",
+                  "phone-device-screen-inner no-scrollbar",
+                  clipContent ? "overflow-hidden" : "overflow-x-hidden overflow-y-auto overscroll-contain",
                   s.maxH,
                 )}
-                style={{ WebkitOverflowScrolling: "touch" }}
+                style={{ WebkitOverflowScrolling: clipContent ? undefined : "touch" }}
               >
                 {children}
               </div>

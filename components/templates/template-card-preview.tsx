@@ -1,13 +1,13 @@
 "use client"
 
-import { PhoneDeviceFrame } from "@/components/device/phone-device-frame"
+import { ScaledPhonePreview } from "@/components/device/scaled-phone-preview"
 import { DbPublicProfileView } from "@/components/profile/db-public-profile-view"
 import { editorStateFromDocument } from "@/lib/editor-state"
 import type { MarketplaceTemplate } from "@/lib/templates/catalog"
 import type { DbProfile } from "@/lib/database.types"
 import { resolveThemeBackground } from "@/lib/theme-presets"
 
-/** Compact live thumbnail for 2-column mobile grid */
+/** Live thumbnail — real device proportions, scaled to fit the grid card */
 export function TemplateCardPreview({ template }: { template: MarketplaceTemplate }) {
   const state = editorStateFromDocument(template.id, template.default_data)
   const previewProfile: DbProfile = {
@@ -25,15 +25,15 @@ export function TemplateCardPreview({ template }: { template: MarketplaceTemplat
     .map((l) => ({ id: l.id, title: l.title || "Link", url: l.url || "#", icon: l.icon }))
 
   return (
-    <div className="flex items-center justify-center overflow-hidden bg-bio-grey-f4 px-1 py-2">
-      <PhoneDeviceFrame size="thumb" showLabel={false} glow={false} className="mx-auto w-full">
+    <div className="relative aspect-[9/19.5] w-full overflow-hidden bg-bio-grey-f4">
+      <ScaledPhonePreview className="absolute inset-0 h-full w-full">
         <DbPublicProfileView
           profile={previewProfile}
           links={previewLinks}
           pageSections={state.page_sections}
           density="device"
         />
-      </PhoneDeviceFrame>
+      </ScaledPhonePreview>
     </div>
   )
 }

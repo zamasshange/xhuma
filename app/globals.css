@@ -279,6 +279,7 @@
   background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
   opacity: 0;
   transition: opacity 0.2s;
+  pointer-events: none;
 }
 .bio-dark-btn:hover::before {
   opacity: 1;

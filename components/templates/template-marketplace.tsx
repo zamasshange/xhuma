@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Eye, Heart } from "lucide-react"
+import { Eye, Heart, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { BioButton } from "@/components/ui/bio-form"
 import { AiIcon, PlusIcon } from "@/components/icons/app-icons"
@@ -104,7 +104,13 @@ export function TemplateMarketplace({
   ]
 
   return (
-    <section id="templates" className={cn("text-bio-dark", compact ? "pt-8" : "pt-24 max-lg:pt-16")}>
+    <section
+      id="templates"
+      className={cn(
+        "pb-20 text-bio-dark sm:pb-28",
+        compact ? "pt-8" : "pt-24 max-lg:pt-16",
+      )}
+    >
       {showHeader && (
         <div className="mx-auto mb-6 w-[min(900px,92%)] px-1 text-center sm:mb-8">
           <h2 className="text-3xl font-semibold tracking-tighter sm:text-4xl lg:text-5xl">
@@ -118,17 +124,23 @@ export function TemplateMarketplace({
 
       <div className="mx-auto w-[min(1200px,100%)] px-3 sm:px-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <input
-            type="search"
-            placeholder="Search templates…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="h-11 flex-1 rounded-xl border border-bio-dark/10 bg-white px-4 text-sm outline-none focus:border-bio-dark/25"
-          />
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-bio-grey" />
+            <input
+              type="search"
+              placeholder="Search templates…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-11 w-full rounded-xl border border-bio-dark/10 bg-white pl-10 pr-4 text-sm shadow-[0_1px_8px_rgba(13,12,34,0.04)] outline-none transition-shadow placeholder:text-bio-grey/80 focus:border-bio-dark/20 focus:shadow-[0_2px_12px_rgba(13,12,34,0.08)] focus:ring-2 focus:ring-bio-dark/5"
+            />
+          </div>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="h-11 w-full rounded-xl border border-bio-dark/10 bg-white px-3 text-sm sm:w-auto"
+            className="h-11 w-full appearance-none rounded-xl border border-bio-dark/10 bg-white bg-[length:12px] bg-[right_12px_center] bg-no-repeat px-3 pr-9 text-sm shadow-[0_1px_8px_rgba(13,12,34,0.04)] outline-none focus:border-bio-dark/20 focus:ring-2 focus:ring-bio-dark/5 sm:w-auto"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23717171' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+            }}
           >
             <option value="All">All categories</option>
             {TEMPLATE_CATEGORIES.map((c) => (

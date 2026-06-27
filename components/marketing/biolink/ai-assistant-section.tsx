@@ -11,9 +11,9 @@ export function AiAssistantSection() {
   const [view, setView] = useState<"app" | "website">("app")
 
   return (
-    <section className="relative pt-28 text-bio-dark max-lg:pt-16 max-md:pt-0">
+    <section className="relative border-t border-bio-dark/8 bg-white pt-24 text-bio-dark max-lg:pt-20 max-md:pt-20">
       <BioContainer>
-        <div className="mb-5 text-center">
+        <div className="mb-6 text-center sm:mb-8">
           <SectionBadge>AI assistant</SectionBadge>
         </div>
         <h2 className="text-center text-6xl font-semibold leading-[1.1] tracking-tighter max-lg:text-5xl max-sm:text-4xl">
@@ -55,7 +55,7 @@ export function AiAssistantSection() {
         </div>
       </BioContainer>
 
-      <div className="relative -mt-16 flex max-h-[70vh] items-center justify-center bg-white max-lg:mt-0 max-lg:h-auto max-lg:max-h-none max-sm:mt-0">
+      <div className="relative mt-10 flex max-h-[70vh] items-center justify-center bg-white max-lg:mt-8 max-lg:h-auto max-lg:max-h-none max-sm:mt-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={view === "app" ? bioAiSection.appImage : bioAiSection.webImage}
