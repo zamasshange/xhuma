@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+import { Show, UserButton } from "@clerk/nextjs"
 import { AnimatePresence, motion } from "framer-motion"
 import { LogoMark } from "@/components/marketing/biolink/logo-mark"
 import { cn } from "@/lib/utils"
@@ -11,11 +12,6 @@ const navLinks = [
   { href: "/features", label: "Features" },
   { href: "/explore", label: "Explore" },
   { href: "/faq", label: "FAQ" },
-]
-
-const authLinks = [
-  { href: "/", label: "Home" },
-  { href: "/editor", label: "My page", primary: true },
 ]
 
 export function BiolinkNavbar() {
@@ -46,19 +42,37 @@ export function BiolinkNavbar() {
             ))}
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-2 md:flex lg:gap-4">
-            <Link
-              href="/editor"
-              className="text-sm font-semibold text-bio-dark transition-colors hover:text-bio-dark/80 lg:text-base"
-            >
-              My page
-            </Link>
-            <Link
-              href="/editor"
-              className="rounded-full bg-bio-dark px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 lg:px-6 lg:text-base"
-            >
-              Get started
-            </Link>
+          <div className="hidden shrink-0 items-center gap-2 md:flex lg:gap-3">
+            <Show when="signed-out">
+              <Link
+                href="/sign-in"
+                className="text-sm font-semibold text-bio-dark transition-colors hover:text-bio-dark/80 lg:text-base"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/sign-up"
+                className="rounded-full bg-bio-dark px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 lg:px-6 lg:text-base"
+              >
+                Get started
+              </Link>
+            </Show>
+            <Show when="signed-in">
+              <Link
+                href="/editor"
+                className="text-sm font-semibold text-bio-dark transition-colors hover:text-bio-dark/80 lg:text-base"
+              >
+                My page
+              </Link>
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    avatarBox: "size-9 ring-2 ring-bio-dark/10",
+                  },
+                }}
+              />
+            </Show>
           </div>
 
           <button
@@ -105,17 +119,25 @@ export function BiolinkNavbar() {
                   </Link>
                 </li>
               ))}
-              {authLinks.map((link) => (
-                <li key={link.label} className="border-b border-bio-dark/10 py-5">
-                  <Link
-                    href={link.href}
-                    className={cn("block text-lg font-bold", link.primary && "text-bio-dark")}
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
+              <Show when="signed-out">
+                <li className="border-b border-bio-dark/10 py-5">
+                  <Link href="/sign-in" className="block text-lg font-bold" onClick={() => setOpen(false)}>
+                    Log in
                   </Link>
                 </li>
-              ))}
+                <li className="border-b border-bio-dark/10 py-5">
+                  <Link href="/sign-up" className="block text-lg font-bold text-bio-dark" onClick={() => setOpen(false)}>
+                    Get started
+                  </Link>
+                </li>
+              </Show>
+              <Show when="signed-in">
+                <li className="border-b border-bio-dark/10 py-5">
+                  <Link href="/editor" className="block text-lg font-bold" onClick={() => setOpen(false)}>
+                    My page
+                  </Link>
+                </li>
+              </Show>
             </ul>
           </motion.div>
         )}

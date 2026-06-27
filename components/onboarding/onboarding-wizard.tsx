@@ -22,13 +22,13 @@ import {
   platformById,
   type OnboardingStep,
 } from "@/data/onboarding"
+import { useUser } from "@clerk/nextjs"
 import { apiFetch } from "@/lib/api-fetch"
-import { getUserId } from "@/lib/temp-user"
 import { displayNameFromUsername, isValidUsername, sanitizeUsername } from "@/lib/username"
 import type { DbProfile, ProfileTheme } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
-import { inferLinkIcon } from "@/lib/infer-link-icon"
+import { SITE_DOMAIN } from "@/lib/brand"
 import { SocialIconBadge, resolveLinkIcon } from "@/components/icons/social-icon"
 
 type LinkDraft = { title: string; url: string }
@@ -36,6 +36,7 @@ type LinkDraft = { title: string; url: string }
 export function OnboardingWizard() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { user } = useUser()
   const fileRef = useRef<HTMLInputElement>(null)
 
   const [stepIndex, setStepIndex] = useState(0)
@@ -55,7 +56,6 @@ export function OnboardingWizard() {
   const totalSteps = ONBOARDING_STEPS.length
 
   useEffect(() => {
-    getUserId()
     const fromUrl = searchParams.get("username")
     if (fromUrl) {
       const slug = sanitizeUsername(fromUrl)
@@ -63,6 +63,12 @@ export function OnboardingWizard() {
       setDisplayName((prev) => prev || displayNameFromUsername(slug))
     }
   }, [searchParams])
+
+  useEffect(() => {
+    if (!user) return
+    const name = user.fullName || user.firstName || ""
+    if (name) setDisplayName((prev) => prev || name)
+  }, [user])
 
   useEffect(() => {
     if (platforms.length === 0) return
@@ -121,7 +127,6 @@ export function OnboardingWizard() {
       return
     }
     setSaving(true)
-    getUserId()
 
     let avatarUrl: string | null = null
     if (avatarFile) {
@@ -325,7 +330,7 @@ export function OnboardingWizard() {
             {!searchParams.get("username") && (
               <input
                 className="h-14 w-full rounded-2xl bg-bio-grey-f4 px-5 text-base text-bio-dark outline-none placeholder:text-bio-grey"
-                placeholder="Username (xhuma.io/you)"
+                placeholder={`Username (${SITE_DOMAIN}/you)`}
                 value={username}
                 onChange={(e) => setUsername(sanitizeUsername(e.target.value))}
               />

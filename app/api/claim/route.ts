@@ -7,7 +7,7 @@ import { inferLinkIcon } from "@/lib/infer-link-icon"
 import type { TemplateDocument } from "@/lib/editor-state"
 
 export async function POST(request: Request) {
-  const sessionId = requireUserId(request)
+  const sessionId = await requireUserId(request)
   if (typeof sessionId === "object") return apiError(sessionId.error, 401)
 
   const body = await request.json()

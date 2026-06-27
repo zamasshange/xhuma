@@ -2,7 +2,7 @@ import { createAdminClient, requireUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
 
 export async function GET(request: Request) {
-  const userId = requireUserId(request)
+  const userId = await requireUserId(request)
   if (typeof userId === "object") return apiError(userId.error, 401)
 
   const supabase = createAdminClient()

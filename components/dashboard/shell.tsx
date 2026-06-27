@@ -11,6 +11,7 @@ import { useDashboard } from "@/components/dashboard/dashboard-provider"
 import { Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { dashboardNav, mobileBottomNav } from "@/constants/navigation"
+import { SITE_DOMAIN } from "@/lib/brand"
 import { cn } from "@/lib/utils"
 
 export function DashboardHeader({ onMenuOpen }: { onMenuOpen: () => void }) {
@@ -84,7 +85,7 @@ export function DashboardSidebar({ open, onClose }: { open?: boolean; onClose?: 
               <Avatar src={profile.avatar_url ?? undefined} alt={profile.display_name} className="size-9" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{profile.display_name}</p>
-                <p className="truncate text-xs text-muted-foreground">xhuma.io/{profile.username}</p>
+                <p className="truncate text-xs text-muted-foreground">{SITE_DOMAIN}/{profile.username}</p>
               </div>
             </Link>
           </div>

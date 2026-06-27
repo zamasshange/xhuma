@@ -1,11 +1,11 @@
-import { getUserId } from "@/lib/temp-user"
+import { getClientUserId } from "@/lib/client-auth"
 
 export async function apiFetch<T>(
   url: string,
   options?: RequestInit,
 ): Promise<{ success: boolean; data?: T; error?: string }> {
   try {
-    const userId = typeof window !== "undefined" ? getUserId() : ""
+    const userId = typeof window !== "undefined" ? getClientUserId() : ""
     const isFormData = options?.body instanceof FormData
     const res = await fetch(url, {
       ...options,

@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useAuth } from "@clerk/nextjs"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { apiFetch } from "@/lib/api-fetch"
-import { getUserId } from "@/lib/temp-user"
 import { isValidUsername, sanitizeUsername } from "@/lib/username"
-import type { DbProfile } from "@/lib/database.types"
+import { SITE_DOMAIN } from "@/lib/brand"
 
 type ClaimLinkInputProps = {
   className?: string
@@ -19,6 +19,7 @@ export function ClaimLinkInput({
   buttonLabel = "Start for free",
   onSuccess,
 }: ClaimLinkInputProps) {
+  const { isSignedIn } = useAuth()
   const [username, setUsername] = useState("")
 
   const goToTemplates = () => {
@@ -34,10 +35,14 @@ export function ClaimLinkInput({
       return
     }
 
-    getUserId()
     onSuccess?.()
 
-    // If they already have a draft/profile in editor, go to claim with username hint
+    if (!isSignedIn) {
+      const dest = `/onboarding?username=${encodeURIComponent(slug)}`
+      window.location.assign(`/sign-up?redirect_url=${encodeURIComponent(dest)}`)
+      return
+    }
+
     const profileRes = await apiFetch<DbProfile | null>("/api/profile")
     const draftRes = await apiFetch<unknown>("/api/draft")
 
@@ -51,13 +56,13 @@ export function ClaimLinkInput({
       return
     }
 
-    goToTemplates()
+    window.location.assign(`/onboarding?username=${encodeURIComponent(slug)}`)
   }
 
   return (
     <form onSubmit={handleSubmit} className={cn("relative z-20", className)}>
       <div className="flex items-center overflow-hidden rounded-full border-2 border-bio-dark bg-white shadow-sm">
-        <span className="shrink-0 pl-5 text-base text-bio-grey max-sm:pl-4 max-sm:text-sm">xhuma.io/</span>
+        <span className="shrink-0 pl-5 text-base text-bio-grey max-sm:pl-4 max-sm:text-sm">{SITE_DOMAIN}/</span>
         <input
           type="text"
           value={username}

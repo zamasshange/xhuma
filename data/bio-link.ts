@@ -147,7 +147,7 @@ export const bioFaqs = [
   },
   {
     q: "Can I use a custom domain?",
-    a: "Absolutely. You can connect your own domain (like yourname.com) or use your default xhuma.io URL.",
+    a: "Absolutely. You can connect your own domain (like yourname.com) or use your default xhuma.cc URL.",
   },
   {
     q: "How do creators typically use Xhuma?",

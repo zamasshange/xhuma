@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
+import { UserButton } from "@clerk/nextjs"
 import {
   Plus,
   ExternalLink,
@@ -184,6 +185,10 @@ export function PageEditor() {
         </>
       )}
       <EditorHomeLink />
+      <UserButton
+        afterSignOutUrl="/"
+        appearance={{ elements: { avatarBox: "size-8 ring-2 ring-bio-dark/10" } }}
+      />
     </>
   )
 

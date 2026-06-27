@@ -10,6 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import { useAuth } from "@clerk/nextjs"
 import { apiFetch } from "@/lib/api-fetch"
 import { getUserId } from "@/lib/temp-user"
 import type { DbLink, DbProfile, ProfileDraft } from "@/lib/database.types"
@@ -54,7 +55,9 @@ const EditorContext = createContext<EditorContextValue | null>(null)
 const AUTOSAVE_MS = 1000
 
 export function EditorProvider({ children }: { children: ReactNode }) {
-  const [userId] = useState(() => getUserId())
+  const { userId: clerkId } = useAuth()
+  const [anonId] = useState(() => getUserId())
+  const userId = clerkId ?? anonId
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<DbProfile | null>(null)

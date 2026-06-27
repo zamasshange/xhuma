@@ -10,7 +10,7 @@ const MOCK_MAP: Record<string, string> = {
 }
 
 async function generateButtonText(platform: string): Promise<string | null> {
-  return openrouterChat(
+  const result = await openrouterChat(
     [
       {
         role: "system",
@@ -20,6 +20,11 @@ async function generateButtonText(platform: string): Promise<string | null> {
     ],
     { temperature: 0.7 },
   )
+  if (!result.ok) {
+    console.warn("[ai/button-text]", result.error)
+    return null
+  }
+  return result.content
 }
 
 export async function POST(request: Request) {

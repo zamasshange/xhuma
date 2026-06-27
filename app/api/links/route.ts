@@ -4,7 +4,7 @@ import { linkCreateSchema, linkUpdateSchema, linksReorderSchema } from "@/lib/va
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 
 export async function GET(request: Request) {
-  const userId = getUserId(request)
+  const userId = await getUserId(request)
   if (!userId) return apiSuccess([])
 
   const supabase = createAdminClient()
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const userId = requireUserId(request)
+  const userId = await requireUserId(request)
   if (typeof userId === "object") return apiError(userId.error, 401)
 
   const body = await request.json()
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const userId = requireUserId(request)
+  const userId = await requireUserId(request)
   if (typeof userId === "object") return apiError(userId.error, 401)
 
   const body = await request.json()
@@ -86,7 +86,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const userId = requireUserId(request)
+  const userId = await requireUserId(request)
   if (typeof userId === "object") return apiError(userId.error, 401)
 
   const id = new URL(request.url).searchParams.get("id")

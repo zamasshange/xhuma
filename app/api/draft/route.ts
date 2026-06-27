@@ -20,7 +20,7 @@ function mapDraft(row: Record<string, unknown>): ProfileDraft {
 }
 
 export async function GET(request: Request) {
-  const sessionId = getUserId(request)
+  const sessionId = await getUserId(request)
   if (!sessionId) return apiSuccess(null)
 
   try {
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  const sessionId = getUserId(request)
+  const sessionId = await getUserId(request)
   if (!sessionId) return apiError("Missing session", 401)
 
   const body = await request.json()

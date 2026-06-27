@@ -4,7 +4,7 @@ import { profileCreateSchema, profileUpdateSchema } from "@/lib/validations"
 import { DEFAULT_THEME, mapProfile } from "@/lib/database.types"
 
 export async function GET(request: Request) {
-  const userId = getUserId(request)
+  const userId = await getUserId(request)
   if (!userId) return apiSuccess(null)
 
   const supabase = createAdminClient()
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const userId = requireUserId(request)
+  const userId = await requireUserId(request)
   if (typeof userId === "object") return apiError(userId.error, 401)
 
   const body = await request.json()
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const userId = requireUserId(request)
+  const userId = await requireUserId(request)
   if (typeof userId === "object") return apiError(userId.error, 401)
 
   const body = await request.json()

@@ -8,7 +8,7 @@ const MOCK_BIOS = [
 ]
 
 async function generateBios(text: string): Promise<string[] | null> {
-  const content = await openrouterChat(
+  const result = await openrouterChat(
     [
       {
         role: "system",
@@ -19,10 +19,13 @@ async function generateBios(text: string): Promise<string[] | null> {
     ],
     { temperature: 0.8 },
   )
-  if (!content) return null
+  if (!result.ok) {
+    console.warn("[ai/bio]", result.error)
+    return null
+  }
 
   try {
-    const parsed = JSON.parse(content.replace(/```json\n?|\n?```/g, "").trim())
+    const parsed = JSON.parse(result.content.replace(/```json\n?|\n?```/g, "").trim())
     if (Array.isArray(parsed) && parsed.length >= 3) return parsed.slice(0, 3).map(String)
     return null
   } catch {

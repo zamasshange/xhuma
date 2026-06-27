@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js"
+import { getAuthUserId, requireAuthUserId } from "@/lib/auth"
 
 export function createAdminClient() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -7,12 +8,10 @@ export function createAdminClient() {
   })
 }
 
-export function getUserId(request: Request): string | null {
-  return request.headers.get("x-user-id")?.trim() || null
+export async function getUserId(request: Request): Promise<string | null> {
+  return getAuthUserId(request)
 }
 
-export function requireUserId(request: Request): string | { error: string } {
-  const id = getUserId(request)
-  if (!id) return { error: "Missing user id" }
-  return id
+export async function requireUserId(request: Request): Promise<string | { error: string }> {
+  return requireAuthUserId(request)
 }

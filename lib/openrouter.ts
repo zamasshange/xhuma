@@ -1,34 +1,58 @@
+import { env } from "@/lib/env"
+
 type ChatMessage = { role: "system" | "user"; content: string }
+
+export type OpenRouterResult =
+  | { ok: true; content: string }
+  | { ok: false; error: string }
 
 export async function openrouterChat(
   messages: ChatMessage[],
   options?: { temperature?: number },
-): Promise<string | null> {
-  const key = process.env.OPENROUTER_API_KEY
-  if (!key) return null
-
-  const model = process.env.OPENROUTER_MODEL ?? "google/gemini-2.0-flash-001"
+): Promise<OpenRouterResult> {
+  if (!env.openrouter.apiKey) {
+    return { ok: false, error: "OPENROUTER_API_KEY is not configured in .env.local" }
+  }
 
   try {
     const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${key}`,
+        Authorization: `Bearer ${env.openrouter.apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+        "HTTP-Referer": env.siteUrl,
         "X-Title": "Xhuma",
       },
       body: JSON.stringify({
-        model,
+        model: env.openrouter.model,
         messages,
         temperature: options?.temperature ?? 0.7,
       }),
     })
 
-    if (!res.ok) return null
-    const json = await res.json()
-    return (json.choices?.[0]?.message?.content as string | undefined)?.trim() ?? null
-  } catch {
-    return null
+    const raw = await res.text()
+    if (!res.ok) {
+      return {
+        ok: false,
+        error: `OpenRouter ${res.status}: ${raw.slice(0, 240)}`,
+      }
+    }
+
+    let json: { choices?: { message?: { content?: string } }[] }
+    try {
+      json = JSON.parse(raw)
+    } catch {
+      return { ok: false, error: "OpenRouter returned invalid JSON" }
+    }
+
+    const content = json.choices?.[0]?.message?.content?.trim()
+    if (!content) return { ok: false, error: "OpenRouter returned empty content" }
+
+    return { ok: true, content }
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "OpenRouter request failed",
+    }
   }
 }

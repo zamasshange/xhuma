@@ -9,7 +9,7 @@ const MOCK_LINKS = [
 ]
 
 async function generateLinks(input: string): Promise<typeof MOCK_LINKS | null> {
-  const content = await openrouterChat(
+  const result = await openrouterChat(
     [
       {
         role: "system",
@@ -20,10 +20,13 @@ async function generateLinks(input: string): Promise<typeof MOCK_LINKS | null> {
     ],
     { temperature: 0.7 },
   )
-  if (!content) return null
+  if (!result.ok) {
+    console.warn("[ai/links]", result.error)
+    return null
+  }
 
   try {
-    const parsed = JSON.parse(content.replace(/```json\n?|\n?```/g, "").trim())
+    const parsed = JSON.parse(result.content.replace(/```json\n?|\n?```/g, "").trim())
     if (Array.isArray(parsed)) return parsed.slice(0, 4)
     return null
   } catch {
