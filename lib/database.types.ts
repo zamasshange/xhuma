@@ -1,4 +1,5 @@
 import type { LinkCardStyle } from "@/lib/link-card-styles"
+import type { PageSection } from "@/lib/editor-sections"
 
 export type ProfileTheme = {
   bg: string
@@ -15,6 +16,8 @@ export type ProfileTheme = {
   bg_image?: string
   /** Editor / picker reference */
   preset_id?: string
+  /** Dynamic page sections (persisted in theme_json for live profiles) */
+  page_sections?: PageSection[]
 }
 
 export type DbLink = {

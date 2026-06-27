@@ -5,6 +5,7 @@ import {
   type TemplateDocument,
 } from "@/lib/editor-state"
 import { getStaticTemplate, STATIC_TEMPLATES, type Template } from "@/data/templates"
+import { getMarketplaceTemplate } from "@/lib/templates/catalog"
 
 export async function fetchTemplatesFromDb(): Promise<Template[] | null> {
   try {
@@ -39,6 +40,16 @@ export async function getTemplate(id: string): Promise<Template | null> {
   } catch {
     /* fall through */
   }
+  const marketplace = getMarketplaceTemplate(id)
+  if (marketplace) {
+    return {
+      id: marketplace.id,
+      name: marketplace.name,
+      description: marketplace.description,
+      preview_image: marketplace.preview_image,
+      default_data: marketplace.default_data,
+    }
+  }
   return getStaticTemplate(id) ?? null
 }
 
@@ -64,12 +75,22 @@ export function mergeDocument(
     profile: { ...base.profile, ...patch.profile },
     links: patch.links ?? base.links,
     sections: patch.sections ?? base.sections,
+    page_sections: patch.page_sections ?? base.page_sections,
   })
 }
 
 /** Ensure template row exists so profile_drafts FK does not fail on live DBs. */
 export async function ensureTemplateInDb(templateId: string): Promise<boolean> {
-  const staticTemplate = getStaticTemplate(templateId)
+  const marketplace = getMarketplaceTemplate(templateId)
+  const staticTemplate = marketplace
+    ? {
+        id: marketplace.id,
+        name: marketplace.name,
+        description: marketplace.description,
+        preview_image: marketplace.preview_image,
+        default_data: marketplace.default_data,
+      }
+    : getStaticTemplate(templateId)
   if (!staticTemplate) return false
 
   try {

@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { getUserId } from "@/lib/temp-user"
 import { apiFetch } from "@/lib/api-fetch"
-import { isTemplateId } from "@/data/templates"
+import { isKnownTemplateId, resolveTemplateForCreate } from "@/lib/templates/catalog"
 import { stashPendingDraft } from "@/lib/client-draft"
 import type { ProfileDraft } from "@/lib/database.types"
 
@@ -16,15 +16,18 @@ export default function CreateTemplatePage() {
   const themeId = searchParams.get("theme") ?? undefined
 
   useEffect(() => {
-    if (!isTemplateId(templateId)) return
+    if (!isKnownTemplateId(templateId)) return
 
     getUserId()
-    stashPendingDraft(templateId, themeId)
+    const resolved = resolveTemplateForCreate(templateId)
+    if (resolved) {
+      stashPendingDraft(templateId, themeId, { document: resolved.document })
+    } else {
+      stashPendingDraft(templateId, themeId)
+    }
 
-    // Open editor immediately — never block on database
     router.replace(themeId ? `/editor?theme=${themeId}` : "/editor")
 
-    // Sync draft to API in background (best-effort)
     void apiFetch<ProfileDraft>("/api/draft", {
       method: "PUT",
       body: JSON.stringify({ template_id: templateId }),

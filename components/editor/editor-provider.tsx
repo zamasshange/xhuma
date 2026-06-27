@@ -23,9 +23,12 @@ import {
   type EditorLink,
   type EditorState,
 } from "@/lib/editor-state"
+import { sectionsToLegacyIds, type PageSection } from "@/lib/editor-sections"
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { consumePendingDraft } from "@/lib/client-draft"
 import { getStaticTemplate } from "@/data/templates"
+import { resolveTemplateForCreate } from "@/lib/templates/catalog"
+import { saveUserTemplate } from "@/lib/user-templates"
 import { getThemePreset, resolveThemeBackground } from "@/lib/theme-presets"
 
 export type EditorMode = "empty" | "draft" | "live"
@@ -44,6 +47,11 @@ type EditorContextValue = {
   updateLink: (id: string, patch: Partial<EditorLink>) => void
   removeLink: (id: string) => void
   moveLink: (index: number, dir: -1 | 1) => void
+  addPageSection: (section: PageSection) => void
+  updatePageSection: (id: string, patch: Partial<PageSection>) => void
+  removePageSection: (id: string) => void
+  movePageSection: (id: string, dir: -1 | 1) => void
+  saveAsTemplate: (name: string) => void
   syncLiveLink: (id: string) => Promise<void>
   deleteLiveLink: (id: string) => Promise<void>
   persistLiveLink: (title: string, url: string, icon?: string | null) => Promise<boolean>
@@ -96,28 +104,62 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         lastSavedJson.current = JSON.stringify(doc)
       } else {
         const pending = consumePendingDraft()
-        const pendingTemplate = pending ? getStaticTemplate(pending.template_id) : null
-        if (pendingTemplate) {
-          let draftState = editorStateFromDocument(pendingTemplate.id, pendingTemplate.default_data)
-          if (pending.theme_id) {
-            const preset = getThemePreset(pending.theme_id)
-            if (preset) {
-              draftState = {
-                ...draftState,
-                profile: { ...draftState.profile, theme: resolveThemeBackground(preset.theme) },
+        if (pending) {
+          const resolved =
+            pending.document != null
+              ? { templateId: pending.template_id, document: pending.document }
+              : resolveTemplateForCreate(pending.template_id)
+
+          if (resolved) {
+            let draftState = editorStateFromDocument(resolved.templateId, resolved.document)
+            if (pending.theme_id) {
+              const preset = getThemePreset(pending.theme_id)
+              if (preset) {
+                draftState = {
+                  ...draftState,
+                  profile: { ...draftState.profile, theme: resolveThemeBackground(preset.theme) },
+                }
               }
             }
+            setState(draftState)
+            setMode("draft")
+            lastSavedJson.current = JSON.stringify(editorStateToDocument(draftState))
+            void apiFetch("/api/draft", {
+              method: "PUT",
+              body: JSON.stringify({
+                template_id: resolved.templateId,
+                data: editorStateToDocument(draftState),
+              }),
+            })
+          } else {
+            const pendingTemplate = getStaticTemplate(pending.template_id)
+            if (pendingTemplate) {
+              let draftState = editorStateFromDocument(pendingTemplate.id, pendingTemplate.default_data)
+              if (pending.theme_id) {
+                const preset = getThemePreset(pending.theme_id)
+                if (preset) {
+                  draftState = {
+                    ...draftState,
+                    profile: { ...draftState.profile, theme: resolveThemeBackground(preset.theme) },
+                  }
+                }
+              }
+              setState(draftState)
+              setMode("draft")
+              lastSavedJson.current = JSON.stringify(editorStateToDocument(draftState))
+              void apiFetch("/api/draft", {
+                method: "PUT",
+                body: JSON.stringify({
+                  template_id: pendingTemplate.id,
+                  data: editorStateToDocument(draftState),
+                }),
+              })
+            } else {
+              setState(null)
+              setMode("empty")
+              lastSavedJson.current = ""
+            }
           }
-          setState(draftState)
-          setMode("draft")
-          lastSavedJson.current = JSON.stringify(editorStateToDocument(draftState))
-          void apiFetch("/api/draft", {
-            method: "PUT",
-            body: JSON.stringify({
-              template_id: pendingTemplate.id,
-              data: editorStateToDocument(draftState),
-            }),
-          })
         } else {
           setState(null)
           setMode("empty")
@@ -208,6 +250,70 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [patchState],
   )
 
+  const addPageSection = useCallback(
+    (section: PageSection) => {
+      patchState((s) => {
+        const linksIdx = s.page_sections.findIndex((x) => x.type === "links")
+        const insertAt = linksIdx >= 0 ? linksIdx + 1 : s.page_sections.length
+        const page_sections = [...s.page_sections]
+        page_sections.splice(insertAt, 0, section)
+        return { ...s, page_sections, sections: sectionsToLegacyIds(page_sections) }
+      })
+    },
+    [patchState],
+  )
+
+  const updatePageSection = useCallback(
+    (id: string, patch: Partial<PageSection>) => {
+      patchState((s) => ({
+        ...s,
+        page_sections: s.page_sections.map((sec) =>
+          sec.id === id ? { ...sec, ...patch, content: patch.content ? { ...sec.content, ...patch.content } : sec.content } : sec,
+        ),
+      }))
+    },
+    [patchState],
+  )
+
+  const removePageSection = useCallback(
+    (id: string) => {
+      patchState((s) => {
+        const target = s.page_sections.find((x) => x.id === id)
+        if (!target || target.type === "profile" || target.type === "links") return s
+        const page_sections = s.page_sections.filter((x) => x.id !== id)
+        return { ...s, page_sections, sections: sectionsToLegacyIds(page_sections) }
+      })
+    },
+    [patchState],
+  )
+
+  const movePageSection = useCallback(
+    (id: string, dir: -1 | 1) => {
+      patchState((s) => {
+        const sections = [...s.page_sections]
+        const idx = sections.findIndex((x) => x.id === id)
+        if (idx < 0) return s
+        if (sections[idx].type === "profile" || sections[idx].type === "links") return s
+        const next = idx + dir
+        if (next < 0 || next >= sections.length) return s
+        if (sections[next].type === "profile" || sections[next].type === "links") return s
+        ;[sections[idx], sections[next]] = [sections[next], sections[idx]]
+        return { ...s, page_sections: sections, sections: sectionsToLegacyIds(sections) }
+      })
+    },
+    [patchState],
+  )
+
+  const saveAsTemplate = useCallback(
+    (name: string) => {
+      setState((current) => {
+        if (current) saveUserTemplate(name, editorStateToDocument(current), "custom")
+        return current
+      })
+    },
+    [],
+  )
+
   // Draft autosave: full JSON → profile_drafts
   useEffect(() => {
     if (mode !== "draft" || !state) return
@@ -234,27 +340,31 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     }
   }, [state, mode])
 
-  // Live autosave: profile fields → profiles table
+  // Live autosave: profile fields + page sections → profiles table
   useEffect(() => {
     if (mode !== "live" || !state) return
 
-    const json = JSON.stringify(state.profile)
-    if (json === lastSavedLiveProfile.current) return
+    const snapshot = JSON.stringify({
+      profile: state.profile,
+      page_sections: state.page_sections,
+    })
+    if (snapshot === lastSavedLiveProfile.current) return
 
     if (liveTimer.current) clearTimeout(liveTimer.current)
     liveTimer.current = setTimeout(async () => {
       setSaving(true)
       try {
+        const theme = resolveThemeBackground(state.profile.theme)
         const res = await apiFetch<DbProfile>("/api/profile", {
           method: "PATCH",
           body: JSON.stringify({
             display_name: state.profile.display_name,
             bio: state.profile.bio,
-            theme: resolveThemeBackground(state.profile.theme),
+            theme: { ...theme, page_sections: state.page_sections },
             avatar_url: state.profile.avatar_url,
           }),
         })
-        if (res.success) lastSavedLiveProfile.current = json
+        if (res.success) lastSavedLiveProfile.current = snapshot
       } finally {
         setSaving(false)
       }
@@ -263,7 +373,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     return () => {
       if (liveTimer.current) clearTimeout(liveTimer.current)
     }
-  }, [state?.profile, mode])
+  }, [state?.profile, state?.page_sections, mode])
 
   const syncLiveLink = useCallback(
     async (id: string) => {
@@ -353,6 +463,11 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       updateLink,
       removeLink,
       moveLink,
+      addPageSection,
+      updatePageSection,
+      removePageSection,
+      movePageSection,
+      saveAsTemplate,
       syncLiveLink,
       deleteLiveLink,
       persistLiveLink,
@@ -371,6 +486,11 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       updateLink,
       removeLink,
       moveLink,
+      addPageSection,
+      updatePageSection,
+      removePageSection,
+      movePageSection,
+      saveAsTemplate,
       syncLiveLink,
       deleteLiveLink,
       persistLiveLink,

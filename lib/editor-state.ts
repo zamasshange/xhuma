@@ -1,6 +1,7 @@
 import { inferLinkIcon } from "@/lib/infer-link-icon"
 import { DEFAULT_THEME, themeForRender } from "@/lib/database.types"
-import type { DbLink, DbProfile } from "@/lib/database.types"
+import type { DbLink, DbProfile, ProfileTheme } from "@/lib/database.types"
+import { normalizePageSections, pageSectionsFromDocument, sectionsToLegacyIds, type PageSection } from "@/lib/editor-sections"
 
 /** Single source of truth for the editor */
 export type EditorLink = {
@@ -16,6 +17,7 @@ export type EditorState = {
   template_id: string
   layout: string
   sections: string[]
+  page_sections: PageSection[]
   profile: {
     display_name: string
     bio: string
@@ -29,6 +31,7 @@ export type EditorState = {
 export type TemplateDocument = {
   layout: string
   sections: string[]
+  page_sections?: PageSection[]
   theme: ProfileTheme
   profile: {
     display_name: string
@@ -68,9 +71,17 @@ export function normalizeTemplateDocument(
   }))
   links.sort((a, b) => a.position - b.position)
 
+  const pageSections = normalizePageSections(raw?.page_sections)
+  const sections = Array.isArray(raw?.sections)
+    ? (raw!.sections as string[])
+    : pageSections.length
+      ? sectionsToLegacyIds(pageSections)
+      : ["profile", "links"]
+
   return {
     layout: String(raw?.layout ?? "creator"),
-    sections: Array.isArray(raw?.sections) ? (raw!.sections as string[]) : ["profile", "links"],
+    sections,
+    page_sections: pageSections.length ? pageSections : undefined,
     theme,
     profile: {
       display_name: String(
@@ -87,10 +98,12 @@ export function normalizeTemplateDocument(
 }
 
 export function editorStateFromDocument(templateId: string, doc: TemplateDocument): EditorState {
+  const pageSections = pageSectionsFromDocument(doc)
   return {
     template_id: templateId,
     layout: doc.layout,
-    sections: doc.sections,
+    sections: doc.sections.length ? doc.sections : sectionsToLegacyIds(pageSections),
+    page_sections: pageSections,
     profile: {
       display_name: doc.profile.display_name,
       bio: doc.profile.bio,
@@ -111,7 +124,8 @@ export function editorStateFromDocument(templateId: string, doc: TemplateDocumen
 export function editorStateToDocument(state: EditorState): TemplateDocument {
   return {
     layout: state.layout,
-    sections: state.sections,
+    sections: sectionsToLegacyIds(state.page_sections),
+    page_sections: state.page_sections,
     theme: state.profile.theme,
     profile: {
       display_name: state.profile.display_name,
@@ -135,15 +149,24 @@ export function editorStateFromProfile(
   templateId = profile.template_id ?? "creator",
 ): EditorState {
   const sorted = [...links].sort((a, b) => a.position - b.position)
+  const theme = themeForRender({ ...DEFAULT_THEME, ...profile.theme_json })
+  const fromTheme = theme.page_sections
+  const page_sections = fromTheme?.length
+    ? normalizePageSections(fromTheme)
+    : normalizePageSections([
+        { id: "profile", type: "profile", content: {} },
+        { id: "links", type: "links", content: {} },
+      ])
   return {
     template_id: templateId,
     layout: templateId,
-    sections: ["profile", "links"],
+    sections: sectionsToLegacyIds(page_sections),
+    page_sections,
     profile: {
       display_name: profile.display_name,
       bio: profile.bio ?? "",
       avatar_url: profile.avatar_url,
-      theme: themeForRender({ ...DEFAULT_THEME, ...profile.theme_json }),
+      theme,
     },
     links: sorted.map((l) => ({
       id: l.id,

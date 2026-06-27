@@ -1,4 +1,4 @@
-import { TemplatesGallery } from "@/components/templates/templates-gallery"
+import { TemplateMarketplace } from "@/components/templates/template-marketplace"
 import { SeoBreadcrumbs } from "@/components/seo/breadcrumb-json-ld"
 import { SiteJsonLd } from "@/components/seo/site-json-ld"
 import { DarkButton } from "@/components/marketing/biolink/dark-button"
@@ -29,7 +29,7 @@ export default function TemplatesPage() {
           Start with a template
         </DarkButton>
       </section>
-      <TemplatesGallery />
+      <TemplateMarketplace showHeader={false} />
     </>
   )
 }

@@ -50,7 +50,10 @@ export async function POST(request: Request) {
       display_name: data.profile.display_name || username,
       bio: data.profile.bio ?? "",
       avatar_url: data.profile.avatar_url,
-      theme_json: themeForRender(data.theme),
+      theme_json: themeForRender({
+        ...data.theme,
+        page_sections: data.page_sections,
+      }),
       template_id: draft.template_id,
     })
     .select()

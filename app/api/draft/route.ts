@@ -1,6 +1,6 @@
 import { createAdminClient, getUserId } from "@/lib/supabase/admin"
 import { apiSuccess, apiError } from "@/lib/api-response"
-import { isTemplateId } from "@/data/templates"
+import { isKnownTemplateId } from "@/lib/templates/catalog"
 import {
   ensureTemplateInDb,
   getTemplate,
@@ -47,7 +47,7 @@ export async function PUT(request: Request) {
   const templateId = body.template_id as string | undefined
   const dataPatch = body.data as Partial<TemplateDocument> | undefined
 
-  if (templateId && !isTemplateId(templateId)) {
+  if (templateId && !isKnownTemplateId(templateId)) {
     return apiError("Unknown template", 400)
   }
 

@@ -11,6 +11,9 @@ import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
 import { resolveThemeBackground } from "@/lib/theme-presets"
 import { resolveLinkButtonColors } from "@/lib/link-card-styles"
+import { ProfileSectionBlocks } from "@/components/profile/profile-section-blocks"
+import type { PageSection } from "@/lib/editor-sections"
+import { normalizePageSections } from "@/lib/editor-sections"
 
 const PRESET_DECOR_CLASS: Record<string, string> = {
   summer: "profile-theme-summer",
@@ -25,6 +28,7 @@ const PRESET_DECOR_CLASS: Record<string, string> = {
 export function DbPublicProfileView({
   profile,
   links,
+  pageSections,
   onShare,
   trackClicks = false,
   compact = false,
@@ -32,6 +36,7 @@ export function DbPublicProfileView({
 }: {
   profile: DbProfile
   links: Pick<DbLink, "id" | "title" | "url" | "icon">[]
+  pageSections?: PageSection[]
   onShare?: () => void
   trackClicks?: boolean
   /** Tighter layout inside device frame */
@@ -39,6 +44,11 @@ export function DbPublicProfileView({
   verified?: boolean
 }) {
   const theme = resolveThemeBackground({ ...DEFAULT_THEME, ...profile.theme_json })
+  const sections =
+    pageSections ??
+    (theme.page_sections?.length
+      ? normalizePageSections(theme.page_sections)
+      : undefined)
   const linkColors = resolveLinkButtonColors(theme)
   const useThemeIcons = theme.social_icon_style === "theme"
   const decorClass =
@@ -161,6 +171,17 @@ export function DbPublicProfileView({
             />
           ))}
         </div>
+
+        {sections && (
+          <ProfileSectionBlocks
+            sections={sections}
+            theme={theme}
+            compact={compact}
+            onLinkClick={(url) => {
+              if (url !== "#") window.open(url, "_blank", "noopener,noreferrer")
+            }}
+          />
+        )}
 
         {!compact && <p className="mt-8 text-center text-[10px] opacity-45">Powered by Xhuma</p>}
       </div>

@@ -43,6 +43,7 @@ import { QuickPlatformChips } from "@/components/editor/quick-platform-chips"
 import { AvatarUpload } from "@/components/editor/avatar-upload"
 import { LinkStylePicker } from "@/components/editor/link-style-picker"
 import { LinkColorPicker } from "@/components/editor/link-color-picker"
+import { PageSectionsPanel } from "@/components/editor/page-sections-panel"
 import { resolveLinkCardStyle } from "@/lib/link-card-styles"
 import type { SocialIconName } from "@/lib/infer-link-icon"
 
@@ -399,6 +400,8 @@ export function PageEditor() {
                   </div>
                 </EditorPanel>
 
+                <PageSectionsPanel />
+
                 <EditorPanel>
                   <EditorSectionTitle subtitle="Shape and feel of your link buttons.">
                     Link style
@@ -446,7 +449,12 @@ export function PageEditor() {
             <div className="hidden lg:block">
               <EditorPreviewFrame>
                 {previewProfile ? (
-                  <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
+                  <DbPublicProfileView
+                    profile={previewProfile}
+                    links={previewLinks}
+                    pageSections={state?.page_sections}
+                    compact
+                  />
                 ) : (
                   <div className="flex min-h-[280px] items-center justify-center p-4 text-center text-xs text-bio-grey">
                     Pick a template to preview.
@@ -461,7 +469,12 @@ export function PageEditor() {
       {tab === "page" && previewProfile && (
         <div className="mt-6 flex justify-center lg:hidden">
           <EditorPreviewFrame>
-            <DbPublicProfileView profile={previewProfile} links={previewLinks} compact />
+            <DbPublicProfileView
+              profile={previewProfile}
+              links={previewLinks}
+              pageSections={state?.page_sections}
+              compact
+            />
           </EditorPreviewFrame>
         </div>
       )}
