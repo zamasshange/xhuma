@@ -6,6 +6,7 @@ import {
   BLANK_TEMPLATE_ID,
   sectionsToLegacyIds,
 } from "@/lib/editor-sections"
+import { applyVariantMockToDocument } from "@/lib/templates/mock-preview"
 
 export const TEMPLATE_CATEGORIES = [
   "Creator",
@@ -88,10 +89,11 @@ const VARIANTS: Omit<MarketplaceTemplate, "default_data" | "preview_image">[] = 
 
 function buildMarketplaceEntry(v: (typeof VARIANTS)[number]): MarketplaceTemplate {
   const base = getStaticTemplate(v.baseId)
+  const raw = base?.default_data ?? STATIC_TEMPLATES[0].default_data
   return {
     ...v,
     preview_image: base?.preview_image ?? null,
-    default_data: base?.default_data ?? STATIC_TEMPLATES[0].default_data,
+    default_data: applyVariantMockToDocument(raw, v.id),
   }
 }
 

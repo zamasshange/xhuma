@@ -221,21 +221,25 @@ function TemplateCard({
 }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-bio-dark/8 bg-white shadow-sm transition hover:shadow-md">
-      <div className="relative overflow-hidden bg-bio-grey-f4">
-        <TemplateCardPreview template={template} />
-        {template.aiReady && (
-          <span className="absolute left-2 top-2 rounded-full bg-bio-dark px-2 py-0.5 text-[10px] font-semibold text-white">
-            AI Ready
-          </span>
-        )}
-        <button
-          type="button"
-          onClick={onFavorite}
-          className="absolute right-2 top-2 rounded-full bg-white/90 p-2 shadow"
-          aria-label="Favourite"
-        >
-          <Heart className={cn("size-4", favorited ? "fill-red-500 text-red-500" : "text-bio-grey")} />
-        </button>
+      <div className="relative bg-bio-grey-f4">
+        <div className="relative z-0">
+          <TemplateCardPreview template={template} />
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-start justify-between gap-2 p-2.5">
+          {template.aiReady && (
+            <span className="rounded-full bg-bio-dark px-2.5 py-1 text-[10px] font-semibold text-white shadow-md ring-1 ring-black/10">
+              AI Ready
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onFavorite}
+            className="pointer-events-auto ml-auto rounded-full bg-white p-2 shadow-md ring-1 ring-black/5 transition hover:bg-white"
+            aria-label="Favourite"
+          >
+            <Heart className={cn("size-4", favorited ? "fill-red-500 text-red-500" : "text-bio-grey")} />
+          </button>
+        </div>
       </div>
       <div className="flex flex-1 flex-col p-3">
         <p className="text-[10px] font-medium uppercase tracking-wide text-bio-grey">{template.category}</p>
