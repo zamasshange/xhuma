@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { Show, UserButton } from "@clerk/nextjs"
 import { AnimatePresence, motion } from "framer-motion"
 import { LogoMark } from "@/components/marketing/biolink/logo-mark"
 import { cn } from "@/lib/utils"
@@ -20,6 +19,23 @@ export function BiolinkNavbar() {
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`)
+
+  const authLinks = (
+    <>
+      <Link
+        href="/sign-in"
+        className="text-sm font-semibold text-bio-dark transition-colors hover:text-bio-dark/80 lg:text-base"
+      >
+        Log in
+      </Link>
+      <Link
+        href="/sign-up"
+        className="rounded-full bg-bio-dark px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 lg:px-6 lg:text-base"
+      >
+        Get started
+      </Link>
+    </>
+  )
 
   return (
     <div className="fixed left-0 right-0 top-0 z-[999] mt-2.5">
@@ -42,38 +58,7 @@ export function BiolinkNavbar() {
             ))}
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-2 md:flex lg:gap-3">
-            <Show when="signed-out">
-              <Link
-                href="/sign-in"
-                className="text-sm font-semibold text-bio-dark transition-colors hover:text-bio-dark/80 lg:text-base"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/sign-up"
-                className="rounded-full bg-bio-dark px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-bio-dark/80 lg:px-6 lg:text-base"
-              >
-                Get started
-              </Link>
-            </Show>
-            <Show when="signed-in">
-              <Link
-                href="/editor"
-                className="text-sm font-semibold text-bio-dark transition-colors hover:text-bio-dark/80 lg:text-base"
-              >
-                My page
-              </Link>
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: "size-9 ring-2 ring-bio-dark/10",
-                  },
-                }}
-              />
-            </Show>
-          </div>
+          <div className="hidden shrink-0 items-center gap-2 md:flex lg:gap-3">{authLinks}</div>
 
           <button
             type="button"
@@ -119,25 +104,16 @@ export function BiolinkNavbar() {
                   </Link>
                 </li>
               ))}
-              <Show when="signed-out">
-                <li className="border-b border-bio-dark/10 py-5">
-                  <Link href="/sign-in" className="block text-lg font-bold" onClick={() => setOpen(false)}>
-                    Log in
-                  </Link>
-                </li>
-                <li className="border-b border-bio-dark/10 py-5">
-                  <Link href="/sign-up" className="block text-lg font-bold text-bio-dark" onClick={() => setOpen(false)}>
-                    Get started
-                  </Link>
-                </li>
-              </Show>
-              <Show when="signed-in">
-                <li className="border-b border-bio-dark/10 py-5">
-                  <Link href="/editor" className="block text-lg font-bold" onClick={() => setOpen(false)}>
-                    My page
-                  </Link>
-                </li>
-              </Show>
+              <li className="border-b border-bio-dark/10 py-5">
+                <Link href="/sign-in" className="block text-lg font-bold" onClick={() => setOpen(false)}>
+                  Log in
+                </Link>
+              </li>
+              <li className="border-b border-bio-dark/10 py-5">
+                <Link href="/sign-up" className="block text-lg font-bold text-bio-dark" onClick={() => setOpen(false)}>
+                  Get started
+                </Link>
+              </li>
             </ul>
           </motion.div>
         )}

@@ -112,7 +112,8 @@ export function SocialIconBadge({
   size?: number
   className?: string
 }) {
-  const resolved = resolveLinkIcon(icon)
+  const resolved =
+    resolveSocialIconName(icon) ?? inferLinkIcon(icon) ?? ("link" as SocialIconName)
   const bg = SOCIAL_BRAND_COLORS[resolved] ?? SOCIAL_BRAND_COLORS.link
   const lightIcon = resolved === "snapchat" || resolved === "coffee" || resolved === "buymeacoffee"
   const iconColor = lightIcon ? "#0d0c22" : "#ffffff"

@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useAuth } from "@clerk/nextjs"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { apiFetch } from "@/lib/api-fetch"
 import { isValidUsername, sanitizeUsername } from "@/lib/username"
 import { SITE_DOMAIN } from "@/lib/brand"
+import type { DbProfile } from "@/lib/database.types"
 
 type ClaimLinkInputProps = {
   className?: string
@@ -14,12 +14,16 @@ type ClaimLinkInputProps = {
   onSuccess?: () => void
 }
 
+export async function isSignedInViaApi(): Promise<boolean> {
+  const res = await apiFetch<DbProfile | null>("/api/profile")
+  return res.success
+}
+
 export function ClaimLinkInput({
   className,
   buttonLabel = "Start for free",
   onSuccess,
 }: ClaimLinkInputProps) {
-  const { isSignedIn } = useAuth()
   const [username, setUsername] = useState("")
 
   const goToTemplates = () => {
@@ -37,7 +41,10 @@ export function ClaimLinkInput({
 
     onSuccess?.()
 
-    if (!isSignedIn) {
+    const profileCheck = await apiFetch<DbProfile | null>("/api/profile")
+    const signedIn = profileCheck.success && profileCheck.data !== undefined
+
+    if (!signedIn) {
       const dest = `/onboarding?username=${encodeURIComponent(slug)}`
       window.location.assign(`/sign-up?redirect_url=${encodeURIComponent(dest)}`)
       return

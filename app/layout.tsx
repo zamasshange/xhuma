@@ -1,5 +1,4 @@
-import { ClerkProvider } from "@clerk/nextjs"
-import { clerkProviderProps } from "@/lib/clerk-config"
+import { ConditionalClerkProvider } from "@/components/providers/conditional-clerk-provider"
 import { Analytics } from '@vercel/analytics/next'
 import type { Viewport } from 'next'
 import { Geist, Geist_Mono, Inter } from 'next/font/google'
@@ -38,12 +37,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-dvh font-sans antialiased text-bio-dark bg-white">
-        <ClerkProvider {...clerkProviderProps}>
+        <ConditionalClerkProvider>
           <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
             {children}
             <Toaster position="top-center" richColors />
           </ThemeProvider>
-        </ClerkProvider>
+        </ConditionalClerkProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

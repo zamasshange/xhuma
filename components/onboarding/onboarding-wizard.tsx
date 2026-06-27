@@ -22,21 +22,21 @@ import {
   platformById,
   type OnboardingStep,
 } from "@/data/onboarding"
-import { useUser } from "@clerk/nextjs"
 import { apiFetch } from "@/lib/api-fetch"
 import { displayNameFromUsername, isValidUsername, sanitizeUsername } from "@/lib/username"
 import type { DbProfile, ProfileTheme } from "@/lib/database.types"
 import { DEFAULT_THEME } from "@/lib/database.types"
 import { cn } from "@/lib/utils"
 import { SITE_DOMAIN } from "@/lib/brand"
-import { SocialIconBadge, resolveLinkIcon } from "@/components/icons/social-icon"
+import { LinkDraftRow } from "@/components/onboarding/link-draft-row"
+import { SocialIconBadge } from "@/components/icons/social-icon"
+import { inferLinkIcon } from "@/lib/infer-link-icon"
 
 type LinkDraft = { title: string; url: string }
 
 export function OnboardingWizard() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user, isLoaded } = useUser()
   const fileRef = useRef<HTMLInputElement>(null)
 
   const [stepIndex, setStepIndex] = useState(0)
@@ -63,12 +63,6 @@ export function OnboardingWizard() {
       setDisplayName((prev) => prev || displayNameFromUsername(slug))
     }
   }, [searchParams])
-
-  useEffect(() => {
-    if (!user) return
-    const name = user.fullName || user.firstName || ""
-    if (name) setDisplayName((prev) => prev || name)
-  }, [user])
 
   useEffect(() => {
     if (platforms.length === 0) return
@@ -214,31 +208,26 @@ export function OnboardingWizard() {
     created_at: new Date().toISOString(),
   }
 
-  const previewLinks = [
-    ...links
-      .filter((l) => l.title && l.url)
-      .map((l, i) => ({
-        id: `draft-${i}`,
-        title: l.title,
-        url: l.url,
-        icon: inferLinkIcon(l.title, l.url),
-      })),
-    ...platforms
-      .map((id) => {
-        const p = platformById(id)
-        const url = socialUrls[id]
-        return p && url ? { id, title: p.linkTitle ?? p.label, url, icon: p.icon } : null
-      })
-      .filter(Boolean) as { id: string; title: string; url: string; icon?: string }[],
-  ]
-
-  if (!isLoaded) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f8] text-bio-grey">
-        Loading…
-      </div>
-    )
-  }
+  const previewLinks = useMemo(
+    () => [
+      ...links
+        .filter((l) => l.title && l.url)
+        .map((l, i) => ({
+          id: `draft-${i}`,
+          title: l.title,
+          url: l.url,
+          icon: inferLinkIcon(l.title, l.url) ?? undefined,
+        })),
+      ...platforms
+        .map((id) => {
+          const p = platformById(id)
+          const url = socialUrls[id]
+          return p && url ? { id, title: p.linkTitle ?? p.label, url, icon: p.icon } : null
+        })
+        .filter(Boolean) as { id: string; title: string; url: string; icon?: string }[],
+    ],
+    [links, platforms, socialUrls],
+  )
 
   return (
     <OnboardingShell step={stepIndex + 1} totalSteps={totalSteps} onBack={stepIndex > 0 ? goBack : undefined}>
@@ -370,31 +359,17 @@ export function OnboardingWizard() {
           </OnboardingTitle>
           <div className="rounded-3xl bg-white p-4 shadow-sm">
             {links.map((link, i) => (
-              <div key={i} className="mb-3 flex gap-3 last:mb-0">
-                <SocialIconBadge
-                  icon={resolveLinkIcon(null, link.title, link.url)}
-                  size={44}
-                  className="mt-1 shrink-0"
-                />
-                <div className="flex min-w-0 flex-1 flex-col gap-2">
-                  <input
-                    className="h-12 w-full rounded-xl bg-bio-grey-f4 px-4 text-bio-dark outline-none placeholder:text-bio-grey"
-                    placeholder="Link name"
-                    value={link.title}
-                    onChange={(e) =>
-                      setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, title: e.target.value } : l)))
-                    }
-                  />
-                  <input
-                    className="h-12 w-full rounded-xl bg-bio-grey-f4 px-4 text-bio-dark outline-none placeholder:text-bio-grey"
-                    placeholder="URL"
-                    value={link.url}
-                    onChange={(e) =>
-                      setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, url: e.target.value } : l)))
-                    }
-                  />
-                </div>
-              </div>
+              <LinkDraftRow
+                key={i}
+                title={link.title}
+                url={link.url}
+                onTitleChange={(title) =>
+                  setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, title } : l)))
+                }
+                onUrlChange={(url) =>
+                  setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, url } : l)))
+                }
+              />
             ))}
             <button
               type="button"
