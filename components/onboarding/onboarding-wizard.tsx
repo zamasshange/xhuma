@@ -36,7 +36,7 @@ type LinkDraft = { title: string; url: string }
 export function OnboardingWizard() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user } = useUser()
+  const { user, isLoaded } = useUser()
   const fileRef = useRef<HTMLInputElement>(null)
 
   const [stepIndex, setStepIndex] = useState(0)
@@ -231,6 +231,14 @@ export function OnboardingWizard() {
       })
       .filter(Boolean) as { id: string; title: string; url: string; icon?: string }[],
   ]
+
+  if (!isLoaded) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f8] text-bio-grey">
+        Loading…
+      </div>
+    )
+  }
 
   return (
     <OnboardingShell step={stepIndex + 1} totalSteps={totalSteps} onBack={stepIndex > 0 ? goBack : undefined}>

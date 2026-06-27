@@ -6,9 +6,18 @@ export default async function AuthContinuePage() {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const supabase = createAdminClient()
-  const { data: profile } = await supabase.from("profiles").select("id").eq("id", userId).maybeSingle()
+  try {
+    const supabase = createAdminClient()
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle()
 
-  if (profile) redirect("/editor")
+    if (!error && profile) redirect("/editor")
+  } catch {
+    // Supabase misconfigured — still send user to onboarding
+  }
+
   redirect("/onboarding")
 }

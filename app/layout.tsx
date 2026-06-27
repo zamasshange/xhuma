@@ -1,4 +1,5 @@
-import { ClerkProvider } from "@clerk/nextjs"
+import { ClerkProvider, ClerkFailed, ClerkLoaded, ClerkLoading } from "@clerk/nextjs"
+import { ClerkFailedScreen } from "@/components/auth/clerk-failed-screen"
 import { clerkProviderProps } from "@/lib/clerk-config"
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
@@ -47,10 +48,20 @@ export default function RootLayout({
     >
       <body className="min-h-dvh font-sans antialiased text-bio-dark bg-white">
         <ClerkProvider {...clerkProviderProps}>
-          <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
-            {children}
-            <Toaster position="top-center" richColors />
-          </ThemeProvider>
+          <ClerkLoading>
+            <div className="flex min-h-dvh items-center justify-center bg-[#f7f7f8] text-bio-grey">
+              Loading…
+            </div>
+          </ClerkLoading>
+          <ClerkFailed>
+            <ClerkFailedScreen />
+          </ClerkFailed>
+          <ClerkLoaded>
+            <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
+              {children}
+              <Toaster position="top-center" richColors />
+            </ThemeProvider>
+          </ClerkLoaded>
         </ClerkProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
