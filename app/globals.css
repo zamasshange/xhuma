@@ -252,7 +252,7 @@
 }
 
 .bio-plan-gradient {
-  background: linear-gradient(0.351turn, rgba(255, 88, 88, 0.5) 23.71%, rgba(192, 88, 255, 0.5) 78.8%);
+  background: var(--color-bio-dark);
 }
 
 @keyframes bio-shine {
