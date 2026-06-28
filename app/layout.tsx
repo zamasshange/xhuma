@@ -46,7 +46,7 @@ export default function RootLayout({
             <Toaster position="top-center" richColors />
           </ThemeProvider>
         </ConditionalClerkProvider>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <Analytics />
       </body>
     </html>
   )
