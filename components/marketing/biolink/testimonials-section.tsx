@@ -1,9 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { bioTestimonialSocialProof, bioTestimonials } from "@/data/bio-link"
-import { SITE_NAME } from "@/lib/brand"
 import { cn } from "@/lib/utils"
+import { bioTestimonialSocialProof } from "@/data/bio-link"
+import { SITE_NAME } from "@/lib/brand"
+import { useRegion } from "@/components/providers/region-provider"
+import { getRegionalTestimonials } from "@/lib/region/content"
 
 function TestimonialAvatar({
   avatar,
@@ -33,7 +35,7 @@ function TestimonialAvatar({
   )
 }
 
-function TestimonialCard({ t }: { t: (typeof bioTestimonials)[0] }) {
+function TestimonialCard({ t }: { t: ReturnType<typeof getRegionalTestimonials>[0] }) {
   return (
     <article className="bio-testimonial-card mb-5 break-inside-avoid">
       <div className="flex items-center gap-3">
@@ -55,8 +57,10 @@ function TestimonialCard({ t }: { t: (typeof bioTestimonials)[0] }) {
 }
 
 export function TestimonialsSection() {
+  const { code: region } = useRegion()
+  const testimonials = getRegionalTestimonials(region)
   const [expanded, setExpanded] = useState(false)
-  const visible = expanded ? bioTestimonials : bioTestimonials.slice(0, 9)
+  const visible = expanded ? testimonials : testimonials.slice(0, 9)
 
   return (
     <section className="relative overflow-hidden bg-[#f9f9f9] pt-28 pb-32 max-lg:pt-20 max-lg:pb-28">

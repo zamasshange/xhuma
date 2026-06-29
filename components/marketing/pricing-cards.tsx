@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { pricingPlans } from "@/data/marketing"
-import { formatCurrency } from "@/lib/locale"
+import { useRegion } from "@/components/providers/region-provider"
 import { cn } from "@/lib/utils"
 
 export function PricingCards() {
+  const { formatCurrency } = useRegion()
   const [annual, setAnnual] = useState(true)
 
   return (

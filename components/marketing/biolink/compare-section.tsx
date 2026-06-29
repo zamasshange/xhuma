@@ -1,11 +1,12 @@
-import { bioComparison, bioPricing, BIO_ASSETS } from "@/data/bio-link"
+import { BIO_ASSETS } from "@/data/bio-link"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
 import { DarkButton, ArrowIcon } from "@/components/marketing/biolink/dark-button"
 import { LogoMark } from "@/components/marketing/biolink/logo-mark"
 import { SITE_NAME } from "@/lib/brand"
 import { formatCurrency } from "@/lib/locale"
-
-const totalElsewhere = bioComparison.reduce((sum, item) => sum + item.price, 0)
+import { detectRegion } from "@/lib/region/detect"
+import { getRegionalComparison, getRegionalPricing } from "@/lib/region/content"
+import { getRegionConfig } from "@/lib/region/config"
 
 function DashedRule() {
   return (
@@ -15,7 +16,13 @@ function DashedRule() {
   )
 }
 
-export function CompareSection() {
+export async function CompareSection() {
+  const region = await detectRegion()
+  const config = getRegionConfig(region)
+  const comparison = getRegionalComparison(region)
+  const pricing = getRegionalPricing(region)
+  const totalElsewhere = comparison.reduce((sum, item) => sum + item.price, 0)
+
   return (
     <section className="bg-white pt-28 max-lg:pt-20">
       <div className="mb-5 text-center">
@@ -49,7 +56,7 @@ export function CompareSection() {
         <DashedRule />
 
         <div className="relative mx-auto my-6 w-[min(420px,88%)] space-y-5 max-sm:my-5 max-sm:space-y-4">
-          {bioComparison.map((item) => (
+          {comparison.map((item) => (
             <div key={item.title} className="flex items-start justify-between gap-4">
               <div className="flex min-w-0 items-start gap-3">
                 <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/80 text-lg shadow-sm ring-1 ring-black/5 max-sm:size-8 max-sm:text-base">
@@ -62,7 +69,9 @@ export function CompareSection() {
                   <p className="mt-0.5 text-[13px] font-light text-bio-grey max-sm:text-xs">{item.replaces}</p>
                 </div>
               </div>
-              <p className="shrink-0 pt-0.5 text-lg font-semibold text-bio-dark max-sm:text-base">{formatCurrency(item.price)}</p>
+              <p className="shrink-0 pt-0.5 text-lg font-semibold text-bio-dark max-sm:text-base">
+                {formatCurrency(item.price, config)}
+              </p>
             </div>
           ))}
         </div>
@@ -77,7 +86,7 @@ export function CompareSection() {
             <p className="text-base text-bio-grey line-through max-sm:text-sm">What you&apos;d spend otherwise</p>
           </div>
           <p className="shrink-0 text-lg font-semibold text-bio-red line-through max-sm:text-base">
-            {formatCurrency(totalElsewhere)}/mo
+            {formatCurrency(totalElsewhere, config)}/mo
           </p>
         </div>
 
@@ -89,7 +98,7 @@ export function CompareSection() {
             </p>
           </div>
           <p className="shrink-0 text-base font-semibold text-bio-green sm:text-lg">
-            {formatCurrency(bioPricing.yearly)}/mo
+            {formatCurrency(pricing.yearly, config)}/mo
           </p>
         </div>
 

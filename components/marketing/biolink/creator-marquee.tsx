@@ -1,9 +1,12 @@
 import Link from "next/link"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { mapProfile } from "@/lib/database.types"
-import { bioCreators } from "@/data/bio-link"
+import { detectRegion } from "@/lib/region/detect"
+import { getRegionalCreators } from "@/lib/region/content"
 
 export async function CreatorMarquee() {
+  const region = await detectRegion()
+  const fallbackCreators = getRegionalCreators(region)
   let creators: { username: string; name: string; image: string; href: string }[] = []
 
   try {
@@ -17,11 +20,11 @@ export async function CreatorMarquee() {
     if (data && data.length >= 3) {
       creators = data.map((p) => {
         const profile = mapProfile(p as Record<string, unknown>)
-        const fallback = bioCreators.find((c) => c.username === profile.username)
+        const fallback = fallbackCreators.find((c) => c.username === profile.username)
         return {
           username: profile.username,
           name: profile.display_name,
-          image: profile.avatar_url || fallback?.image || bioCreators[0].image,
+          image: profile.avatar_url || fallback?.image || fallbackCreators[0].image,
           href: `/${profile.username}`,
         }
       })
@@ -31,7 +34,7 @@ export async function CreatorMarquee() {
   }
 
   if (creators.length === 0) {
-    creators = bioCreators.map((c) => ({
+    creators = fallbackCreators.map((c) => ({
       username: c.username,
       name: c.name,
       image: c.image,

@@ -1,70 +1,83 @@
-/** South African locale defaults for Xhuma */
+import type { RegionConfig } from "@/lib/region/config"
+import { getRegionConfig, DEFAULT_REGION } from "@/lib/region/config"
 
+/** @deprecated Use getRegionConfig() or useRegion() */
 export const DEFAULT_LOCALE = "en-ZA" as const
+/** @deprecated Use getRegionConfig() or useRegion() */
 export const DEFAULT_TIMEZONE = "Africa/Johannesburg"
+/** @deprecated Use getRegionConfig() or useRegion() */
 export const CURRENCY_CODE = "ZAR"
+/** @deprecated Use getRegionConfig() or useRegion() */
 export const CURRENCY_SYMBOL = "R"
 
-/** Example SA phone numbers for placeholders and mock data */
+/** @deprecated Use getRegionConfig("ZA").phoneExample */
 export const SA_PHONE_EXAMPLES = {
   mobile: "+27 82 123 4567",
   mobileAlt: "+27 71 555 1234",
 } as const
 
-/** Example SA cities for mock data */
-export const SA_CITIES = [
-  "Johannesburg",
-  "Cape Town",
-  "Durban",
-  "Pretoria",
-  "Gqeberha",
-  "Bloemfontein",
-  "Polokwane",
-  "Mbombela",
-  "Soweto",
-  "Midrand",
-] as const
+/** @deprecated Use getRegionConfig("ZA").cities */
+export const SA_CITIES = getRegionConfig("ZA").cities
 
 export function formatCurrency(
   amount: number,
+  region: RegionConfig | RegionConfig["code"] = DEFAULT_REGION,
   options?: { decimals?: boolean; suffix?: string },
 ): string {
+  const config = typeof region === "string" ? getRegionConfig(region) : region
   if (amount === 0) return "Free"
-  const formatted = amount.toLocaleString(DEFAULT_LOCALE, {
+  const formatted = amount.toLocaleString(config.locale, {
     minimumFractionDigits: options?.decimals ? 2 : 0,
     maximumFractionDigits: options?.decimals ? 2 : 0,
   })
-  const base = `${CURRENCY_SYMBOL}${formatted}`
+  const base =
+    config.currency.code === "USD"
+      ? `${config.currency.symbol}${formatted}`
+      : `${config.currency.symbol}${formatted}`
   return options?.suffix ? `${base}${options.suffix}` : base
 }
 
-export function formatPriceMonthly(amount: number, annual = false): string {
+export function formatPriceMonthly(
+  amount: number,
+  region: RegionConfig | RegionConfig["code"] = DEFAULT_REGION,
+  annual = false,
+): string {
   if (amount === 0) return "Free"
-  return `${formatCurrency(amount)}/${annual ? "month, billed annually" : "month"}`
+  return `${formatCurrency(amount, region)}/${annual ? "month, billed annually" : "month"}`
 }
 
-/** Long date: 27 June 2026 */
-export function formatDateLong(value: Date | string): string {
+export function formatDateLong(
+  value: Date | string,
+  region: RegionConfig | RegionConfig["code"] = DEFAULT_REGION,
+): string {
+  const config = typeof region === "string" ? getRegionConfig(region) : region
   const date = typeof value === "string" ? new Date(value) : value
-  return date.toLocaleDateString(DEFAULT_LOCALE, {
+  return date.toLocaleDateString(config.locale, {
     day: "numeric",
     month: "long",
     year: "numeric",
-    timeZone: DEFAULT_TIMEZONE,
+    timeZone: config.timezone,
   })
 }
 
-/** Short date: 27/06/2026 */
-export function formatDateShort(value: Date | string): string {
+export function formatDateShort(
+  value: Date | string,
+  region: RegionConfig | RegionConfig["code"] = DEFAULT_REGION,
+): string {
+  const config = typeof region === "string" ? getRegionConfig(region) : region
   const date = typeof value === "string" ? new Date(value) : value
-  return date.toLocaleDateString(DEFAULT_LOCALE, {
+  return date.toLocaleDateString(config.locale, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-    timeZone: DEFAULT_TIMEZONE,
+    timeZone: config.timezone,
   })
 }
 
-export function formatNumber(value: number): string {
-  return value.toLocaleString(DEFAULT_LOCALE)
+export function formatNumber(
+  value: number,
+  region: RegionConfig | RegionConfig["code"] = DEFAULT_REGION,
+): string {
+  const config = typeof region === "string" ? getRegionConfig(region) : region
+  return value.toLocaleString(config.locale)
 }

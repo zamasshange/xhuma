@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { bioPricing, BIO_ASSETS } from "@/data/bio-link"
+import { BIO_ASSETS } from "@/data/bio-link"
 import { SectionBadge } from "@/components/marketing/biolink/section-badge"
 import { DarkButton, ArrowIcon } from "@/components/marketing/biolink/dark-button"
-import { formatCurrency } from "@/lib/locale"
+import { useRegion } from "@/components/providers/region-provider"
+import { getRegionalPricing } from "@/lib/region/content"
 
 function GradientCheck() {
   return (
@@ -25,8 +26,10 @@ function GradientCheck() {
 }
 
 export function BiolinkPricing() {
+  const { code: region, formatCurrency } = useRegion()
+  const pricing = getRegionalPricing(region)
   const [yearly, setYearly] = useState(true)
-  const price = yearly ? bioPricing.yearly : bioPricing.monthly
+  const price = yearly ? pricing.yearly : pricing.monthly
 
   return (
     <section className="relative mx-auto w-[min(900px,92%)] pt-28 max-lg:pt-16">
@@ -93,7 +96,7 @@ export function BiolinkPricing() {
             <span className="mb-2 ml-1 text-base text-bio-grey">/mo</span>
           </div>
           <ul className="mt-6 space-y-4 max-sm:mt-3">
-            {bioPricing.features.map((feature) => (
+            {pricing.features.map((feature) => (
               <li key={feature} className="flex text-base leading-snug max-sm:text-sm">
                 <GradientCheck />
                 {feature}
