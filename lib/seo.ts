@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { SITE_DOMAIN, SITE_NAME, SITE_URL } from "@/lib/brand"
+import { SITE_NAME } from "@/lib/brand"
+import { buildAbsoluteUrl, getSiteUrl } from "@/lib/site-url"
 import { DEFAULT_LOCALE } from "@/lib/locale"
 import { SEO_KEYWORDS_ALL } from "@/lib/seo-keywords"
 
@@ -19,10 +20,8 @@ export const INDEX_ROBOTS: Metadata["robots"] = {
 }
 
 /** Build absolute URL from a site path */
-export function absoluteUrl(path = "/"): string {
-  const base = SITE_URL.replace(/\/$/, "")
-  if (!path || path === "/") return base
-  return `${base}${path.startsWith("/") ? path : `/${path}`}`
+export function absoluteUrl(path = "/", origin?: string): string {
+  return buildAbsoluteUrl(origin ?? getSiteUrl(), path)
 }
 
 type BuildMetadataOptions = {
@@ -52,6 +51,7 @@ export function buildMetadata({
   absoluteTitle = false,
 }: BuildMetadataOptions): Metadata {
   const url = absoluteUrl(path)
+  const siteUrl = getSiteUrl()
   const imageUrl = image
     ? image.startsWith("http")
       ? image
@@ -80,7 +80,7 @@ export function buildMetadata({
     title: absoluteTitle || path === "/" ? { absolute: fullTitle } : fullTitle,
     description: description.slice(0, 160),
     keywords,
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(siteUrl),
     alternates: { canonical: url },
     robots: noIndex ? NOINDEX_ROBOTS : INDEX_ROBOTS,
     openGraph,
@@ -95,15 +95,17 @@ export function buildMetadata({
 }
 
 /** Root layout defaults */
-export const rootMetadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+export function rootMetadata(): Metadata {
+  const siteUrl = getSiteUrl()
+  return {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Xhuma – AI Link in Bio Platform for Creators",
     template: "%s | Xhuma",
   },
   description: SEO_DEFAULT_DESCRIPTION,
   applicationName: SITE_NAME,
-  authors: [{ name: "BDL Corp", url: SITE_URL }],
+  authors: [{ name: "BDL Corp", url: siteUrl }],
   creator: "BDL Corp",
   publisher: SITE_NAME,
   keywords: [...SEO_KEYWORDS_ALL].slice(0, 32),
@@ -132,6 +134,7 @@ export const rootMetadata: Metadata = {
     shortcut: "/favicon.png",
   },
   category: "technology",
+  }
 }
 
 export const marketingPages = {

@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next"
-import { SITE_URL } from "@/lib/brand"
-import { absoluteUrl } from "@/lib/seo"
+import { buildAbsoluteUrl, getRequestSiteUrl } from "@/lib/site-url"
 
-export default function robots(): MetadataRoute.Robots {
+export const dynamic = "force-dynamic"
+
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const siteUrl = await getRequestSiteUrl()
+
   return {
     rules: [
       {
@@ -28,7 +31,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: absoluteUrl("/sitemap.xml"),
-    host: SITE_URL.replace(/^https?:\/\//, ""),
+    sitemap: buildAbsoluteUrl(siteUrl, "/sitemap.xml"),
+    host: siteUrl.replace(/^https?:\/\//, ""),
   }
 }

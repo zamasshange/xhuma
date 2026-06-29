@@ -1,4 +1,7 @@
+import { getSiteUrl, PRODUCTION_SITE_URL, SITE_DOMAIN, buildAbsoluteUrl, getRequestSiteUrl } from "@/lib/site-url"
+
 export const SITE_NAME = "Xhuma"
-export const SITE_DOMAIN = "xhuma.cc"
-/** Vercel redirects apex → www; keep in sync with NEXT_PUBLIC_SITE_URL */
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? `https://www.${SITE_DOMAIN}`
+/** @deprecated Import SITE_DOMAIN from @/lib/site-url */
+export { SITE_DOMAIN, PRODUCTION_SITE_URL, getSiteUrl, getRequestSiteUrl, buildAbsoluteUrl }
+/** Public site origin — prefer getRequestSiteUrl() in sitemap/robots */
+export const SITE_URL = getSiteUrl()

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 })
 const inter = Inter({ variable: '--font-inter', subsets: ['latin'] })
 
-export const metadata = rootMetadata
+export const metadata = rootMetadata()
 
 export const viewport: Viewport = {
   colorScheme: 'light dark',

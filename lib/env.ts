@@ -1,6 +1,9 @@
+import { getSiteUrl, PRODUCTION_SITE_URL } from "@/lib/site-url"
+
 /** Server-safe environment accessors */
 export const env = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.xhuma.cc",
+  siteUrl: getSiteUrl(),
+  productionSiteUrl: PRODUCTION_SITE_URL,
   siteDomain: "xhuma.cc",
 
   supabase: {
